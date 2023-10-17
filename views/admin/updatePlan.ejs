@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <%- include("../utils/header.ejs") %>
+    <title>Document</title>
+</head>
+<style>
+    body{
+        overflow: hidden;
+    }
+    #table-info{
+        width: 100vw;
+        height: 85vh;
+        overflow: auto;
+    }
+    th:not:first-child, td{
+        min-width: 25em;
+        font-size: smaller;
+    }
+    .checkbox{
+        min-width: 1em;
+    }
+    input[type="checkbox"]{
+        cursor: pointer;
+        width: 1.95em;
+        height: 1.95em;
+    }
+    .error-message{
+        color: red;
+    }
+    .label{
+        font-weight: bolder;
+        font-size: x-small;
+    }
+    #table-info th, #table-info td{
+        padding: 0 !important;
+    }
+    #table-create tbody td{
+        padding: 0.6em;
+    }
+    #table-info{
+        border-spacing: 0px !important;
+    }
+    #table-update tbody td{
+        padding: 0.6em;
+    }
+    select{
+        width: 12em;
+        height: 2em;
+    }
+    input{
+        border: 1px solid rgba(0, 0, 0, 0.685);
+    }
+</style>
+<body>
+    <%- include("../layout/navbar.ejs") %>
+    <div id="table-info">
+        <table class="table table-bordered table-hover" id="table-infor">
+            <thead class="thead-dark table-hover">
+                <th id="thead-check-box"></th>
+                <th id="thead-week" style="min-width: 3em;">WEEK</th>
+                <th id="thead-stt" style="min-width: 3em;">STT</th>
+                <th id="thead-no-booking" style="min-width: 3em;">BK NO</th>
+                <!-- <th id="thead-estimated-loading-date" style="min-width: 3em;" >E.L DATE</th> -->
+                <th id="thead-request-loading" style="min-width: 10em;" >REQUEST LOADING</th>
+                <th id="thead-container-number" style="min-width: 10em;">CONT NUMBER</th>
+                <th id="thead-seal-number" style="min-width: 10em;">SEAL NUMBER</th>
+                <th id="thead-dc" style="min-width: 3em;">DC</th>
+                <th id="thead-carrier" style="min-width: 10em;">CARRIER</th>
+                <th id="thead-loading-location" style="min-width: 5em;">LOAD LOCATE</th>
+                <th id="thead-loading-date" style="min-width: 10em;">LOADING DATE</th>
+                <th id="thead-ship-date" style="min-width: 10em;">SHIP DATE</th>
+                <th id="thead-cdf-date" style="min-width: 10em;">CDF DATE</th>
+                <th id="thead-booking-number" style="min-width: 8em;">BK NUMBER</th>
+                <th id="thead-cut-off-loading-date" style="min-width: 10em;">CUT OFF LOAD DATE</th>
+                <th id="thead-cy-cut-off" style="min-width: 10em;">CY CUT OFF</th>
+                <th id="thead-ammentdent-bill-cut-off" style="min-width: 10em;">AMMENTDENT BILL CUT OFF</th>
+                <th id="thead-etd" style="min-width: 10em;">ETD</th>
+                <th id="thead-new-etd" style="min-width: 10em;">NEW ETD</th>
+                <th id="thead-service" style="min-width: 12em;">SERVICE</th>
+                <th id="thead-eta" style="min-width: 10em;">ETA</th>
+                <th id="thead-vessel" style="min-width: 12em;">VESSEL</th>
+                <th id="thead-picked-date" style="min-width: 10em;">PICKED DATE</th>
+                <th id="thead-vendor" style="min-width: 10em;">VENDOR</th>
+                <th id="thead-ata-pb" style="min-width: 10em;">ATA PHU BAI</th>
+                <th id="thead-unloading-location" style="min-width: 12em;">UNLOADING LOCATION</th>
+                <th id="thead-unloading-date" style="min-width: 10em;">UNLOADING DATE</th>
+                <th id="thead-export-saving-thuck-date" style="min-width: 12em;">EXPORT SAVING TRUCK DATE</th>
+                <th id="thead-reason-export-saving-truck" style="min-width: 10em;">REASON EXPORT SAVING TRUCK</th>
+                <th id="thead-picked-at-port" style="min-width: 10em;">PICK PORT</th>
+                <th id="thead-dropping-at-port" style="min-width: 12em;">DROPPING AT PORT</th>
+                <th id="thead-dropping-date" style="min-width: 10em;">DROPPING DATE</th>
+                <!-- <th id="thead-new-eta">NEW ETA</th> -->
+                <th id="thead-cont-category" style="min-width: 3em;">CONT TYPE</th>
+                <th id="thead-pre-booking-number" style="min-width: 12em;">PRE-BOOKING NUMBER</th>
+                <th id="thead-oil-price" style="min-width: 8em;">OIL PRICE</th>
+                <th id="thead-note" style="min-width: 12em;">NOTE</th>
+            </thead>
+                <tbody>
+                    <%var i=0%>
+                    <% for(let data of listData){ %>
+                        <tr class="tr stt-<%=++i%> existed tbody<%=data['idSystem']%>" id="tbody-<%=i%>" ondblclick="optional(this)">
+                            <td class="td-checkbox"><input type="checkbox" class="input-checkbox" disabled></td>
+        
+                            <td class="td-week">
+                                <input style="width: 3em;" readonly class="input-week" type="number" placeholder="WEEK" oninput="changeWeek()" value="<%=data["estimated_loading_week"]%>">
+                                <div class="error-message error-input-week"></div>
+                            </td>
+
+                            <td class="td-stt" style="text-align: center;"><%=i%></td>
+
+                            <td class="td-no-booking">
+                                <input style="width: 3em;" class="input-no-booking" value="<%=data["booking_no_update"]%>" placeholder="NO BOOKING" type="number">
+                                <div class="error-message error-input-no-booking"></div>
+                            </td>
+
+                            <td class="td-estimated-loading-date" style="display: none;">
+                                <input style="width: 3em;" value="<%=data["estimated_loading_date"]%>" class="input-estimated-loading-date" placeholder="ESTIMATE LOADING DATE" type="text">
+                                <div class="error-message error-input-estimated-loading-date"></div>
+                            </td>
+
+                            <td class="td-request-loading">
+                                <input style="width: 10em;" value="<%=data["request_loading"]%>" class="input-request-loading datetime" placeholder="REQUEST LOADING" onmouseenter="addDateTime(this)" type="text">
+                                <div class="error-message error-input-request-loading"></div>
+                            </td>
+
+                            <td class="td-container-number">
+                                <input style="width: 10em;" value="<%=data["cont_number"]%>" class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                                <div class="error-message error-input-container-number"></div>
+                            </td>
+
+                            <td class="td-seal-number">
+                                <input style="width: 10em;" value="<%=data["seal"]%>" class="input-seal-number" placeholder="SEAL NUMBER" type="text">
+                                <div class="error-message error-input-seal-number"></div>
+                            </td>
+
+                            <td class="td-dc">
+                                <input style="width: 3em;" class="input-dc" value="<%=data["DC"]?.split(";")[0]%>" placeholder="DC" type="text">
+                                <div class="error-message error-input-dc"></div>
+                            </td>
+
+                            <td class="td-carrier">
+                                <input class="input-carrier" value="<%=data["carrier"]%>" placeholder="CARRIER" type="text" oninput="copyDataAllowBooking(this)">
+                                <div class="dropdown">
+                                    <button style="width: 10em;" onclick="myFunction('dropdown-<%=i%>')" class="dropbtn" id="dropbtn-<%=i%>">Dropdown</button>
+                                    <div id="dropdown-<%=i%>" class="dropdown-content select-carrier">
+                                      <input class="input-search-droplist" type="text" placeholder="Search.." id="input-search-dropdown-<%=i%>" onkeyup="filterFunction('input-search-dropdown-<%=i%>', 'dropdown-<%=i%>')">
+                                      
+                                    </div>
+                                </div>
+                                <div class="error-message error-input-carrier"></div>
+                            </td>
+
+                            <td class="td-loading-location">
+                                <input style="width: 5em;" value="<%=data["loading_location"]%>" class="input-loading-location" placeholder="LOCATION" type="text">
+                                <select style="width: 5em;"  class="select-loading-location"></select>
+                                <div class="error-message error-input-loading-location"></div>
+                            </td>
+
+                            <td class="td-loading-date">
+                                <input style="width: 10em;" value="<%=data["loading_date"]%>" class="input-loading-date datetime" onmouseenter="addDateTime(this)"   placeholder="LOADING DATE" type="text">
+                                <div class="error-message error-input-loading-date datetime"></div>
+                            </td>
+
+                            <td class="td-ship-date">
+                                <input style="width: 10em;" value="<%=data["ship_date"]%>" class="input-ship-date datetime" onmouseenter="addDateTime(this)" placeholder="SHIP DATE" type="text">
+                                <div class="error-message error-input-ship-date datetime"></div>
+                            </td>
+
+                            <td class="td-cdf-date">
+                                <input style="width: 10em;" value="<%=data["CDF_date"]?.split(";")[0]%>" class="input-cdf-date datetime" onmouseenter="addDateTime(this)" placeholder="CDF DATE" type="text">
+                                <div class="error-message error-input-cdf-date datetime"></div>
+                            </td>
+
+                            <td class="td-booking-number">
+                                <input style="width: 8em;" class="input-booking-number" value="<%=data["booking_number"]%>" placeholder="BOOKING NUMBER" type="text" oninput="autoFillAllowBook(this, 'table-info')">
+                                <div class="error-message error-input-booking-number"></div>
+                            </td>
+
+                            <td class="td-cut-off-loading-date">
+                                <input style="width: 10em;" value="<%=data["cut_off_loading_date"]%>" class="input-cut-off-loading-date datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CUT OFF LOADING DATE" type="text">
+                                <div class="error-message error-input-cut-off-loading-date datetime"></div>
+                            </td>
+
+                            <td class="td-cy-cut-off">
+                                <input style="width: 10em;" value="<%=data["cy_cut_off"]%>" class="input-cy-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CY CUT OFF" type="text">
+                                <div class="error-message error-input-cy-cut-off datetime"></div>
+                            </td>
+
+                            <td class="td-ammentdent-bill-cut-off">
+                                <input style="width: 10em;" value="<%=data["ammentdent_bill_cut_off"]%>" class="input-ammentdent-bill-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="AMMENTDENT BILL CUT OFF" type="text">
+                                <div class="error-message error-input-ammentdent-bill-cut-off datetime"></div>
+                            </td>
+
+                            <td class="td-etd">
+                                <input style="width: 10em;" value="<%=data["original_etd"]%>" class="input-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="ETD" type="text">
+                                <div class="error-message error-input-etd datetime"></div>
+                            </td>
+                            
+                            <td class="td-new-etd">
+                                <input style="width: 10em;" value="<%=data["new_etd"]%>" class="input-new-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="NEW ETD" type="text">
+                                <div class="error-message error-input-new-etd datetime"></div>
+                            </td>
+                            
+                            <td class="td-service">
+                                <input style="width: 12em;" value="<%=data["service"]%>" class="input-service" placeholder="SERVICE" oninput="copyDataAllowBooking(this)" type="text">
+                                <div class="error-message error-input-service"></div>
+                            </td>
+                            
+                            <td class="td-eta">
+                                <input style="width: 10em;" value="<%=data["ETA"]%>" class="input-eta datetime" placeholder="ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                                <div class="error-message error-input-eta"></div>
+                            </td>
+                            
+                            <td class="td-vessel">
+                                <input style="width: 12em;" value="<%=data["vessel"]%>" class="input-vessel" placeholder="VESSEL" oninput="copyDataAllowBooking(this)" type="text">
+                                <div class="error-message error-input-vessel"></div>
+                            </td>
+                            
+                            <td class="td-picked-date">
+                                <input style="width: 10em;" value="<%=data["picked_date"]%>" class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED DATE" type="text">
+                                <div class="error-message error-input-picked-date datetime"></div>
+                            </td>
+                            
+                            <td class="td-vendor">
+                                <input style="width: 10em;" value="<%=data["vendor"]%>" class="input-vendor" placeholder="VENDOR" type="text">
+                                <select class="select-vendor" style="width: 10em;">
+                                    
+                                </select>
+                                <div class="error-message error-input-vendor"></div>
+                            </td>
+                            
+                            <td class="td-ata-pb">
+                                <input style="width: 10em;" value="<%=data["ATA_phu_bai"]%>" class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                                <div class="error-message error-input-ata-pb datetime"></div>
+                            </td>
+                            
+                            <td class="td-unloading-location">
+                                <input style="width: 12em;" value="<%=data["unload_location"]%>" class="input-unloading-location" placeholder="UNLOADING LOCATION" type="text">
+                                <div class="error-message error-input-unloading-location"></div>
+                            </td>
+                            
+                            <td class="td-unloading-date">
+                                <input style="width: 10em;" value="<%=data["unload_complete_day"]%>" class="input-unloading-date datetime" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                                <div class="error-message error-input-unloading-date datetime"></div>
+                            </td>
+                            
+                            <td class="td-export-saving-truck-date">
+                                <input style="width: 12em;" value="<%=data["export_saving_truck_day"]%>" class="input-export-saving-truck-date" placeholder="EXPORT SAVING TRUCK DATE" type="text">
+                                <div class="error-message error-input-export-saving-truck-date"></div>
+                            </td>
+                            
+                            <td class="td-reason-export-saving-truck">
+                                <textarea style="width: 10em;" class="input-reason-export-saving-truck" placeholder="REASON EXPORT SAVING TRUCK"><%=data["reason_export_saving_truck"]%></textarea>
+                                <div class="error-message error-input-reason-export-saving-truck"></div>
+                            </td>
+                            
+                            <td class="td-picked-at-port">
+                                <input style="width: 10em;"  value="<%=data["picked_at_port"]%>" class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                                <select style="width: 10em;" class="select-picked-at-port"></select>
+                                <div class="error-message error-input-picked-at-port"></div>
+                            </td>
+                            
+                            <td class="td-dropping-at-port">
+                                <input style="width: 12em;" value="<%=data["dropping_at_port"]%>" class="input-dropping-at-port" placeholder="DROPPING AT PORT" type="text">
+                                <select style="width: 12em;" class="select-dropping-at-port"></select>
+                                <div class="error-message error-input-dropping-at-port"></div>
+                            </td>
+                            
+                            <td class="td-dropping-date">
+                                <input style="width: 10em;" value="<%=data["dropping_date"]%>" class="input-dropping-date datetime" onmouseenter="addDateTime(this)" placeholder="DROPPING DATE" type="text">
+                                <div class="error-message error-input-dropping-date datetime"></div>
+                            </td>
+
+                            <td class="td-category-cont">
+                                <input style="width: 3em;" class="input-category-cont" type="text" placeholder="CATEGORY CONT" value="<%=data["cont_category"]%>">
+                                <div class="error-message error-input-category-cont"></div>
+                            </td>
+                            
+                            <td class="td-pre-booking-number">
+                                <input style="width: 12em;" value="<%=data["pre_booking_number"]%>" class="input-pre-booking-number" placeholder="PRE BOOKING NUMBER" type="text" oninput="copyDataAllowBooking(this)">
+                                <div class="error-message error-input-pre-booking-number"></div>
+                            </td>
+
+                            <td class="td-oil-price">
+                                <input style="width: 8em;" value="<%=data["oil_price"]%>" class="input-oil-price" placeholder="OIL PRICE" type="number">
+                                <div class="error-message error-input-oil-price"></div>
+                            </td>
+        
+                            <td class="td-note">
+                                <textarea style="width: 12em;" class="input-note" placeholder="NOTE" type="text"><%=data["note_loading_plan"]%></textarea>
+                                <div class="error-message error-input-note"></div>
+                            </td>
+
+                            <td class="color-background" style="display: none;"><%=data["color"]%></td>
+                        </tr>
+                    <%}%>
+                </tbody>
+        </table>
+    </div>
+    <div style="display: flex; gap: 1em; margin-left: 50vw;">
+        <button class="btn btn-primary create-delete" id="create-btn" data-toggle="modal" data-target="#createRow"><i class="fa-solid fa-plus"></i></button>
+        <button class="btn btn-danger create-delete" id="delete-btn" onclick="deleteRow()"><i class="fa-solid fa-trash"></i></button>
+        <button class="btn btn-success" id="upload-btn" onclick="postData()">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="loading-post-data" style="display: none;"></span>
+            <i class="fa-solid fa-upload" id="create-post-data"></i>
+        </button>
+    </div>
+   
+    <!-- modal-create-form -->
+    <div class="modal fade" id="createRow"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">CREATE NEW ROW</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <table id="table-create">
+                    <tbody>
+                        <tr>
+                            <td class="td-week">
+                                <div class="label">WEEK:</div>
+                                <input class="input-week" type="number" placeholder="WEEK" oninput="changeWeek()">
+                            </td>
+
+                            <td class="td-no-booking">
+                                <div class="label">NO BOOKING:</div>
+                                <input class="input-no-booking" placeholder="NO BOOKING" type="number">
+                            </td>
+
+                            <td class="td-estimated-loading-date" style="display: none;">
+                                <div class="label">ESTIMATED LOADING DATE:</div>
+                                <input class="input-estimated-loading-date" placeholder="ESTIMATED LOADING DATE" type="text">
+                            </td>
+
+                            <td class="td-request-loading">
+                                <div class="label">REQUEST LOADING:</div>
+                                <input onmouseenter="addDateTime(this)" class="input-request-loading datetime" placeholder="REQUEST LOADING" type="text">
+                            </td>
+                        <tr>
+                            <td class="td-container-number">
+                                <div class="label">CONTAINER NUMBER:</div>
+                                <input class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                            </td>
+
+                            <td class="td-seal-number">
+                                <div class="label">SEAL NUMBER:</div>
+                                <input class="input-seal-number" placeholder="SEAL NUMBER" type="text">
+                            </td>
+
+                            <td class="td-dc">
+                                <div class="label">DC:</div>
+                                <input class="input-dc" placeholder="DC" type="text">
+                            </td>
+
+                            <td class="td-carrier">
+                                <div class="label">CARRIER:</div>
+                                <input class="input-carrier" placeholder="CARRIER" type="text" oninput="copyDataAllowBooking(this)">
+                                <div class="dropdown">
+                                    <button onclick="myFunction('table-create-dropdown-1')" class="dropbtn" id="dropbtn-1">Dropdown</button>
+                                    <div id="table-create-dropdown-1" class="dropdown-content select-carrier">
+                                      <input class="input-search-droplist" type="text" placeholder="Search.." id="table-create-input-search-dropdown-1" onkeyup="filterFunction('table-create-input-search-dropdown-1', 'table-create-dropdown-1')">
+                                      
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-loading-location">
+                                <div class="label">LOAD LOCATE:</div>
+                                <input class="input-loading-location" placeholder="LOCATION" type="text">
+                                <select class="select-loading-location"></select>
+                            </td>
+
+                            <td class="td-loading-date">
+                                <div class="label">LOADING DATE:</div>
+                                <input class="input-loading-date datetime" onmouseenter="addDateTime(this)" placeholder="LOADING DATE" type="text">
+                            </td>
+
+                            <td class="td-ship-date">
+                                <div class="label">SHIP DATE:</div>
+                                <input class="input-ship-date datetime" onmouseenter="addDateTime(this)" placeholder="SHIP DATE" type="text">
+                            </td>
+
+                            <td class="td-cdf-date">
+                                <div class="label">CDF DATE:</div>
+                                <input class="input-cdf-date datetime" onmouseenter="addDateTime(this)" placeholder="CDF DATE" type="text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-booking-number">
+                                <div class="label">BOOKING NUMBER:</div>
+                                <input value="" class="input-booking-number" placeholder="BOOKING NUMBER" type="text" oninput="autoFillAllowBook(this, 'table-create')">
+                            </td>
+
+                            <td class="td-cut-off-loading-date">
+                                <div class="label">CUT OFF LOADING DATE:</div>
+                                <input class="input-cut-off-loading-date datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CUT OFF LOADING DATE" type="text">
+                            </td>
+
+                            <td class="td-cy-cut-off">
+                                <div class="label">CY CUT OFF:</div>
+                                <input class="input-cy-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CY CUT OFF" type="text">
+                            </td>
+
+                            <td class="td-ammentdent-bill-cut-off">
+                                <div class="label">AMMENTDENT BILL CUT OFF:</div>
+                                <input class="input-ammentdent-bill-cut-off datetime" onchange="copyDataAllowBooking(this)" onmouseenter="addDateTime(this)" placeholder="AMMENTDENT BILL CUT OFF" type="text">
+                            </td>
+                        </tr> 
+                        <tr>
+                            <td class="td-etd">
+                                <div class="label">ETD:</div>
+                                <input class="input-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="ETD" type="text">
+                            </td>
+
+                            <td class="td-new-etd">
+                                <div class="label">NEW ETD:</div>
+                                <input class="input-new-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="NEW ETD" type="text">
+                            </td>
+
+                            <td class="td-service">
+                                <div class="label">SERVICE:</div>
+                                <input class="input-service" placeholder="SERVICE" oninput="copyDataAllowBooking(this)" type="text">
+                            </td>
+
+                            <td class="td-eta">
+                                <div class="label">ETA:</div>
+                                <input class="input-eta datetime" placeholder="ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-new-eta">
+                                <div class="label">NEW ETA:</div>
+                                <input class="input-new-eta datetime" placeholder="NEW ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                            </td>
+
+                            <td class="td-vessel">
+                                <div class="label">VESSEL:</div>
+                                <input class="input-vessel" placeholder="VESSEL" oninput="copyDataAllowBooking(this)" type="text">
+                            </td>
+
+                            <td class="td-picked-date">
+                                <div class="label">PICKED DATE:</div>
+                                <input class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED DATE" type="text">
+                            </td>
+
+                            <td class="td-vendor">
+                                <div class="label">VENDOR:</div>
+                                <input class="input-vendor" placeholder="VENDOR" type="text">
+                                <select class="select-vendor">
+                                    
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-ata-pb">
+                                <div class="label">ATA PHU BAI:</div>
+                                <input class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                            </td>
+
+                            <td class="td-unloading-location">
+                                <div class="label">UNLOADING LOCATION:</div>
+                                <input class="input-unloading-location" placeholder="UNLOADING LOCATION" type="text">
+                            </td>
+                            
+                            <td class="td-unloading-date">
+                                <div class="label">UNLOADING DATE:</div>
+                                <input class="input-unloading-date datetime" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                            </td>
+
+                            <td class="td-export-saving-truck-date">
+                                <div class="label">EXPORT SAVING TRUCK DATE:</div>
+                                <input class="input-export-saving-truck-date" placeholder="EXPORT SAVING TRUCK DATE" type="text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-reason-export-saving-truck">
+                                <div class="label">REASON EXPORT SAVING TRUCK:</div>
+                                <textarea class="input-reason-export-saving-truck" placeholder="REASON EXPORT SAVING TRUCK"></textarea>
+                            </td>
+
+                            <td class="td-picked-at-port">
+                                <div class="label">PICKED AT PORT:</div>
+                                <input class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                                <select class="select-picked-at-port"></select>
+                            </td>
+
+                            <td class="td-dropping-at-port">
+                                <div class="label">DROPPING AT PORT:</div>
+                                <input class="input-dropping-at-port" placeholder="DROPPING AT PORT" type="text">
+                                <select class="select-dropping-at-port"></select>
+                            </td>
+
+                            <td class="td-dropping-date">
+                                <div class="label">DROPPING DATE:</div>
+                                <input class="input-dropping-date datetime" onmouseenter="addDateTime(this)" placeholder="DROPPING DATE" type="text">
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td class="td-category-cont">
+                                <div class="label">CATEGORY CONT:</div>
+                                <input class="input-category-cont" type="text" placeholder="CATEGORY CONT">
+                            </td>
+                            
+                            <td class="td-pre-booking-number">
+                                <div class="label">PRE BOOKING NUMBER:</div>
+                                <input class="input-pre-booking-number" placeholder="PRE BOOKING NUMBER" type="text">
+                            </td>
+
+                            <td class="td-oil-price">
+                                <div class="label">OIL PRICE:</div>
+                                <input class="input-oil-price" placeholder="OIL PRICE" type="number">
+                            </td>
+
+                            <td class="td-note">
+                                <div class="label">NOTE:</div>
+                                <textarea class="input-note" placeholder="NOTE" type="text"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="createRow()">Save changes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- modal-update-form -->
+    <div class="modal fade" id="updateRow"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">UPDATE ROW</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <table id="table-update">
+                    <tbody>
+                        <tr>
+                            <td class="td-week">
+                                <div class="label">WEEK:</div>
+                                <input class="input-week" type="number" placeholder="WEEK" oninput="changeWeek()">
+                            </td>
+
+                            <td class="td-no-booking">
+                                <div class="label">NO BOOKING:</div>
+                                <input class="input-no-booking" placeholder="NO BOOKING" type="number">
+                            </td>
+
+                            <td class="td-estimated-loading-date" style="display: none;">
+                                <div class="label">ESTIMATED LOADING DATE:</div>
+                                <input class="input-estimated-loading-date" placeholder="ESTIMATED LOADING DATE" type="text">
+                            </td>
+
+                            <td class="td-request-loading">
+                                <div class="label">REQUEST LOADING:</div>
+                                <input onmouseenter="addDateTime(this)" class="input-request-loading datetime" placeholder="REQUEST LOADING" type="text">
+                            </td>
+                        <tr>
+                            <td class="td-container-number">
+                                <div class="label">CONTAINER NUMBER:</div>
+                                <input class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                            </td>
+
+                            <td class="td-seal-number">
+                                <div class="label">SEAL NUMBER:</div>
+                                <input class="input-seal-number" placeholder="SEAL NUMBER" type="text">
+                            </td>
+
+                            <td class="td-dc">
+                                <div class="label">DC:</div>
+                                <input class="input-dc" placeholder="DC" type="text">
+                            </td>
+
+                            <td class="td-carrier">
+                                <div class="label">CARRIER:</div>
+                                <input class="input-carrier" placeholder="CARRIER" type="text" oninput="copyDataAllowBooking(this)">
+                                <div class="dropdown">
+                                    <button onclick="myFunction('table-update-dropdown-1')" class="dropbtn" id="dropbtn-1">Dropdown</button>
+                                    <div id="table-update-dropdown-1" class="dropdown-content select-carrier">
+                                      <input class="input-search-droplist" type="text" placeholder="Search.." id="table-update-input-search-dropdown-1" onkeyup="filterFunction('table-update-input-search-dropdown-1', 'table-create-dropdown-1')">
+                                      
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-loading-location">
+                                <div class="label">LOAD LOCATE:</div>
+                                <input class="input-loading-location" placeholder="LOCATION" type="text">
+                                <select class="select-loading-location"></select>
+                            </td>
+
+                            <td class="td-loading-date">
+                                <div class="label">LOADING DATE:</div>
+                                <input class="input-loading-date datetime" onmouseenter="addDateTime(this)" placeholder="LOADING DATE" type="text">
+                            </td>
+
+                            <td class="td-ship-date">
+                                <div class="label">SHIP DATE:</div>
+                                <input class="input-ship-date datetime" onmouseenter="addDateTime(this)" placeholder="SHIP DATE" type="text">
+                            </td>
+
+                            <td class="td-cdf-date">
+                                <div class="label">CDF DATE:</div>
+                                <input class="input-cdf-date datetime" onmouseenter="addDateTime(this)" placeholder="CDF DATE" type="text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-booking-number">
+                                <div class="label">BOOKING NUMBER:</div>
+                                <input value="" class="input-booking-number" placeholder="BOOKING NUMBER" type="text" oninput="autoFillAllowBook(this, 'table-update')">
+                            </td>
+
+                            <td class="td-cut-off-loading-date">
+                                <div class="label">CUT OFF LOADING DATE:</div>
+                                <input class="input-cut-off-loading-date datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CUT OFF LOADING DATE" type="text">
+                            </td>
+
+                            <td class="td-cy-cut-off">
+                                <div class="label">CY CUT OFF:</div>
+                                <input class="input-cy-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CY CUT OFF" type="text">
+                            </td>
+
+                            <td class="td-ammentdent-bill-cut-off">
+                                <div class="label">AMMENTDENT BILL CUT OFF:</div>
+                                <input class="input-ammentdent-bill-cut-off datetime" onchange="copyDataAllowBooking(this)" onmouseenter="addDateTime(this)" placeholder="AMMENTDENT BILL CUT OFF" type="text">
+                            </td>
+                        </tr> 
+                        <tr>
+                            <td class="td-etd">
+                                <div class="label">ETD:</div>
+                                <input class="input-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="ETD" type="text">
+                            </td>
+
+                            <td class="td-new-etd">
+                                <div class="label">NEW ETD:</div>
+                                <input class="input-new-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="NEW ETD" type="text">
+                            </td>
+
+                            <td class="td-service">
+                                <div class="label">SERVICE:</div>
+                                <input class="input-service" placeholder="SERVICE" oninput="copyDataAllowBooking(this)" type="text">
+                            </td>
+
+                            <td class="td-eta">
+                                <div class="label">ETA:</div>
+                                <input class="input-eta datetime" placeholder="ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td class="td-vessel">
+                                <div class="label">VESSEL:</div>
+                                <input class="input-vessel" placeholder="VESSEL" oninput="copyDataAllowBooking(this)" type="text">
+                            </td>
+
+                            <td class="td-picked-date">
+                                <div class="label">PICKED DATE:</div>
+                                <input class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED DATE" type="text">
+                            </td>
+
+                            <td class="td-vendor">
+                                <div class="label">VENDOR:</div>
+                                <input class="input-vendor" placeholder="VENDOR" type="text">
+                                <select class="select-vendor">
+                                    
+                                </select>
+                            </td>
+
+                            <td class="td-ata-pb">
+                                <div class="label">ATA PHU BAI:</div>
+                                <input class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-unloading-location">
+                                <div class="label">UNLOADING LOCATION:</div>
+                                <input class="input-unloading-location" placeholder="UNLOADING LOCATION" type="text">
+                            </td>
+
+                            <td class="td-unloading-date">
+                                <div class="label">UNLOADING DATE:</div>
+                                <input class="input-unloading-date datetime" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                            </td>
+
+                            <td class="td-export-saving-truck-date">
+                                <div class="label">EXPORT SAVING TRUCK DATE:</div>
+                                <input class="input-export-saving-truck-date" placeholder="EXPORT SAVING TRUCK DATE" type="text">
+                            </td>
+                            
+                            <td class="td-reason-export-saving-truck">
+                                <div class="label">REASON EXPORT SAVING TRUCK:</div>
+                                <textarea class="input-reason-export-saving-truck" placeholder="REASON EXPORT SAVING TRUCK">
+
+                                </textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-picked-at-port">
+                                <div class="label">PICKED AT PORT:</div>
+                                <input class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                                <select class="select-picked-at-port"></select>
+                            </td>
+
+                            <td class="td-dropping-at-port">
+                                <div class="label">DROPPING AT PORT:</div>
+                                <input class="input-dropping-at-port" placeholder="DROPPING AT PORT" type="text">
+                                <select class="select-dropping-at-port"></select>
+                            </td>
+
+                            <td class="td-dropping-date">
+                                <div class="label">DROPPING DATE:</div>
+                                <input class="input-dropping-date datetime" onmouseenter="addDateTime(this)" placeholder="DROPPING DATE" type="text">
+                            </td>
+
+                            <td class="td-category-cont">
+                                <div class="label">CATEGORY CONT:</div>
+                                <input class="input-category-cont" type="text" placeholder="CATEGORY CONT">
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td class="td-pre-booking-number">
+                                <div class="label">PRE BOOKING NUMBER:</div>
+                                <input class="input-pre-booking-number" placeholder="PRE BOOKING NUMBER" type="text">
+                            </td>
+
+                            <td class="td-oil-price">
+                                <div class="label">OIL PRICE:</div>
+                                <input class="input-oil-price" placeholder="OIL PRICE" type="number">
+                            </td>
+
+                            <td class="td-note">
+                                <div class="label">NOTE:</div>
+                                <textarea class="input-note" placeholder="NOTE" type="text"></textarea>
+                            </td>
+
+                            <td class="td-color">
+                                <div class="label">COLOR:</div>
+                                <input style="width: 100%;" class="input-color"  type="color">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateData()">Save changes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- modal-option -->
+    <div class="modal fade" id="optional"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">OPTIONAL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: center; gap: 1em;">
+                <button id="insert-above" class="btn btn-primary" onclick="insertRow('up')"><i class="fa-solid fa-circle-up"></i></button>
+                <button id="insert-below" class="btn btn-danger" onclick="insertRow('down')"><i class="fa-solid fa-circle-down"></i></button>
+                <button id="update-data" class="btn btn-success" onclick="triggerUpdate()"><i class="fa-solid fa-pen-nib"></i></button>
+            </div>
+            
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateData()">Save changes</button>
+            </div> -->
+          </div>
+        </div>
+    </div>
+    
+    <div id="row-selection" style="display: none;"></div>
+
+    <button id="update-trigger" data-toggle="modal" data-target="#optional" style="display: none;"></button>
+    <button id="update-row-trigger" data-toggle="modal" data-target="#updateRow" style="display: none;"></button>
+
+
+    <script src="../../script/utils.js"></script>
+    <script>
+        let tableUpdateInput = $("#table-update input")
+        for(let i=0; i<tableUpdateInput.length; i++){
+            $(tableUpdateInput[i]).attr("placeholder", "")
+        }
+        //fill color
+        let colorBg = $(".color-background");
+        for(let i=0; i<colorBg.length; i++){
+            let row = $(colorBg[i]).parent();
+            let color = $(colorBg[i]).text();
+            let idRow = $(row).attr("id");
+            $(row).css("background-color", color);
+            let listInput =  $(`#${idRow} input`);
+
+            for(let j=0; j<listInput.length; j++){
+                $(listInput[j]).css("background-color", color);
+            }
+            let listButton =  $(`#${idRow} button`);
+
+            for(let j=0; j<listButton.length; j++){
+                $(listButton[j]).css("background-color", color);
+            }
+
+            let listTextarea =  $(`#${idRow} textarea`);
+            
+            for(let j=0; j<listTextarea.length; j++){
+                $(listTextarea[j]).css("background-color", color);
+            }
+        }
+    </script>
+
+    <script>
+        function cssOptimaize(){
+            //tinh chinh lai textarea
+            $("#table-info textarea").css("height","27px")
+            //tinh chinh thead
+            $("#table-info #thead-dc").css("min-width","3em");
+            $("#table-info #thead-carrier").css("min-width", "7em");
+            $("#table-info #thead-carrier").css("min-width", "7em");
+            $("#table-info #thead-loading-location").css("min-width", "5em");
+            //tinh chinh input
+            $("#table-info .input-estimated-loading-date").css("width","3em");
+            $("#table-info .input-dc").css("width","3em");
+            $("#table-info button").css("width", "10em");
+            $("#table-info .input-loading-location").css("width", "5em");
+            $("#table-info .select-loading-location").css("width", "5em");
+            $("#table-info .datetime").css("width", "10em");
+        }
+    </script>
+    <script>
+        let arrSelectPickAtport = [];
+        let arrSelectDroppingAtPort = [];
+        let arrSelectLoadingLocation = [];
+        let arrSelectVendor = [];
+        let arrSelectCarrier = [];
+        let tableUpdateInputUpdate = $("#table-update input")
+        for(let i=0; i<tableUpdateInputUpdate.length; i++){
+            $(tableUpdateInputUpdate[i]).attr("placeholder", "")
+        }
+        let tableUpdateInputCreate = $("#table-create input")
+        for(let i=0; i<tableUpdateInputCreate.length; i++){
+            $(tableUpdateInputCreate[i]).attr("placeholder", "")
+        }
+        //dinh dang lai ngay thang
+        let datetime = $(".datetime");
+        for(let i=0; i<datetime.length; i++){
+            let time = $($(datetime[i])).children().context;
+            let valueDate = $(time).val();
+            
+            if(valueDate){
+                try {
+                    let date = new Date(valueDate)?.toISOString()?.split("T")[0].split("-").reverse().join("/")
+                    let hour = new Date(valueDate)?.toISOString()?.split("T")[1].split(".")[0]
+
+                    $(time).val(date+ " " +hour);
+                } catch (error) {
+                    
+                }
+                
+            }
+        }
+        let weekRoot = $($(".input-week")[0]).val();
+        
+        function addDateTime(param){
+            $(param).datetimepicker({format:'d/m/Y H:00:00'});
+        }
+        // them row moi
+        function createRow(){
+            let rank = $("#table-info tbody tr").length;
+            let weekRoot = $($(".input-week")[0]).val();
+            let tableCreate = "#table-create "
+            let nextRow =                
+            `<tr id="tbody-${rank+1}" ondblclick="optional(this)">
+                    <td class="td-check-box"><input class="input-checkbox" type="checkbox"></td>
+                    
+                    <td class="td-week">
+                        <input style="width: 3em;" value="${weekRoot}" class="input-week" type="number" placeholder="WEEK" oninput="changeWeek()">
+                        <div class="error-message error-input-week"></div>
+                    </td>
+
+                    <td class="td-stt" style="text-align:center">${rank+1}</td>
+
+                    <td class="td-no-booking">
+                        <input style="width: 3em;" value="${$(tableCreate+".td-no-booking "+"input").val()}" class="input-no-booking" placeholder="NO BOOKING" type="number" min=1>
+                        <div class="error-message error-input-no-booking"></div>
+                    </td>
+
+                    <td class="td-estimated-loading-date" style="display:none">
+                        <input value="${$(tableCreate+".td-estimated-loading-date "+"input").val()}" class="input-estimated-loading-date" placeholder="ESTIMATE LOADING DATE" type="text">
+                        <div class="error-message error-input-estimated-loading-date"></div>
+                    </td>
+
+                    <td class="td-request-loading">
+                        <input value="${$(tableCreate+".td-request-loading "+"input").val()}" onmouseenter="addDateTime(this)" class="input-request-loading datetime" placeholder="REQUEST LOADING" type="text">
+                        <div class="error-message error-input-estimated-loading-date"></div>
+                    </td>
+
+                    <td class="td-container-number">
+                        <input style="width: 10em;" value="${$(tableCreate+".td-container-number "+"input").val()}" class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                        <div class="error-message error-input-container-number"></div>
+                    </td>
+
+                    <td class="td-seal-number">
+                        <input style="width: 10em;" value="${$(tableCreate+".td-seal-number "+"input").val()}" class="input-seal-number" placeholder="SEAL NUMBER" type="text">
+                        <div class="error-message error-input-seal-number datetime"></div>
+                    </td>
+
+                    <td class="td-dc">
+                        <input value="${$(tableCreate+".td-dc "+"input").val()}"" class="input-dc" placeholder="DC" type="text">
+                        <div class="error-message error-input-dc"></div>
+                    </td>
+
+                    <td class="td-carrier">
+                        <input value="${$(tableCreate+".td-carrier "+"input").val()}" class="input-carrier" placeholder="CARRIER" type="text" oninput="copyDataAllowBooking(this)">
+                        <div class="dropdown">
+                            <button style="width: 10em;" onclick="myFunction('dropdown-${rank+1}')" class="dropbtn" id="dropbtn-${rank+1}">
+                                ${$(tableCreate+".td-carrier "+"input").val()}
+                            </button>
+                            <div id="dropdown-${rank+1}" class="dropdown-content select-carrier">
+                                <input class="input-search-droplist" type="text" placeholder="Search.." id="input-search-dropdown-${rank+1}" onkeyup="filterFunction('input-search-dropdown-${rank+1}', 'dropdown-${rank+1}')">
+                                <a onclick="selectData(this)"></a>
+                                ${arrSelectCarrier.map(result=>`<a onclick="selectData(this)">${result}</a>`).join("")}
+                            </div>
+                        </div>
+                        <div class="error-message error-input-booking-number"></div>
+                    </td>
+
+                    <td class="td-loading-location">
+                        <input value="${$(tableCreate+".td-loading-location "+"input").val()}" class="input-loading-location" placeholder="LOCATION" type="text">
+                        <select class="select-loading-location" style="width:5em">
+                            <option value=' '></option>
+                            ${arrSelectLoadingLocation.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-loading-location "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-loading-location"></div>
+                    </td>
+
+                    <td class="td-loading-date">
+                        <input value="${$(tableCreate+".td-loading-date "+"input").val()}" class="input-loading-date datetime" onmouseenter="addDateTime(this)" placeholder="LOADING DATE" type="text">
+                        <div class="error-message error-input-loading-date"></div>
+                    </td>
+
+                    <td class="td-ship-date">
+                        <input value="${$(tableCreate+".td-ship-date "+"input").val()}" class="input-ship-date datetime" onmouseenter="addDateTime(this)" placeholder="SHIP DATE" type="text">
+                        <div class="error-message error-input-ship-date"></div>
+                    </td>
+
+                    <td class="td-cdf-date">
+                        <input value="${$(tableCreate+".td-cdf-date "+"input").val()}" class="input-cdf-date datetime" onmouseenter="addDateTime(this)" placeholder="CDF DATE" type="text">
+                        <div class="error-message error-input-cdf-date datetime"></div>
+                    </td>
+
+                    <td class="td-booking-number">
+                        <input style="width: 8em;" value="${$(tableCreate+".td-booking-number "+"input").val()}" class="input-booking-number" placeholder="BOOKING NUMBER" type="text" oninput="autoFillAllowBook(this, 'table-info')">
+                        <div class="error-message error-input-booking-number"></div>
+                    </td>
+
+                    <td class="td-cut-off-loading-date">
+                        <input value="${$(tableCreate+".td-cut-off-loading-date "+"input").val()}" class="input-cut-off-loading-date datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CUT OFF LOADING DATE" type="text">
+                        <div class="error-message error-input-cut-off-loading-date"></div>
+                    </td>
+
+                    <td class="td-cy-cut-off">
+                        <input value="${$(tableCreate+".td-cy-cut-off "+"input").val()}" class="input-cy-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CY CUT OFF" type="text">
+                        <div class="error-message error-input-cy-cut-off"></div>
+                    </td>
+
+                    <td class="td-ammentdent-bill-cut-off">
+                        <input value="${$(tableCreate+".td-ammentdent-bill-cut-off "+"input").val()}" class="input-ammentdent-bill-cut-off datetime" oninput="copyDataAllowBooking(this)" placeholder="AMMENT BILL CUT OFF" type="text">
+                        <div class="error-message error-input-ammentdent-bill-cut-off"></div>
+                    </td>
+
+                    <td class="td-etd">
+                        <input value="${$(tableCreate+".td-etd "+"input").val()}" class="input-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="ETD" type="text">
+                        <div class="error-message error-input-etd datetime"></div>
+                    </td>
+
+                    <td class="td-new-etd">
+                        <input value="${$(tableCreate+".td-new-etd "+"input").val()}" class="input-new-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="NEW ETD" type="text">
+                        <div class="error-message error-input-new-etd datetime"></div>
+                    </td>
+
+                    <td class="td-service">
+                        <input value="${$(tableCreate+".td-service "+"input").val()}" class="input-service" placeholder="SERVICE" oninput="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-service datetime"></div>
+                    </td>
+
+                    <td class="td-eta">
+                        <input style="width: 10em;" value="${$(tableCreate+".td-eta "+"input").val()}" class="input-eta" placeholder="ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-eta datetime"></div>
+                    </td>
+
+                    <td class="td-vessel">
+                        <input value="${$(tableCreate+".td-vessel "+"input").val()}" class="input-vessel" placeholder="VESSEL" oninput="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-vessel datetime"></div>
+                    </td>
+                    
+                    <td class="td-picked-date">
+                        <input value="${$(tableCreate+".td-picked-date "+"input").val()}" class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED DATE" type="text">
+                        <div class="error-message error-input-picked-date datetime"></div>
+                    </td>
+
+                    <td class="td-vendor">
+                        <input style="width: 10em" value="${$(tableCreate+".td-vendor "+"input").val()}" class="input-vendor" placeholder="VENDOR" type="text">
+                        <select class="select-vendor" style="width: 10em">
+                            <option value=' '></option>
+                            ${arrSelectVendor.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-vendor "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-vendor datetime"></div>
+                    </td>
+
+                    <td class="td-ata-pb">
+                        <input value="${$(tableCreate+".td-ata-pb "+"input").val()}" class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                        <div class="error-message error-input-ata-pb datetime"></div>
+                    </td>
+
+                    <td class="td-unloading-location">
+                        <input value="${$(tableCreate+".td-unloading-location "+"input").val()}" class="input-unloading-location" placeholder="UNLOADING LOCATION" type="text">
+                        <div class="error-message error-input-unloading-location datetime"></div>
+                    </td>
+
+                    <td class="td-unloading-date">
+                        <input value="${$(tableCreate+".td-unloading-date "+"input").val()}" class="input-unloading-date datetime" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                        <div class="error-message error-input-unloading-date datetime"></div>
+                    </td>
+
+                    <td class="td-export-saving-truck-date">
+                        <input value="${$(tableCreate+".td-export-saving-truck-date "+"input").val()}" class="input-export-saving-truck-date" placeholder="EXPORT SAVING TRUCK DATE" type="text">
+                        <div class="error-message error-input-export-saving-truck-date datetime"></div>
+                    </td>
+
+                    <td class="td-reason-export-saving-truck">
+                        <textarea style="width:10em" class="input-reason-export-saving-truck" placeholder="REASON EXPORT SAVING TRUCK">${$(tableCreate+".td-reason-export-saving-truck "+"textarea").val()}</textarea>
+                        <div class="error-message error-input-reason-export-saving-truck datetime"></div>
+                    </td>
+
+                    <td class="td-picked-at-port">
+                        <input style="width:10em" value="${$(tableCreate+".td-picked-at-port "+"input").val()}" class="input-picked-at-port" />
+                        <select class="select-picked-at-port" style="width:10em">
+                            <option value=' '></option>
+                            ${arrSelectPickAtport.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-picked-at-port "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-picked-at-port datetime"></div>
+                    </td>
+
+                    <td class="td-dropping-at-port">
+                        <input style="display:none" value="${$(tableCreate+".td-dropping-at-port "+"input").val()}" class="input-dropping-at-port" placeholder="DROPPING AT PORT" type="text">
+                        <select class="select-dropping-at-port">
+                            <option value=' '></option>
+                            ${arrSelectDroppingAtPort.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-dropping-at-port "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-dropping-at-port datetime"></div>
+                    </td>
+
+                    <td class="td-dropping-date">
+                        <input value="${$(tableCreate+".td-dropping-date "+"input").val()}" class="input-dropping-date datetime" onmouseenter="addDateTime(this)" placeholder="DROPPING DATE" type="text">
+                        <div class="error-message error-input-dropping-date datetime"></div>
+                    </td>
+
+                    <td class="td-category-cont">
+                        <input style="width:3em" value="40" class="input-category-cont" type="text" placeholder="CONT CATEGORY" oninput="copyDataAllowBooking(this)">
+                        <div class="error-message error-input-category-cont"></div>
+                    </td>
+
+                    <td class="td-pre-booking-number">
+                        <input value="${$(tableCreate+".td-pre-booking-number "+"input").val()}" class="input-pre-booking-number" placeholder="PRE BOOKING NUMBER" type="text" oninput="copyDataAllowBooking(this)">
+                        <div class="error-message error-input-pre-booking-number datetime"></div>
+                    </td>
+
+                    <td class="td-oil-price">
+                        <input style="width:8em" value="${$(tableCreate+".td-oil-price "+"input").val()}" class="input-oil-price" placeholder="OIL PRICE" type="text">
+                        <div class="error-message error-input-oil-price"></div>
+                    </td>
+
+                    <td class="td-note">
+                        <textarea style="width:12em" class="input-note" placeholder="NOTE">${$(tableCreate+".td-note "+"textarea").val()}</textarea>
+                        <div class="error-message error-input-note datetime"></div>
+                    </td>
+                </tr>`;
+            $("#table-info tbody").append(nextRow);
+            initSelect();
+            cssOptimaize();
+            $("#createRow .close").click();
+        }
+        
+        //trigger click button update
+        function triggerUpdate(){
+            let listRow = $("#table-info tbody tr")
+            for(let i=0; i<listRow.length; i++){
+                $(listRow[i]).attr("id", `tbody-${i+1}`)
+            }
+            $("#optional .close").click();
+            $("#update-row-trigger").click();
+        }
+        
+        //fill update row duoc chon
+        function updateDataRow(row){
+            let listRow = $("#table-info tbody tr");
+            for(let i=0; i<listRow.length; i++){
+                $(listRow[i]).attr("id",`tbody-${i+1}`)
+            }
+            let listChidren = $(row).children();
+            let arrInput = [];
+            let tableUpdate = $("#table-update tbody td");
+            let colorRow = $(row).css("background-color");
+            $("#table-update tbody td .input-color").val(rgbToHex(colorRow))
+            for(let i=0; i<tableUpdate.length; i++){
+                
+                let updateInput = $($(tableUpdate[i]).children()[1]);
+                let rowTable = $($(listChidren[i+2]).children()[0]);
+                let dropdown = $($(listChidren[i+2]).children()[1]);
+                let selectOptionUpdate = $($(tableUpdate[i]).children()[2]);
+
+                arrInput.push($(rowTable).attr("class")?.split(" ")[0]);
+                if($(rowTable).attr("class")===$(updateInput).attr("class")){
+                    $(updateInput).val($(rowTable).val());
+
+                    if($(dropdown).hasClass("dropdown")){
+                        let chidrenDropdown = $(dropdown).children();
+                        for(let i=0; i<chidrenDropdown.length; i++){
+                            if($(chidrenDropdown[i]).hasClass("dropbtn")){
+                                let value = $(chidrenDropdown[i]).text();
+                                importData(value)
+                            }
+                        }
+                    }else{
+                        $(selectOptionUpdate).val($(rowTable).val());
+                        $(selectOptionUpdate).select2();
+                    }
+                }
+                function importData(data){
+                    for(let i=0; i<selectOptionUpdate.length; i++){
+                        if($(selectOptionUpdate[i]).hasClass("dropdown")){
+                            let select = $(selectOptionUpdate[i]).children();
+                            for(let j=0; j<select.length; j++){
+                                if($(select[i]).hasClass("dropbtn")){
+                                    $(select[i]).text(data);
+                                }
+                                break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            let selectList = $("select");
+            for(let i=0; i<selectList.length; i++){
+                $(selectList[i]).select2();
+            }
+            $("#updateRow .modal-title").text(`UPDATE ROW ${$(row).attr("id").split("-")[1]}`)
+            $("#updateTrigger").click();
+        }
+        
+        // update row duoc chon
+        function updateData(){
+            let stt = $("#updateRow .modal-title").text().split(" ")[2];
+            let listChidren = $(`#table-info tbody #tbody-${stt}`).children();
+            let listInputBooking = $("#table-info .input-booking-number");
+            let inputBookingVal = $("#table-update .input-booking-number").val();
+            let arrInput = [];
+            let tableUpdate = $("#table-update tbody td");
+            let allows = [
+                "input-category-cont",
+                "input-new-etd", 
+                "input-carrier",
+                "input-cut-off-loading-date",
+                "input-cy-cut-off", 
+                "input-ammentdent-bill-cut-off",
+                "input-etd",
+                "input-service",
+                "input-eta",
+                "input-new-eta",
+                "input-vessel",
+                "input-pre-booking-number"
+            ];
+            // thay doi color
+            let color = $($("#table-update .input-color")).val();
+            for(let i=0; i<listInputBooking.length; i++){
+                if(inputBookingVal==$(listInputBooking[i]).val() && inputBookingVal){
+                    let row = $(listInputBooking[i]).parent().parent();
+                    let idRow = $(listInputBooking[i]).parent().parent().attr("id");
+                    $(row).css("background-color",color);
+                    let inputInRow = $(`#${idRow} input`);
+                    let buttonInRow = $(`#${idRow} button`);
+                    let textareaInRow = $(`#${idRow} textarea`);
+                    let selectInRow = $(`#${idRow} span`);
+                    for(let j=0; j<inputInRow.length; j++){
+                        $(inputInRow[j]).css("background-color",color);
+                    }
+                    for(let j=0; j<buttonInRow.length; j++){
+                        $(buttonInRow[j]).css("background-color",color);
+                    }
+                    for(let j=0; j<textareaInRow.length; j++){
+                        $(textareaInRow[j]).css("background-color",color);
+                    }
+                    // for(let j=0; j<selectInRow.length+1; j++){
+                    //     if($(selectInRow[j]).attr("aria-labelledby")?.split("-").length > 0){
+                    //         console.log(`#${idRow}`,selectInRow[j])
+                    //         $(selectInRow[j]).css("background-color",color);
+                    //     }
+                    // }
+                }
+            }
+            for(let i=0; i<tableUpdate.length; i++){
+                
+                let updateInput = $($(tableUpdate[i]).children()[1]);
+                let rowTable = $($(listChidren[i+2]).children()[0]);
+
+                let dropdown = $($(listChidren[i+2]).children()[1]);
+                let selectOptionUpdate = $($(tableUpdate[i]).children()[2]);
+
+                arrInput.push($(rowTable)?.attr("class")?.split(" ")[0]);
+                if($(rowTable).attr("class")===$(updateInput).attr("class")){
+                    // console.log($(updateInput).attr("class"))
+                    $(rowTable).val($(updateInput).val());
+                    for(let j=0; j<allows.length; j++){
+                        if($(rowTable).hasClass(allows[j])){
+                            copyDataAllowBooking($(rowTable))
+                        }
+                    }
+                    if($(selectOptionUpdate).hasClass("dropdown")){
+                        let chidrenDropdown = $(selectOptionUpdate).children();
+                        for(let i=0; i<chidrenDropdown.length; i++){
+                            if($(chidrenDropdown[i]).hasClass("dropbtn")){
+                                let value = $(chidrenDropdown[i]).text();
+                                importData(value)
+                            }
+                        }
+                    }else{
+                        if($(dropdown).val()){
+                            $(dropdown).val($(selectOptionUpdate).val());
+                            
+                            $(dropdown).select2();
+                        }
+                    }
+                    function importData(data){
+                    for(let i=0; i<dropdown.length; i++){
+                        if($(dropdown[i]).hasClass("dropdown")){
+                            let select = $(dropdown[i]).children();
+                            for(let j=0; j<select.length; j++){
+                                if($(select[i]).hasClass("dropbtn")){
+                                    $(select[i]).text(data);
+                                }
+                                break;
+                            }
+                            break;
+                        }
+                    }
+                }
+                }
+            }
+            // let selectList = $("select");
+            // for(let i=0; i<selectList.length; i++){
+            //     $(selectList[i]).select2();
+            // }
+            $("#updateRow .close").click();
+        }
+        
+        //auto fill allow booking 
+        function autoFillAllowBook(booking, table){
+            let allows = [
+                "input-category-cont",
+                "input-no-booking",
+                "input-new-etd", 
+                "input-carrier",
+                "input-cut-off-loading-date",
+                "input-cy-cut-off", 
+                "input-ammentdent-bill-cut-off",
+                "input-etd",
+                "input-service",
+                "input-eta",
+                "input-new-eta",
+                "input-vessel",
+                "input-pre-booking-number"
+            ];
+            let select = [
+                "select-category-cont",
+                "input-no-booking",
+                "select-new-etd", 
+                "select-carrier",
+                "select-cut-off-loading-date",
+                "select-cy-cut-off", 
+                "select-ammentdent-bill-cut-off",
+                "select-etd",
+                "select-service",
+                "select-eta",
+                "select-new-eta",
+                "select-vessel",
+                "input-pre-booking-number"
+            ];
+            let idRow = $(booking).parent().parent().attr("id");
+            let rowsOfTable = $("#table-info tbody tr");
+            let valueBookUpdate = $(booking).val().trim();
+            let listInputBooking = $("#table-info .input-booking-number");
+            $(`#${idRow}`).css("background-color","rgba(255,255,255)");
+            //fill color mac dinh
+            let inputInRow = $(`#${idRow} input`);
+            let buttonInRow = $(`#${idRow} button`);
+            let textareaInRow = $(`#${idRow} textarea`);
+            let selectInRow = $(`#${idRow} span`);
+            for(let j=0; j<inputInRow.length; j++){
+                $(inputInRow[j]).css("background-color","rgba(255,255,255)");
+            }
+            for(let j=0; j<buttonInRow.length; j++){
+                $(buttonInRow[j]).css("background-color","rgba(255,255,255)");
+            }
+            for(let j=0; j<textareaInRow.length; j++){
+                $(textareaInRow[j]).css("background-color","rgba(255,255,255)");
+            }
+
+            for(let i=0; i<listInputBooking.length; i++){
+                let valueCompare = $(listInputBooking[i]).val();
+                let idRowCompare = $(listInputBooking[i]).parent().parent().attr("id");
+                if(valueCompare===valueBookUpdate && valueCompare!='' && valueBookUpdate!=''){
+                    //fill color
+                    let color = $(`#${idRowCompare}`).css("background-color");
+                    $(`#${idRow}`).css("background-color",color);
+
+                    let inputInRow = $(`#${idRow} input`);
+                    let buttonInRow = $(`#${idRow} button`);
+                    let textareaInRow = $(`#${idRow} textarea`);
+                    let selectInRow = $(`#${idRow} span`);
+                    for(let j=0; j<inputInRow.length; j++){
+                        $(inputInRow[j]).css("background-color",color);
+                    }
+                    for(let j=0; j<buttonInRow.length; j++){
+                        $(buttonInRow[j]).css("background-color",color);
+                    }
+                    for(let j=0; j<textareaInRow.length; j++){
+                        $(textareaInRow[j]).css("background-color",color);
+                    }
+
+                    let j=0;
+                    for(let allow of allows){
+                        let targetCopy = $(`#table-info .${allow}`)[i];
+                        let valueCopy = $(targetCopy).val();
+                        
+                        $(`#${table} ${table=='table-info'?"#"+idRow:"tbody"} .${allow}`).val(valueCopy);
+
+                        let valueSelect = $(`#${table} ${table=='table-info'?"#"+idRow:"tbody"} .${select[j]}`).val();
+
+                        if(valueSelect){
+                            $(`#${table} ${table=='table-info'?"#"+idRow:"tbody"} .${select[j]}`).val(valueCopy);
+                            // $(`#${table} tbody .${select[j]}`).select2();
+                        }else{
+                            let listParent = $(`#${table} ${table=='table-info'?"#"+idRow:"tbody"} .${select[j]}`).parent();
+                            
+                            for(let i=0; i<listParent.length; i++){
+                                if($(listParent[i]).hasClass("dropdown")){
+                                    
+                                    let chidren = $(listParent[i]).children();
+                                    $(chidren[0]).text(valueCopy)
+                                }
+                            }
+                        }
+                        j++;
+                    }
+                    break
+                }else{
+                    // for(let allow of allows){
+                    //     let targetCopy = $(`#table-info .${allow}`)[i]
+                    //     let valueCopy = $(targetCopy).val();
+                    //     $(`#${table} tbody .${allow}`).val("")
+                    // }
+                }
+            }
+            
+            
+            
+            let countBookingNumber = 0;
+            if(table!=='table-info'){
+                countBookingNumber=1;
+            }
+            for(let i=0; i<listInputBooking.length; i++){
+                let valueCompare = $(listInputBooking[i]).val();
+                if(valueCompare===valueBookUpdate && valueCompare!='' && valueBookUpdate!=''){
+                    countBookingNumber++;
+                }
+            }
+            if(table=='table-info'){
+                let idSelected = $(booking).parent().parent().attr("id");
+                $(`#${idSelected} .input-no-booking`).val(countBookingNumber)
+            }else{
+                let nameRowUpdate;
+                if(table=='table-update'){
+                    $(`#table-update .input-no-booking`).val(countBookingNumber);
+                    nameRowUpdate = $("#updateRow .modal-title").text();
+                }else{
+                    $(`#table-create .input-no-booking`).val(countBookingNumber);
+                    nameRowUpdate = $("#createRow .modal-title").text();
+                }
+                let stt = nameRowUpdate.split(" ")[2];
+                
+                $(`#table-info #tbody-${stt} .input-no-booking`).val(countBookingNumber);
+            }
+            
+        }
+
+        // xoa row da duoc checkbox
+        function deleteRow() {
+            let listCheckBox = $(".input-checkbox");
+            for(let i=0; i<listCheckBox.length; i++){
+                if($(listCheckBox[i]).is(":checked")){
+                    
+                    $(`#tbody-${i+1}`).remove();
+                }
+            }
+            let listStt = $(".td-stt");
+            let listRow = $("#table-info tbody tr");
+            for(let i=0; i<listStt.length; i++){
+                $(listStt[i]).text(i+1);
+            }
+            for(let i=0; i<listRow.length; i++){
+                $(listRow[i]).attr("id", `tbody-${i+1}`)
+            }
+            $("#delete-btn").click();
+        }
+        
+        //thay doi hang loat week
+        function changeWeek() { 
+            let listRow = $(".input-week");
+            let weekRoot = $(listRow[0]).val();
+            for(let i=1; i<listRow.length; i++){
+                $(listRow[i]).val(weekRoot);
+            }
+         }
+        
+         //copy data theo booking
+        function copyDataAllowBooking(row) {  
+            let rowClass = $(row).attr("class").split(" ")[0];
+            let rowIncludeData = $(row).parent().parent();
+            let rankOfRow = +$(rowIncludeData).attr("id").split("-")[1];
+            let rowsOfTable = $("#table-info tbody tr");
+            let bookingNumberRoot = $($(".input-booking-number")[rankOfRow-1]).val();
+            let inputRoot = $($(`.${rowClass}`)[rankOfRow-1]).val();
+            for(let i=0; i<rowsOfTable.length; i++){
+                let bookingNumberTaget = $($(".input-booking-number")[i]).val();
+
+                if(bookingNumberRoot!==""&& bookingNumberTaget===bookingNumberRoot && i!==rankOfRow-1){
+                    $($(`.${rowClass}`)[i]).val(inputRoot);
+                    let arrSelect = rowClass.split("-");
+                    arrSelect[0] = "select";
+                    let selectClass = arrSelect.join("-");
+                    
+                    let listDroplist = $($(`.${selectClass}`)[i]);
+                    
+                    for(let j=0; j<listDroplist.length; j++){
+                        if($(listDroplist[j]).parent().hasClass("dropdown")){
+                            $($(listDroplist[j]).parent().children()[0]).text(inputRoot)
+                        }
+                    }
+                }
+            }
+
+        }
+        
+        //post du lieu len database
+        function postData(){
+            let listRow = $("#table-info tbody tr");
+            let datas = [];
+
+            let week = $(" #table-info tbody tr .input-week");
+            let contCategory = $("#table-info tbody tr .input-category-cont")
+            let noBooking = $("#table-info tbody tr .input-no-booking");
+            let bookingNumber = $("#table-info tbody tr .input-booking-number");
+            let carrier = $("#table-info tbody tr .input-carrier");
+            let dc = $("#table-info tbody tr .input-dc");
+            let containerNumber = $("#table-info tbody tr .input-container-number");
+            let estimateLoadingDate = $("#table-info tbody tr .input-estimated-loading-date");
+            let requestLoading = $("#table-info tbody tr .input-request-loading");
+            let loadingLocation = $("#table-info tbody tr .input-loading-location");
+            let loadingDate = $("#table-info tbody tr .input-loading-date");
+            let shipDate = $("#table-info tbody tr .input-ship-date");
+            let cutOffLoadingDate = $("#table-info tbody tr .input-cut-off-loading-date");
+            let cyCutOff = $("#table-info tbody tr .input-cy-cut-off");
+            let ammentdentBillCutOff = $("#table-info tbody tr .input-ammentdent-bill-cut-off");
+            let etd = $("#table-info tbody tr .input-etd");
+            let newEtd = $("#table-info tbody tr .input-new-etd");
+            let service = $("#table-info tbody tr .input-service");
+            let eta = $("#table-info tbody tr .input-eta");
+            let newEta = $("#table-info tbody tr .input-new-eta");
+            let vessel = $("#table-info tbody tr .input-vessel");
+            let pickedDate = $("#table-info tbody tr .input-picked-date");
+            let vendor = $("#table-info tbody tr .input-vendor");
+            let ataPb = $("#table-info tbody tr .input-ata-pb");
+            let unloadingLocation = $(".input-unloading-location");
+            let unloadingDate = $("#table-info tbody tr .input-unloading-date");
+            let oilPrice = $("#table-info tbody tr .input-oil-price");
+            let cdfDate = $("#table-info tbody tr .input-cdf-date");
+            let exportSavingTruckDate = $(".input-export-saving-truck-date");
+            let reasonExportSavingTruck = $("#table-info tbody tr .input-reason-export-saving-truck");
+            let pickedAtPort = $("#table-info tbody tr .input-picked-at-port");
+            let droppingAtPort = $("#table-info tbody tr .input-dropping-at-port");
+            let droppingDate = $("#table-info tbody tr .input-dropping-date");
+            let preBookingNumber = $("#table-info tbody tr .input-pre-booking-number");
+            let seal = $("#table-info tbody tr .input-seal-number");
+            let note = $("#table-info tbody tr .input-note");
+            let no = $("#table-info tbody tr .td-stt");
+
+            let arrError = {};
+            let errMsg = "";
+            let dataObj = {
+                existed:[],
+                new:[],
+            };
+            for(let i=0; i<listRow.length; i++){
+                let data = {};
+                let errArr = [];
+
+                data.color = convertNull($(listRow[i]).css("background-color")==="rgba(0, 0, 0, 0)"?"rgba(255, 255, 255)":$(listRow[i]).css("background-color"));
+
+                data.week = convertNull($(week[i]).val().trim());
+                
+                data.contCategory = convertNull($(contCategory[i]).val().trim());
+
+                data.noBooking = convertNull($(noBooking[i]).val().trim());
+                
+                data.bookingNumber = convertNull($(bookingNumber[i]).val().trim());
+                
+                data.carrier = convertNull($(carrier[i]).val().trim());
+                
+                data.dc = convertNull($(dc[i]).val().trim());
+                
+                data.containerNumber = convertNull($(containerNumber[i]).val().trim());
+                
+                data.idSystem = convertNull(`${$(containerNumber[i]).val().trim()}-${Math.random().toFixed(8).split(".")[1]}`);
+                
+                data.idCurrent = 
+                convertNull($(bookingNumber[i]).val().trim())?
+                `${$(bookingNumber[i]).val().replace(/\s+/g,"")}-${Math.random().toFixed(10).split(".")[1]}`:
+                Math.random().toFixed(10).split(".")[1];
+
+                data.estimateLoadingDate = convertNull($(estimateLoadingDate[i]).val().trim());
+
+                data.requestLoading = convertNull(formatDate($(requestLoading[i]).val()));
+                
+                data.loadingLocation = convertNull($(loadingLocation[i]).val().trim());
+                
+                data.loadingDate = convertNull(formatDate($(loadingDate[i]).val()));
+                
+                data.shipDate = convertNull(formatDate($(shipDate[i]).val()));
+                
+                data.cutOffLoadingDate = convertNull(formatDate($(cutOffLoadingDate[i]).val()));
+                
+                data.cyCutOff = convertNull(formatDate($(cyCutOff[i]).val()));
+                
+                data.ammentdentBillCutOff = convertNull(formatDate($(ammentdentBillCutOff[i]).val()));
+                
+                data.etd = convertNull(formatDate($(etd[i]).val()));
+                
+                data.newEtd = convertNull(formatDate($(newEtd[i]).val()));
+                
+                data.service = convertNull($(service[i]).val().trim());
+                
+                data.eta = convertNull(formatDate($(eta[i]).val().trim()));
+
+                data.newEta = null
+                
+                data.vessel = convertNull($(vessel[i]).val().trim())
+                
+                data.pickedDate = convertNull(formatDate($(pickedDate[i]).val()));
+
+                data.oilPrice = $(oilPrice[i]).val() || null;
+                
+                data.vendor = convertNull($(vendor[i]).val().trim());
+                
+                data.ataPb = convertNull(formatDate($(ataPb[i]).val()))
+                
+                data.unloadingLocation = convertNull($(unloadingLocation[i]).val().trim())
+                
+                data.unloadingDate = convertNull(formatDate($(unloadingDate[i]).val()));
+                
+                data.cdfDate = convertNull(formatDate($(cdfDate[i]).val()));
+                
+                data.exportSavingTruckDate = convertNull($(exportSavingTruckDate[i]).val().trim());
+                
+                data.reasonExportSavingTruck = convertNull($(reasonExportSavingTruck[i]).val().trim());
+                
+                data.picAtPort = convertNull($(pickedAtPort[i]).val().trim());
+                
+                data.droppingAtPort = convertNull($(droppingAtPort[i]).val().trim());
+                
+                data.droppingDate = convertNull(formatDate($(droppingDate[i]).val()));
+                
+                data.preBookingNumber = convertNull($(preBookingNumber[i]).val().trim());
+                
+                data.seal = convertNull($(seal[i]).val().trim());
+                
+                data.note = convertNull($(note[i]).val().trim());
+
+                data.no = convertNull($(no[i]).text().trim());
+
+                let year = new URLSearchParams(window.location.search).get('year');
+
+                data.year = `${year||new Date().getFullYear()}`;
+
+                let listStt = $("#table-info tbody tr");
+                for(let i=0; i<listStt.length; i++){
+                    $(listStt[i]).attr("id",`tbody-${i+1}`);
+                }
+
+
+                // let listInput = $($(listRow[i]).children())
+
+                // for(let j=0; j<listInput.length; j++){
+                //     let input = $($(listInput[j]).children()[0]);
+                //     if(!$(listInput[j]).hasClass("td-checkbox") && !$(listInput[j]).hasClass("td-stt")){
+                //         errArr.push($(input).attr("class")?.split(" ")[0])
+                //     }
+                // }
+
+                // let error = validate(errArr, `#table-info tbody #tbody-${i+1}`)
+                
+                
+                // if(error.length > 0){
+                //     arrError[i+1] = error;
+                // }
+                // //hien thi thong bao loi
+                // for(let key of Object.keys(arrError)){
+                //     for(let j=0; j < arrError[key].length; j++){
+                //         let clasKey = Object.keys(arrError[key][j])[0];
+                //         let errMessage = Object.values(arrError[key][j])[0];
+                //         $(`#table-info tbody #tbody-${key} .error-${clasKey}`).text(errMessage)
+                //     }
+                // }
+
+                if(!data.carrier){
+                    let message = `Tại hàng ${i+1}, Carrier đang trống \n`;
+                    errMsg+=message;
+                }
+
+                if(!data.bookingNumber){
+                    let message = `Tại hàng ${i+1}, Booking Number đang trống \n`;
+                    errMsg+=message;
+                }
+
+                if(!data.noBooking){
+                    let message = `Tại hàng ${i+1}, STT Booking Number đang trống \n`;
+                    errMsg+=message;
+                }
+                // console.log(arrError)
+                if($(listRow[i]).hasClass("existed")){
+                    data.idSystem = $(listRow[i]).attr("class").split(" ")[3].split("tbody")[1];
+                    
+                    dataObj.existed.push(data);
+                }else{
+                    if(data["carrier"] && data["bookingNumber"]){
+                        dataObj.new.push(data);
+                    }
+                }
+                // datas.push(data);
+            }
+            console.log(errMsg)
+            // console.log("length",Object.keys(arrError))
+            
+            if(errMsg==false){
+                $("#loading-post-data").css("display","block");
+                $("#create-post-data").css("display","none");
+                $("#upload-btn").attr("disabled",true);
+                $.ajax({
+                    headers: {
+                        'Content-Type':'application/json'
+                    },
+                    url: host+"/api/updateBooking",
+                    type: "POST",
+                    data:JSON.stringify(dataObj),
+                    })
+                .done((result)=>{
+                    for(let i=0; i<$("input").length; i++){
+                        $($("input")[i]).val("");
+                    }
+                    location.reload(); 
+                })
+                .fail((e)=>{
+                    $("#loading-post-data").css("display","none");
+                    $("#create-post-data").css("display","block");
+                    $("#upload-btn").attr("disabled",false);
+                    alert("something wrong")
+                })
+            }else{
+                alert(errMsg)
+            }
+        }
+        
+        // validate du lieu dau vao
+        function validate(listInput, selectorInput){
+            let arrValidate = [];
+            let validate = {
+                "input-no-booking":{
+                    required: "This input is required"
+                },
+                "input-carrier":{
+                    required: "This input is required"
+                },
+                "input-booking-number":{
+                    required: "This input is required"
+                }
+            };
+            for(let i=0; i<listInput.length; i++){
+                for(let key of Object.keys(validate)){
+                    if(listInput[i]===key){
+                        
+                        if($(selectorInput +" ."+key).val().trim()=='' && validate[key]["required"]){
+                            arrValidate.push({[key]:validate[key]["required"]});
+                        }
+                    }
+                }
+            }
+            let errorMessage = $(".error-message");
+            for(let i=0; i<errorMessage.length; i++){
+                $(errorMessage[i]).text("");
+            }
+            return arrValidate;
+        }
+    </script>
+
+    <script>
+        // optional
+        function optional(row){
+            updateDataRow(row)
+            let target = $(row).attr("id");
+            $("#row-selection").text(target);
+            $("#update-trigger").click();
+        }
+        
+        //chi dinh chen hang
+        function insertRow(option){
+            let idRnd = Math.random().toString().split(".")[1];
+            let tableCreate = "#table-create ";
+            let newRow = 
+            `<tr id="tbody-${idRnd}" ondblclick="optional(this)">
+                    <td class="td-check-box"><input class="input-checkbox" type="checkbox"></td>
+                    
+                    <td class="td-week">
+                        <input style="width: 3em;" value="${weekRoot}" class="input-week" type="number" placeholder="WEEK" oninput="changeWeek()">
+                        <div class="error-message error-input-week"></div>
+                    </td>
+
+                    <td class="td-stt" style="text-align:center"></td>
+
+                    <td class="td-no-booking">
+                        <input style="width: 3em;" value="${$(tableCreate+".td-no-booking "+"input").val()}" class="input-no-booking" placeholder="NO BOOKING" type="number" min=1>
+                        <div class="error-message error-input-no-booking"></div>
+                    </td>
+
+                    <td class="td-estimated-loading-date" style="display:none">
+                        <input value="${$(tableCreate+".td-estimated-loading-date "+"input").val()}" class="input-estimated-loading-date" placeholder="ESTIMATE LOADING DATE" type="text">
+                        <div class="error-message error-input-estimated-loading-date"></div>
+                    </td>
+
+                    <td class="td-request-loading">
+                        <input value="${$(tableCreate+".td-request-loading "+"input").val()}" class="input-request-loading datetime" onmouseenter="addDateTime(this)" placeholder="REQUEST LOADING" type="text">
+                        <div class="error-message error-input-estimated-loading-date"></div>
+                    </td>
+
+                    <td class="td-container-number">
+                        <input style="width: 10em;" value="${$(tableCreate+".td-container-number "+"input").val()}" class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                        <div class="error-message error-input-container-number"></div>
+                    </td>
+
+                    <td class="td-seal-number">
+                        <input style="width: 10em;" value="${$(tableCreate+".td-seal-number "+"input").val()}" class="input-seal-number" placeholder="SEAL NUMBER" type="text">
+                        <div class="error-message error-input-seal-number datetime"></div>
+                    </td>
+
+                    <td class="td-dc">
+                        <input value="${$(tableCreate+".td-dc "+"input").val()}"" class="input-dc" placeholder="DC" type="text">
+                        <div class="error-message error-input-dc"></div>
+                    </td>
+
+                    <td class="td-carrier">
+                        <input value="${$(tableCreate+".td-carrier "+"input").val()}" class="input-carrier" placeholder="CARRIER" type="text" oninput="copyDataAllowBooking(this)">
+                        <div class="dropdown">
+                            <button onclick="myFunction('dropdown-${idRnd}')" class="dropbtn" id="dropbtn-${idRnd}">
+                                ${$(tableCreate+".td-carrier "+"input").val()}
+                            </button>
+                            <div id="dropdown-${idRnd}" class="dropdown-content select-carrier">
+                                <input class="input-search-droplist" type="text" placeholder="Search.." id="input-search-dropdown-${idRnd}" onkeyup="filterFunction('input-search-dropdown-${idRnd}', 'dropdown-${idRnd}')">
+                                <a onclick="selectData(this)"></a>
+                                ${arrSelectCarrier.map(result=>`<a onclick="selectData(this)">${result}</a>`).join("")}
+                            </div>
+                        </div>
+                        <div class="error-message error-input-booking-number"></div>
+                    </td>
+
+                    <td class="td-loading-location">
+                        <input value="${$(tableCreate+".td-loading-location "+"input").val()}" class="input-loading-location" placeholder="LOCATION" type="text">
+                        <select class="select-loading-location" style="width:5em">
+                            <option value=' '></option>
+                            ${arrSelectLoadingLocation.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-loading-location "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-loading-location"></div>
+                    </td>
+
+                    <td class="td-loading-date">
+                        <input value="${$(tableCreate+".td-loading-date "+"input").val()}" class="input-loading-date datetime" onmouseenter="addDateTime(this)" placeholder="LOADING DATE" type="text">
+                        <div class="error-message error-input-loading-date"></div>
+                    </td>
+
+                    <td class="td-ship-date">
+                        <input value="${$(tableCreate+".td-ship-date "+"input").val()}" class="input-ship-date datetime" onmouseenter="addDateTime(this)" placeholder="SHIP DATE" type="text">
+                        <div class="error-message error-input-ship-date"></div>
+                    </td>
+
+                    <td class="td-cdf-date">
+                        <input value="${$(tableCreate+".td-cdf-date "+"input").val()}" class="input-cdf-date datetime" onmouseenter="addDateTime(this)" placeholder="CDF DATE" type="text">
+                        <div class="error-message error-input-cdf-date datetime"></div>
+                    </td>
+
+                    <td class="td-booking-number">
+                        <input style="width: 8em;" value="${$(tableCreate+".td-booking-number "+"input").val()}" class="input-booking-number" placeholder="BOOKING NUMBER" type="text" oninput="autoFillAllowBook(this, 'table-info')">
+                        <div class="error-message error-input-booking-number"></div>
+                    </td>
+
+                    <td class="td-cut-off-loading-date">
+                        <input value="${$(tableCreate+".td-cut-off-loading-date "+"input").val()}" class="input-cut-off-loading-date datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CUT OFF LOADING DATE" type="text">
+                        <div class="error-message error-input-cut-off-loading-date"></div>
+                    </td>
+
+                    <td class="td-cy-cut-off">
+                        <input value="${$(tableCreate+".td-cy-cut-off "+"input").val()}" class="input-cy-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CY CUT OFF" type="text">
+                        <div class="error-message error-input-cy-cut-off"></div>
+                    </td>
+
+                    <td class="td-ammentdent-bill-cut-off">
+                        <input value="${$(tableCreate+".td-ammentdent-bill-cut-off "+"input").val()}" class="input-ammentdent-bill-cut-off datetime" oninput="copyDataAllowBooking(this)" placeholder="AMMENT BILL CUT OFF" type="text">
+                        <div class="error-message error-input-ammentdent-bill-cut-off"></div>
+                    </td>
+
+                    <td class="td-etd">
+                        <input value="${$(tableCreate+".td-etd "+"input").val()}" class="input-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="ETD" type="text">
+                        <div class="error-message error-input-etd datetime"></div>
+                    </td>
+
+                    <td class="td-new-etd">
+                        <input value="${$(tableCreate+".td-new-etd "+"input").val()}" class="input-new-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="NEW ETD" type="text">
+                        <div class="error-message error-input-new-etd datetime"></div>
+                    </td>
+
+                    <td class="td-service">
+                        <input value="${$(tableCreate+".td-service "+"input").val()}" class="input-service" placeholder="SERVICE" oninput="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-service datetime"></div>
+                    </td>
+
+                    <td class="td-eta">
+                        <input style="width: 10em;" value="${$(tableCreate+".td-eta "+"input").val()}" class="input-eta" placeholder="ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-eta datetime"></div>
+                    </td>
+
+                    <td class="td-vessel">
+                        <input value="${$(tableCreate+".td-vessel "+"input").val()}" class="input-vessel" placeholder="VESSEL" oninput="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-vessel datetime"></div>
+                    </td>
+                    
+                    <td class="td-picked-date">
+                        <input value="${$(tableCreate+".td-picked-date "+"input").val()}" class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED DATE" type="text">
+                        <div class="error-message error-input-picked-date datetime"></div>
+                    </td>
+
+                    <td class="td-vendor">
+                        <input style="width: 10em" value="${$(tableCreate+".td-vendor "+"input").val()}" class="input-vendor" placeholder="VENDOR" type="text">
+                        <select class="select-vendor" style="width: 10em">
+                            <option value=' '></option>
+                            ${arrSelectVendor.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-vendor "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-vendor datetime"></div>
+                    </td>
+
+                    <td class="td-ata-pb">
+                        <input value="${$(tableCreate+".td-ata-pb "+"input").val()}" class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                        <div class="error-message error-input-ata-pb datetime"></div>
+                    </td>
+
+                    <td class="td-unloading-location">
+                        <input value="${$(tableCreate+".td-unloading-location "+"input").val()}" class="input-unloading-location" placeholder="UNLOADING LOCATION" type="text">
+                        <div class="error-message error-input-unloading-location datetime"></div>
+                    </td>
+
+                    <td class="td-unloading-date">
+                        <input value="${$(tableCreate+".td-unloading-date "+"input").val()}" class="input-unloading-date datetime" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                        <div class="error-message error-input-unloading-date datetime"></div>
+                    </td>
+
+                    <td class="td-export-saving-truck-date">
+                        <input value="${$(tableCreate+".td-export-saving-truck-date "+"input").val()}" class="input-export-saving-truck-date" placeholder="EXPORT SAVING TRUCK DATE" type="text">
+                        <div class="error-message error-input-export-saving-truck-date datetime"></div>
+                    </td>
+
+                    <td class="td-reason-export-saving-truck">
+                        <textarea style="width:10em" class="input-reason-export-saving-truck" placeholder="REASON EXPORT SAVING TRUCK">${$(tableCreate+".td-reason-export-saving-truck "+"textarea").val()}</textarea>
+                        <div class="error-message error-input-reason-export-saving-truck datetime"></div>
+                    </td>
+
+                    <td class="td-picked-at-port">
+                        <input style="width:10em" value="${$(tableCreate+".td-picked-at-port "+"input").val()}" class="input-picked-at-port" />
+                        <select class="select-picked-at-port" style="width:10em">
+                            <option value=' '></option>
+                            ${arrSelectPickAtport.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-picked-at-port "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-picked-at-port datetime"></div>
+                    </td>
+
+                    <td class="td-dropping-at-port">
+                        <input style="display:none" value="${$(tableCreate+".td-dropping-at-port "+"input").val()}" class="input-dropping-at-port" placeholder="DROPPING AT PORT" type="text">
+                        <select class="select-dropping-at-port">
+                            <option value=' '></option>
+                            ${arrSelectDroppingAtPort.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-dropping-at-port "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-dropping-at-port datetime"></div>
+                    </td>
+
+                    <td class="td-dropping-date">
+                        <input value="${$(tableCreate+".td-dropping-date "+"input").val()}" class="input-dropping-date datetime" onmouseenter="addDateTime(this)" placeholder="DROPPING DATE" type="text">
+                        <div class="error-message error-input-dropping-date datetime"></div>
+                    </td>
+
+                    <td class="td-category-cont">
+                        <input style="width:3em" value="40" class="input-category-cont" type="text" placeholder="CONT CATEGORY" oninput="copyDataAllowBooking(this)">
+                        <div class="error-message error-input-category-cont"></div>
+                    </td>
+
+                    <td class="td-pre-booking-number">
+                        <input value="${$(tableCreate+".td-pre-booking-number "+"input").val()}" class="input-pre-booking-number" placeholder="PRE BOOKING NUMBER" type="text" oninput="copyDataAllowBooking(this)">
+                        <div class="error-message error-input-pre-booking-number datetime"></div>
+                    </td>
+
+                    <td class="td-oil-price">
+                        <input value="${$(tableCreate+".td-oil-price "+"input").val()}" class="input-oil-price" placeholder="OIL PRICE" type="text">
+                        <div class="error-message error-input-oil-price datetime"></div>
+                    </td>
+
+                    <td class="td-note">
+                        <textarea style="width:12em" class="input-note" placeholder="NOTE">${$(tableCreate+".td-note "+"textarea").val()}</textarea>
+                        <div class="error-message error-input-note datetime"></div>
+                    </td>
+                </tr>`;
+            let idTarget = $("#row-selection").text();
+            if(option==='up'){
+                $(newRow).insertBefore(`#${idTarget}`)
+            }else if(option==='down'){
+                $(newRow).insertAfter(`#${idTarget}`)
+            }
+            cssOptimaize();
+            let listStt = $(".td-stt");
+            for(let i=0; i<listStt.length; i++){
+                $(listStt[i]).text(i+1);
+            }
+            initSelect();
+            $("#optional .close").click();
+        }
+        
+    </script>
+
+    <script>
+        let pickedAtPorts = $(".select-picked-at-port");
+        let inputPicked = $(".input-picked-at-port");
+
+        let droppedAtPorts = $(".select-dropping-at-port");
+        let inputDroppedAtPort = $(".input-dropping-at-port");
+
+        let loadingLocations = $(".select-loading-location");
+        let inputLoadingLocation = $(".input-loading-location");
+
+        let vendor = $(".select-vendor");
+        let inputVendor = $(".input-vendor");
+
+        let carirer = $(".select-carrier");
+        let inputCarrier = $(".input-carrier");
+
+
+        function initSelect(){
+            //picked at port
+            let pickedAtPorts = $(".select-picked-at-port");
+            let inputPicked = $(".input-picked-at-port");
+            for(let i=0; i<pickedAtPorts.length; i++){
+                $(inputPicked[i]).css("display","none")
+                $(pickedAtPorts[i]).on("change", ()=>{
+                    let valueSelect = $(pickedAtPorts[i]).find(":selected").val();
+                    $(inputPicked[i]).val(valueSelect);
+                })
+            }
+            // dropping at port
+            let droppedAtPorts = $(".select-dropping-at-port");
+            let inputDroppedAtPort = $(".input-dropping-at-port");
+            for(let i=0; i<droppedAtPorts.length; i++){
+                $(inputDroppedAtPort[i]).css("display","none")
+                $(droppedAtPorts[i]).on("change", ()=>{
+                    let valueSelect = $(droppedAtPorts[i]).find(":selected").val();
+                    $(inputDroppedAtPort[i]).val(valueSelect);
+                })
+            }
+            // loading location
+            let loadingLocations = $(".select-loading-location");
+            let inputLoadingLocation = $(".input-loading-location");
+            for(let i=0; i<loadingLocations.length; i++){
+                $(inputLoadingLocation[i]).css("display","none")
+                $(loadingLocations[i]).on("change", ()=>{
+                    let valueSelect = $(loadingLocations[i]).find(":selected").val();
+                    $(inputLoadingLocation[i]).val(valueSelect);
+                })
+            }
+            // vendor
+            let vendor = $(".select-vendor");
+            let inputVendor = $(".input-vendor");
+            for(let i=0; i<vendor.length; i++){
+                $(inputVendor[i]).css("display","none")
+                $(vendor[i]).on("change", ()=>{
+                    let valueSelect = $(vendor[i]).find(":selected").val();
+                    $(inputVendor[i]).val(valueSelect);
+                })
+            }
+            //carrier
+            let carrier = $(".select-carrier");
+            let inputCarrier = $(".input-carrier");
+            for(let i=0; i<carrier.length; i++){
+                $(inputCarrier[i]).css("display","none")
+                $(carrier[i]).on("change", ()=>{
+                    let valueSelect = $(carrier[i]).find(":selected").val();
+                    $(inputCarrier[i]).val(valueSelect);
+                })
+            }
+
+            let selectList = $("select");
+            for(let i=0; i<selectList.length; i++){
+                $(selectList[i]).select2();
+            }
+        }
+
+        function initPickedAtPort(){
+            $.ajax({
+                url: host + "/api/picked-at-port",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectPickAtport.push(result[i]["port"])
+                }
+                for(let i=0; i<pickedAtPorts.length; i++){
+                    $(pickedAtPorts[i]).append("<option value=' '></option>")
+                    $(inputPicked[i]).val()?"":$(inputPicked[i]).val(" ");
+                    for(let j=0; j<result.length; j++){
+                        $(pickedAtPorts[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+                // initSelected();
+                initSelect();
+                
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        function initDroppedAtPort(){
+            $.ajax({
+                url: host + "/api/dropped-at-port",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectDroppingAtPort.push(result[i]["port"])
+                }
+                for(let i=0; i<droppedAtPorts.length; i++){
+                    $(droppedAtPorts[i]).append("<option value=' '></option>")
+                    $(inputDroppedAtPort[i]).val()?"":$(inputDroppedAtPort[i]).val(" ");
+                    for(let j=0; j<result.length; j++){
+                        $(droppedAtPorts[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+                // initSelected();
+                initSelect();
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        function initLoadingLocation(){
+            $.ajax({
+                url: host + "/api/loading-location",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectLoadingLocation.push(result[i]["port"])
+                }
+                for(let i=0; i<loadingLocations.length; i++){
+                    $(loadingLocations[i]).append("<option value=' '></option>")
+                    $(inputLoadingLocation[i]).val()?"":$(inputLoadingLocation[i]).val(" ");
+                    for(let j=0; j<result.length; j++){
+                        $(loadingLocations[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+                // initSelected();
+                initSelect();
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        function initVendor(){
+            $.ajax({
+                url: host + "/api/vendor",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectVendor.push(result[i]["port"])
+                }
+                for(let i=0; i<vendor.length; i++){
+                    $(vendor[i]).append(`<option value=" "></option>`);
+                    $(inputVendor[i]).val()?"":$(inputVendor[i]).val(" ");
+                    for(let j=0; j<result.length; j++){
+                        $(vendor[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+                initSelected();
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        function initCarrier(){
+            $.ajax({
+                url: host + "/api/carrier",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectCarrier.push(result[i]["port"])
+                }
+                for(let i=0; i<carirer.length; i++){
+                    $(inputCarrier[i]).val()?"":$(inputCarrier[i]).val(" ")
+                    $($(".td-carrier .dropbtn")[i]).text(" ")
+                    for(let j=0; j<result.length; j++){
+                        $(carirer[i]).append(`<a onclick="selectData(this)">${result[j]["port"]}</a>`);
+                    }
+                }
+                initSelected();
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        initDroppedAtPort();
+        initPickedAtPort();
+        initLoadingLocation();
+        initVendor();
+        initCarrier();
+
+    </script>
+    <!-- hien thi selected cua du lieu database -->
+    <script>
+        function initSelected(){
+            let listRow = $("#table-info tbody tr td");
+            for(let i=0; i<listRow.length; i++){
+                let rowTable = $($(listRow[i]).children()[0]);
+                let selectValue = $($(listRow[i]).children()[1]);
+                if($(selectValue).val()){
+                    let valueSelectValue = $(rowTable).val();
+                    $(selectValue).val(valueSelectValue);
+                }else{
+                    if($(selectValue).hasClass("dropdown")){
+                        let value = $($(selectValue).parent().children()[0]).val();
+                        $($(selectValue).children()[0]).text(value)
+                    }
+                }
+            }
+            let selectList = $("select");
+            for(let i=0; i<selectList.length; i++){
+                $(selectList[i]).select2();
+            }
+        }
+        
+        // let selectList = $("select");
+        // for(let i=0; i<selectList.length; i++){
+        //     $(selectList[i]).select2();
+        // }
+    </script>
+
+    <script>
+        let idSelected;
+        function myFunction(id) {
+            document.getElementById(id).classList.toggle("show");
+            idSelected = id;
+        }
+
+        function filterFunction(idInput, idDropdown) {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById(idInput);
+            filter = input.value.toUpperCase();
+            div = document.getElementById(idDropdown);
+            a = div.getElementsByTagName("a");
+            for (i = 0; i < a.length; i++) {
+                txtValue = a[i].textContent || a[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+                } else {
+                a[i].style.display = "none";
+                }
+            }
+        }
+        function selectData(rowSelected){
+            let table = $(rowSelected).parent().parent().parent().parent().parent().parent().attr("id");
+            
+            let rowType = $(rowSelected).parent().parent().parent().attr("class");
+
+            let listChidrenRowType = $(rowSelected).parent().parent().parent().children();
+
+            let rowTarget = $(rowSelected).parent().parent().parent();
+
+            let listChildrenTd = $(rowSelected).parent().parent().parent().parent().children().children();
+
+            let valueBookingRoot;
+
+            for(let i=0; i<listChildrenTd.length; i++){
+                if($(listChildrenTd[i]).hasClass("input-booking-number")){
+                    valueBookingRoot = $(listChildrenTd[i]).val();
+                    break;
+                }
+            }
+            let indexBtn = +`${table=="table-infor"?1:2}`;
+            
+            let btnSelect = $($(listChidrenRowType)[indexBtn]).children();
+
+            let idBtn = $($(btnSelect)[0]).attr("id");
+
+            let valueTarget = $(rowSelected).text();
+
+            // console.log($(`#${table} .${rowType} #${idBtn}`))
+
+            $(`#${table} .${rowType} #${idBtn}`).text(valueTarget);
+
+
+            let listBooking = $(`#${table} .input-booking-number`);
+
+            let listCarrier = $(`#${table} .input-carrier`);
+
+            let listButtonSelect = $(`#${table} .td-carrier button`);
+
+            
+            for(let i=0; i<listBooking.length; i++){
+                let valueBookingCompare = $(listBooking[i]).val();
+                if(valueBookingRoot===valueBookingCompare && valueBookingRoot && valueBookingCompare){
+                    $(listCarrier[i]).val(valueTarget);
+                    $(listButtonSelect[i]).text(valueTarget);
+                }
+            }
+
+            // $(`#${table} .${rowType} input`).val(valueTarget)
+
+            let indexInput = +`${table=="table-infor"?0:1}`;
+            
+            $(listChidrenRowType[indexInput]).val(valueTarget)
+
+            $(`#${idSelected}`).removeClass("show")
+        }
+    </script>
+</body>
+</html>

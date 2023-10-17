@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("../utils/header.ejs") %>
+    <title>Document</title>
+</head>
+<style>
+    #table-info{
+        width: 100vw;
+        height: 80vh;
+        overflow: auto;
+    }
+    th, td{
+        min-width: 20em;
+        min-height: 10em;
+    }
+    .target{
+        background-color: rgb(255, 153, 0);
+    }
+    .size{
+        min-width: "3em";
+    }
+</style>
+<body>
+    <%- include("../layout/navbar.ejs")%>
+    <div id="table-info">
+        <table class="table table-bordered table-hover" id="data-table">
+            <thead class="thead-dark table-hover" style="position: block;">
+                <th id="thead-stt" style="min-width: 3em;">STT</th>
+                <th id="thead-week" style="min-width: 3em;">WEEK</th>
+                <th id="thead-cont-category" style="min-width: 3em;">CONT CATEGORY</th>
+                <th id="thead-no-booking" style="min-width: 9em;">NO BOOKING</th>
+                <th id="thead-booking-number">BOOKING NUMBER</th>
+                <th id="thead-carrier">CARRIER</th>
+                <th id="thead-dc">DC</th>
+                <th id="thead-container-number">CONTAINER NUMBER</th>
+                <th id="thead-estimated-loading-date" class="wrappable">ESTIMATED LOADING DATE</th>
+                <th id="thead-loading-location">LOADING LOCATION</th>
+                <th id="thead-loading-date">LOADING DATE</th>
+                <th id="thead-ship-date">SHIP DATE</th>
+                <th id="thead-cut-off-loading-date">CUT OFF LOADING DATE</th>
+                <th id="thead-cy-cut-off">CY CUT OFF</th>
+                <th id="thead-ammentdent-bill-cut-off">AMMENTDENT BILL CUT OFF</th>
+                <th id="thead-etd">ETD</th>
+                <th id="thead-new-etd">NEW ETD</th>
+                <th id="thead-service">SERVICE</th>
+                <th id="thead-eta">ETA</th>
+                <th id="thead-new-eta">NEW ETA</th>
+                <th id="thead-vessel">VESSEL</th>
+                
+                <th id="thead-cdf-date">CDF DATE</th>
+                <th id="thead-cdf-pic">CDF PIC</th>
+                <th id="thead-finish-export-docs">FINISH EXPORT DOCS</th>
+                <th id="thead-so-number">SO NUMBER</th>
+                <th id="thead-hq-number">HQ NUMBER</th>
+
+                <th id="thead-pre-booking-number">PRE-BOOKING NUMBER</th>
+                <th id="thead-seal-number">SEAL NUMBER</th>
+                <th id="thead-note">NOTE</th>
+            </thead>
+            <tbody>
+                <%var i=0%>
+                <% for(let data of listData){ %>
+                    <tr class="tr stt-<%=++i%>" id="<%=data['idSystem']%>">
+                    
+                        <td class="tbody-stt" data-stt="<%=i%>" style="min-width: 3em;"><%=i%></td>
+
+                        <td class="tbody-week" data-stt="<%=i%>" style="min-width: 3em;"><%=data["estimated_loading_week"]%></td>
+
+                        <td class="tbody-cont-category" data-stt="<%=i%>" style="min-width: 3em;"><%=data["cont_category"]%></td>
+                        
+                        <td class="tbody-no-booking" style="min-width: 9em;" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["booking_no_update"]%></td>
+                        
+                        <td class="tbody-booking-number" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["booking_number"]%></td>
+                        
+                        <td class="tbody-carrier" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["carrier"]%></td>
+                        
+                        <td class="tbody-dc" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["DC"]%></td>
+                        
+                        <td class="tbody-container-number" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["cont_number"]%></td>
+                        
+                        <td class="tbody-estimated-loading-date" ondblclick="handleUpdate(this)" class="wrappable" data-stt="<%=i%>"><%=data["estimated_loading_date"]%></td>
+                        
+                        <td class="tbody-loading-location" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["loading_location"]%></td>
+                        
+                        <td class="tbody-loading-date datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["loading_date"]%></td>
+                        
+                        <td class="tbody-ship-date datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["ship_date"]%></td>
+                        
+                        <td class="tbody-cut-off-loading-date datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["cut_off_loading_date"]%></td>
+                        
+                        <td class="tbody-cy-cut-off datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["cy_cut_off"]%></td>
+                        
+                        <td class="tbody-ammentdent-bill-cut-off datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["ammentdent_bill_cut_off"]%></td>
+                        
+                        <td class="tbody-etd datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["original_etd"]%></td>
+                        
+                        <td class="tbody-new-etd datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["new_etd"]%></td>
+                        
+                        <td class="tbody-service" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["service"]%></td>
+                        
+                        <td class="tbody-eta datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["ETA"]%></td>
+
+                        <td class="tbody-new-eta datetime " ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["new_ETA"]%></td>
+                        
+                        <td class="tbody-vessel" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["vessel"]%></td>
+                                                                                                
+                        <td class="tbody-cdf-date datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["CDF_date"]%></td>
+                        
+                        <td class="tbody-cdf-pic" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["doc_pic"]%></td>
+
+                        <td class="tbody-finish-export-docs datetime" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["finish_export_docx"]%></td>
+
+                        <td class="tbody-so-number" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["SO"]%></td>
+
+                        <td class="tbody-hq-number" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["HQ"]%></td>
+                        
+                        <td class="tbody-pre-booking-number" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["pre_booking_number"]%></td>
+
+                        <td class="tbody-seal-number" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["seal"]%></td>
+                        
+                        <td class="tbody-note" ondblclick="handleUpdate(this)" data-stt="<%=i%>"><%=data["note_exporter"]%></td>
+                    </tr>
+                <%}%>
+            </tbody>
+        </table>
+    </div>
+    
+    <form>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">FILTER</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <th>YEAR</th>
+                            <th>WEEK</th>
+                        </thead>
+                        <tbody>
+                            <tr style="padding: 1em;">
+                                <td><input type="number" id="input-year" name="year"/></td>
+                                <td><input type="number" id="input-week" name="week"/></td>
+                            </tr>
+                        </tbody>
+                      </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- modal update option -->
+    <div class="modal fade" id="updateOption" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">OPTION MODAL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <a href="#"><button class="btn btn-danger btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true" onclick="directUpdate()">UPDATE DATA</button></a>
+                <a href="#"><button onclick="updateRoleBooking()" class="btn btn-success btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true">UPDATE NO BOOKING</button></a>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap:1em">
+        <a>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </a>
+
+        <a href="#"><button class="btn btn-success btn-lg active" onclick="directUpdate()" role="button" style="font-size: smaller;" aria-pressed="true">UPDATE EXPORTER</button></a>
+        
+        <nav aria-label="Page navigation example">
+            <ul class="pagination" id="navbar-pagination">
+              
+            </ul>
+        </nav>
+    </div>
+    <script src="../../script/utils.js"></script>
+
+    <script>
+        //dinh dang lai ngay thang
+        let datetime = $(".datetime");
+        for(let i=0; i<datetime.length; i++){
+            let time = $(datetime[i]).text()
+            if(time){
+                let date = new Date(time).toISOString().split("T")[0].split("-").reverse().join("/")
+                let hour = new Date(time).toISOString().split("T")[1].split(".")[0]
+
+                $(datetime[i]).text(date+ " " +hour);
+            }
+        }
+        // chuyen huong trang update 
+        function directUpdate(){
+            let urlParams = new URLSearchParams(window.location.search);
+            let year = urlParams.get("year") || new Date().getFullYear();
+            let week = urlParams.get("week");
+            window.location.href=`/update-exporter?${week?"&week="+week:""}${year?"&year="+year:""}`;
+        }
+    </script>
+    <!-- init data vao bang -->
+    <script>
+        let urlParams = new URLSearchParams(window.location.search);
+        let week = urlParams.get('week'); 
+        let year = urlParams.get('year')||new Date().getFullYear();
+        let maxWeek = urlParams.get('maxWeek');
+        let minWeek = urlParams.get('minWeek');
+        let maxBtn = "hehe";
+        let arrBtn = [];
+        $.ajax({
+            url: host+`/api/countRowPlan?year=${year}`,
+            method: "GET"
+            })
+            .done(result=>{
+                maxBtn = result[0].max;
+                $("#makePlanBtn").attr("href", `/create-loading-plan?${year?"year="+year:""}&week=${maxBtn||0}`)
+                initData(maxWeek, minWeek);
+            })
+            .fail(err=>{
+                console.log(err);
+        })
+        //call so phan trang tai giao dien
+        function initData(maxWeek, minWeek){
+            $.ajax({
+                url: host+`/api/top5week?${year?"year="+year:""}&${maxWeek?"maxWeek="+maxWeek:""}&${minWeek?"minWeek="+minWeek:""}`,
+                method: "GET"
+            })
+            .done(result=>{
+                console.log(result);
+                let preBtn = `<li class="page-item"><a class="page-link" onclick=pagination("pre") href="#">Previous</a></li>`;
+                let nextBtn = `<li class="page-item"><a class="page-link" onclick=pagination("next") href="#">Next</a></li>`;
+                
+                let maxBtn = result[0]["estimated_loading_week"];
+
+                let arrNew = devidePaginate(maxBtn);
+                
+                let firstIndex = arrNew[0][0];
+                let lastIndex = arrNew[0][arrNew[0].length-1];
+                let pagination = "";
+                
+                function checkRange(page) { 
+                    let range = {};
+                    for(let i=0; i<arrNew.length; i++){
+                        for(let j=0; j<arrNew[i].length; j++){
+                            if(page==arrNew[i][j]){
+                                range.lastIndex = arrNew[i][arrNew[i].length-1];
+                                range.firstIndex = arrNew[i][0];
+                                return range;
+                            }
+                        }
+                    }
+                }
+                for(let i=0; i<result.length; i++){
+                    arrBtn.push(result[i]["estimated_loading_week"]);
+                    if(!week) week=maxBtn;
+                    let range = checkRange(result[i]["estimated_loading_week"]);
+                    pagination += `
+                        <li class="page-item ${week==result[i]["estimated_loading_week"]?"active":""}">
+                            <a class="page-link" href="/shipping?week=${result[i]["estimated_loading_week"]}&year=${year}&maxWeek=${range.firstIndex}&minWeek=${range.lastIndex}">
+                                ${result[i]["estimated_loading_week"]}
+                            </a>
+                        </li>`;
+                }
+
+                let totalPgination = nextBtn + pagination + preBtn;
+            
+                $("#navbar-pagination").html(totalPgination)
+            })
+            .fail(e=>{
+                console.log(e);
+            })
+        }
+    </script>
+
+    <!-- handle phan trang -->
+    <script>
+        arrBtn = devidePaginate(maxBtn);
+        // phan trang
+        function pagination(status){
+            let count = 1;
+            let urlParams = new URLSearchParams(window.location.search);
+            let week = +urlParams.get('week')||+maxBtn;
+            // let year = urlParams.get('year')||new Date().getFullYear();
+
+            let maxWeek = +urlParams.get('maxWeek') || arrBtn[0][0];
+            let minWeek = +urlParams.get('minWeek') || arrBtn[0][arrBtn[0]-1];
+
+            maxBtn = +maxBtn
+            console.log(week+1)
+            if(status==="pre" && week-1>0){
+                handlePagination(status)
+            }else if(status === "next" && week+1<=maxBtn){
+                handlePagination(status)
+            }
+            
+        }
+        //chia khoang cac tuan
+        function devidePaginate(arrBtn){
+            let result = [];
+            for(let i=maxBtn; i>=1;){
+                let arrDevide = [];
+                for(let j=1; j<=countBtnPagination; j++){
+                    if(i>=1){
+                        arrDevide.push(+i);
+                        i--;
+                    }
+                }
+                result.push(arrDevide);
+            }
+            return result;
+        }
+        //
+        function handlePagination(status){
+            // let listBtn = $("#navbar-pagination li");
+            let arr = devidePaginate(maxBtn);
+            for(let i=0; i<arr.length; i++){
+                for(let j=0; j<arr[i].length; j++){
+                    if(week==arr[i][0]){
+                        if(status==='next'){
+                            // console.log("next");
+                            // return;
+                            window.location.href=`/exporter?week=${+week+1}&year=${year}&maxWeek=${arr[i-1][0]}&minWeek=${arr[i-1][arr[i-1].length-1]}`;
+                            return
+                        }
+                    }
+                    if(week==arr[i][arr[i].length-1]){
+                        if(status==='pre'){
+                        //    console.log("prev");
+                        //    return;
+                            window.location.href=`/exporter?week=${+week-1}&year=${year}&maxWeek=${arr[i+1][0]}&minWeek=${arr[i+1][arr[i+1].length-1]}`;
+                            return ;
+                        }
+                    }
+                    if(week==arr[i][j]){
+                        if(status==='pre'){
+                            // console.log("prev thuong")
+                            // return 
+                            window.location.href=`/exporter?week=${+week-1}&year=${year}&maxWeek=${arr[i][0]}&minWeek=${arr[i][arr[i].length-1]}`;
+                            return;
+                        }
+                        if(status==='next'){
+                            // console.log("next thuong")
+                            window.location.href=`/shipping?week=${+week+1}&year=${year}&maxWeek=${arr[i][0]}&minWeek=${arr[i][arr[i].length-1]}`;
+                            return 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- handle vi tr cac row theo booking -->
+    <script>
+        // $( "#table-info" ).sortable({
+        //     items: '.tr',
+        //     dropOnEmpty: false,
+        //     start: function (G, ui) {
+        //             ui.item.addClass("select");
+        //         },
+        //     stop: function (G, ui) {
+        //         // ui.item.removeClass("select");
+        //         // $(this).find("tr").each(function (GFG) {
+        //         //     console.log($(this).find("td").eq(2))
+        //         //     if (GFG > 0) {
+        //         //         $(this).find("td").eq(2).html(GFG);
+        //         //     }
+        //         // });
+        //     }
+        // });
+        $( "" ).sortable({
+            items: '.tr',
+            dropOnEmpty: false,
+            start: function (G, ui) {
+                // ui.item.addClass("select");
+                // console.log(ui.item["context"]["cells"])
+                // let rank = $(stt[0]).attr("class").split(" ")[1].split("-")[1];
+                // console.log(rank)
+                let nameBooking = "";
+                let listCell = ui.item["context"]["cells"];
+                for(let i=0; i<listCell.length; i++){
+                    if($(listCell[i]).hasClass("tbody-booking-number")){
+                        nameBooking = $(listCell[i]).text();
+                        break;
+                    }
+                }
+                
+                let listBookingRow = $(".tbody-booking-number");
+                let listRow = $(".tr");
+                for(let i=0; i<listRow.length; i++){
+                    let rowBookingNumber = $(listRow[i]).children();
+                    
+                    for(let j=0; j<rowBookingNumber.length; j++){
+                        if($(rowBookingNumber[j]).hasClass("tbody-booking-number")){
+                            let text = $(rowBookingNumber[j]).text();
+                            
+                            if(text == nameBooking){
+                                $(listRow[i]).addClass("target")
+                            }else{
+                                $(listRow[i]).css("background")
+                            }
+                        }
+                    }
+                }
+
+            },
+            stop: function (G, ui) {
+                let listRow = $(".tr");
+                for(let i=0; i<listRow.length; i++){
+                    if($(listRow[i]).hasClass("target")){
+                        $($(".tr")[i]).removeClass("target")
+                    }
+                }
+                let nameBooking = "";
+                let listCell = ui.item["context"]["cells"];
+                for(let i=0; i<listCell.length; i++){
+                    if($(listCell[i]).hasClass("tbody-booking-number")){
+                        nameBooking = $(listCell[i]).text();
+                        break;
+                    }
+                }
+                let listBookingRow = $(".tbody-booking-number");
+                let a=1;
+                for(let i=0; i<listRow.length; i++){
+                    let rowBookingNumber = $(listRow[i]).children();
+
+                    for(let j=0; j<rowBookingNumber.length; j++){
+                        if($(rowBookingNumber[j]).hasClass("tbody-booking-number")){
+                            let text = $(rowBookingNumber[j]).text();
+                            if(text == nameBooking){
+                                for(let b=0; b<rowBookingNumber.length; b++){
+                                    if($(rowBookingNumber[b]).hasClass("tbody-no-booking")){
+                                        $(rowBookingNumber[b]).text(a);
+                                        a++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    for(let q=0; q<rowBookingNumber.length; q++){
+                        if($(rowBookingNumber[q]).hasClass("tbody-stt")){
+                            $(rowBookingNumber[q]).text(i+1);
+                        }
+                    }
+                }
+            }
+            });
+    </script>
+
+    <!-- handle khi nguoi dung muon thay doi cac o -->
+    <script>
+        // function handleUpdate(selector){
+        //     let number = Math.random();
+        //     let classSelector = $(selector).attr("class").split(" ")[0];
+        //     $(selector).css("color","white");
+        //     let value = $(selector).text();
+        //     let input = `<input class="${classSelector}" id="zxc" value="${value}"/>`
+            
+        //     $(selector).html(input+value);
+            
+        //     $(selector).mouseleave(()=>{
+        //         console.log($(`#zxc`))
+        //         $(selector).html($(`#zxc`).val())
+        //     })
+        // }
+    </script>
+
+    <!-- update role booking -->
+    <script>
+        function updateRoleBooking(){
+            let tableRow = $("#table-info tbody tr");
+            let listResult = [];
+            for(let i=0; i<tableRow.length; i++){
+                let obj = {};
+                obj.id = $(tableRow[i]).attr("id");
+                let chidren = $(tableRow[i]).children();
+                for(let j=0; j<chidren.length; j++){
+                    if($(chidren[j]).hasClass("tbody-no-booking")){
+                        obj.noBooking = convertNull($(chidren[j]).text());
+                    }
+                }
+                listResult.push(obj);
+            }
+            postDataRoleBooking(listResult);
+        }
+        function postDataRoleBooking(listData){
+            // console.log(listData);
+            $.ajax({
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                url: host + "/api/updateBookingStt",
+                type: "POST",
+                data: JSON.stringify(listData)
+            })
+            .then(()=>{
+                location.reload()
+            })
+            .fail((e)=>{
+                console.log(e);
+            })
+            
+        }
+    </script>
+</body>
+</html>

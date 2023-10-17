@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <%- include("../utils/header.ejs") %>
+    <title>Document</title>
+</head>
+<style>
+    body{
+        overflow: hidden;
+    }
+    #table-info{
+        width: 100vw;
+        height: 85vh;
+        overflow: auto;
+    }
+    /* /* th:not:first-child, td{
+        min-width: 25em;
+        font-size: smaller;
+    } */
+    .checkbox{
+        min-width: 1em;
+    }
+    input[type="checkbox"]{
+        cursor: pointer;
+        width: 1.5em;
+        height: 1.5em;
+    }
+    .error-message{
+        color: red;
+    }
+    .label{
+        font-weight: bolder;
+        font-size: x-small;
+    }
+    #table-create tbody td{
+        padding: 0.6em;
+    }
+    #table-update tbody td{
+        padding: 0.6em;
+    }
+    #table-filter th, #table-filter td {
+        min-width: 20em;
+        min-height: 10em;
+    }
+    #table-info{
+        padding: 0px 40em;
+    }
+</style>
+<body>
+    <%- include("../layout/navbar.ejs") %>
+    <div id="table-info">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark table-hover">
+                <th id="thead-stt">STT</th>
+                <th id="thead-manufacture">REASON</th>
+                <th id="thead-unloading">UNLOADING</th>
+                <th id="thead-loading">LOADING</th>
+            </thead>
+                <tbody>
+                    <%var i=0%>
+                    <% for(let data of listData){ %>
+                        <tr class="tr stt-<%=++i%> existed tbody<%=data['idSystem']%>" id="tbody-<%=i%>" ondblclick="updateDataRow(this)">
+    
+                            <td class="td-stt"><%=i%></td>
+        
+                            <td class="td-manufacture">
+                                <input readonly class="input-manufacture" type="text" placeholder="MANUFACTURE" value="<%=data["reason"]%>">
+                                <div class="error-message error-input-manufacture"></div>
+                            </td>
+
+                            <td class="td-unloading" style="text-align: center;">
+                                <input readonly class="input-unloading" type="checkbox" <%=data["unloading"]=='Y'?'checked':""%>>
+                                <div class="error-message error-input-unloading"></div>
+                            </td>
+
+                            <td class="td-loading" style="text-align: center;">
+                                <input readonly class="input-loading" type="checkbox" <%=data["loading"]=='Y'?'checked':""%>>
+                                <div class="error-message error-input-loading"></div>
+                            </td>
+                        </tr>
+                    <%}%>
+                </tbody>
+        </table>
+    </div>
+    <!-- list dieu khien o bottom -->
+    <div style="display: flex; justify-content: flex-end; gap:1em">
+        <!-- <button class="btn btn-success" id="upload-btn" onclick="postData()"><i class="fa-solid fa-upload"></i></button> -->
+        <a>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </a>
+
+        <a>
+            <button class="btn btn-primary create-delete" id="create-btn" data-toggle="modal" data-target="#createRow">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </a>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination" id="navbar-pagination">
+              
+            </ul>
+        </nav>
+    </div>
+   
+    <script src="../../script/utils.js"></script>
+
+    <!-- modal-update-form -->
+    <div class="modal fade" id="updateRow" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">UPDATE ROW</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <table id="table-update">
+                    <tbody>
+                        <tr>
+                            <td class="td-manufacture">
+                                <div class="label">REASON UNLOADING:</div>
+                                <input class="input-manufacture" type="text" placeholder="REASON UNLOADING">
+                                <div class="error-message error-input-manufacture"></div>
+                            </td>
+
+                            <td class="td-unloading">
+                                <div class="label">UNLOADING:</div>
+                                <input class="input-unloading" type="checkbox">
+                                <div class="error-message error-input-unloading"></div>
+                            </td>
+
+                            <td class="td-loading">
+                                <div class="label">LOADING:</div>
+                                <input class="input-loading" type="checkbox">
+                                <div class="error-message error-input-loading"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteReason()">DELETE</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="postData()">Save changes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- modal-create-form -->
+    <div class="modal fade" id="createRow" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">CREATE ROW</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <table id="table-create">
+                    <tbody>
+                        <tr>
+                            <td class="td-manufacture">
+                                <div class="label">REASON:</div>
+                                <input class="input-manufacture" type="text" placeholder="REASON">
+                                <div class="error-message error-input-manufacture"></div>
+                            </td>
+
+                            <td class="td-unloading">
+                                <div class="label">UNLOADING:</div>
+                                <input class="input-unloading" type="checkbox">
+                                <div class="error-message error-input-unloading"></div>
+                            </td>
+
+                            <td class="td-loading">
+                                <div class="label">LOADING:</div>
+                                <input class="input-loading" type="checkbox">
+                                <div class="error-message error-input-loading"></div>
+                            </td>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="createNewData()">Save changes</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal filter -->
+    <form>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">FILTER</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <table id="table-filter">
+                        <thead>
+                            <th>SEARCH</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" id="input-search" name="search"/></td>
+                            </tr>
+                        </tbody>
+                      </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- modal-option -->
+    <div class="modal fade" id="optional" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">OPTIONAL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: center; gap: 1em;">
+                <button id="insert-above" class="btn btn-primary" onclick="insertRow('up')"><i class="fa-solid fa-circle-up"></i></button>
+                <button id="insert-below" class="btn btn-danger" onclick="insertRow('down')"><i class="fa-solid fa-circle-down"></i></button>
+                <button id="update-data" class="btn btn-success" onclick="triggerUpdate()"><i class="fa-solid fa-pen-nib"></i></button>
+            </div>
+            
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateData()">Save changes</button>
+            </div> -->
+          </div>
+        </div>
+    </div>
+    
+    <div id="row-selection" style="display: none;"></div>
+
+    <button id="update-trigger" data-toggle="modal" data-target="#optional" style="display: none;"></button>
+    <button id="update-row-trigger" data-toggle="modal" data-target="#updateRow" style="display: none;"></button>
+    
+    <div id="idSystem" style="display: none;"></div>
+    <!-- init data vao bang -->
+    <script>
+        let urlParams = new URLSearchParams(window.location.search);
+        let page = urlParams.get('page') || 1; 
+        let limit = urlParams.get('limit') || 16;
+        let search = urlParams.get('search');
+        let maxBtn = "hehe";
+        let arrBtn = [];
+        let listBtn = [];
+        $.ajax({
+            url: host+`/api/count-row-reason-unloading?${search?"search="+search:""}`,
+            method: "GET"
+            })
+            .done(result=>{
+                maxBtn = result[0].max;
+                for(let i=1; i<=Math.ceil(maxBtn/countRowPerPage); i++){
+                    listBtn.push(i);
+                }
+                initData();
+            })
+            .fail(err=>{
+                console.log(err);
+        })
+        //call so phan trang tai giao dien
+        function initData(maxWeek, minWeek){
+            let preBtn = `<li class="page-item"><a class="page-link" onclick=pagination("pre") href="#">Previous</a></li>`;
+            let nextBtn = `<li class="page-item"><a class="page-link" onclick=pagination("next") href="#">Next</a></li>`;
+
+            let arrNew = devidePaginate(Math.ceil(maxBtn/countRowPerPage));
+            console.log("aqwe",arrNew)
+            let firstIndex = arrNew[0][0];
+            let lastIndex = arrNew[0][arrNew[0].length-1];
+            let pagination = "";
+            
+            function checkRange(page) { 
+                let range = {};
+                for(let i=0; i<arrNew.length; i++){
+                    for(let j=0; j<arrNew[i].length; j++){
+                        if(page==arrNew[i][j]){
+                            range.lastIndex = arrNew[i][arrNew[i].length-1];
+                            range.firstIndex = arrNew[i][0];
+                            return range;
+                        }
+                    }
+                }
+            }
+            function exportRangePaginate(){
+                for(let i=0; i<arrNew.length; i++){
+                    for(let j=0; j<arrNew[i].length; j++){
+                        if(page==arrNew[i][j]){
+                            return arrNew[i];
+                        }
+                    }
+                }
+            }
+
+            let range = exportRangePaginate();
+            
+            for(let i=0; i<range.length; i++){
+                pagination += `
+                    <li class="page-item ${page==range[i]?"active":""}">
+                        <a class="page-link" href="/reason-unloading?page=${range[i]}&limit=${limit}${search?"&search="+search:""}">
+                            ${range[i]}
+                        </a>
+                    </li>`;
+            }
+            // for(let i=0; i<result.length; i++){
+            //     arrBtn.push(result[i]["estimated_loading_week"]);
+            //     if(!week) week=maxBtn;
+            //     let range = checkRange(result[i]["estimated_loading_week"]);
+            //     pagination += `
+            //         <li class="page-item ${week==result[i]["estimated_loading_week"]?"active":""}">
+            //             <a class="page-link" href="/admin?week=${result[i]["estimated_loading_week"]}&year=${year}&maxWeek=${range.firstIndex}&minWeek=${range.lastIndex}">
+            //                 ${result[i]["estimated_loading_week"]}
+            //             </a>
+            //         </li>`;
+            // }
+
+            let totalPgination = preBtn + pagination + nextBtn;
+        
+            $("#navbar-pagination").html(totalPgination)
+        }
+    </script>
+
+    <!-- handle phan trang -->
+    <script>
+        arrBtn = devidePaginate(maxBtn);
+        // phan trang
+        function pagination(status){
+            let arr = devidePaginate(Math.ceil(maxBtn/countRowPerPage));
+            let max = listBtn[listBtn.length-1];
+            console.log("max", max);
+            let min = listBtn[0];
+            console.log("min", min)
+
+            if(status==='next'){
+                if(+page+1 <= max){
+                    window.location = `/reason-unloading?page=${+page+1}&limit=${+limit}${search?"&search="+search:""}`;
+                }
+            }
+            if(status==='pre'){
+                if(+page-1 >= min){
+                    window.location = `/reason-unloading?page=${+page-1}&limit=${+limit}${search?"&search="+search:""}`;
+                }
+            }
+            
+            
+        }
+        //chia khoang cac tuan
+        function devidePaginate(maxBtn){
+            let result = [];
+            for(let i=1; i<=maxBtn; ){
+                let arrDevide = [];
+                for(let j=1; j<=countListBtnImporter; j++){
+                    if(i<=maxBtn){
+                        arrDevide.push(i);
+                        i++;
+                    }
+                }
+                result.push(arrDevide);
+            }
+            return result;
+        }
+        //
+        function handlePagination(status){
+            // let listBtn = $("#navbar-pagination li");
+            
+        }
+    </script>
+
+    <script>
+        //chuyen doi input ve dang text nhung cell disabled 
+        let listInput = $("#table-info tbody input");
+        for(let i=0; i<listInput.length; i++){
+            if($(listInput[i]).attr("disabled")){
+                $(listInput[i]).css("border","none")
+                $(listInput[i]).attr("placeholder","")
+            }
+        }
+        //dinh dang lai ngay thang
+        let datetime = $(".datetime");
+        for(let i=0; i<datetime.length; i++){
+            let time = $($(datetime[i])).children().context;
+            let valueDate = $(time).val();
+            
+            if(valueDate){
+                let date = new Date(valueDate).toISOString().split("T")[0].split("-").reverse().join("/")
+                let hour = new Date(valueDate).toISOString().split("T")[1].split(".")[0]
+
+                $(time).val(date+ " " +hour);
+            }
+        }
+        let weekRoot = $($(".input-week")[0]).val();
+        
+        function addDateTime(param){
+            $(param).datetimepicker({format:'d/m/Y H:00:00'});
+        }
+        // them row moi
+        function createRow(){
+            let rank = $("#table-info tbody tr").length;
+            let weekRoot = $($(".input-week")[0]).val();
+            let tableCreate = "#table-create "
+            let nextRow =                
+            `<tr id="tbody-${rank+1}" ondblclick="optional(this)">
+                    <td class="td-check-box"><input class="input-checkbox" type="checkbox"></td>
+
+                    <td class="td-stt">${rank+1}</td>
+
+                    <td class="td-week">
+                        <input value="${weekRoot}" class="input-week" type="number" placeholder="WEEK" oninput="changeWeek()">
+                        <div class="error-message error-input-week"></div>
+                    </td>
+
+                    <td class="td-category-cont">
+                        <input value="${$(tableCreate+".td-category-cont "+"input").val()}" class="input-category-cont" type="text" placeholder="CONT CATEGORY" oninput="copyDataAllowBooking(this)">
+                        <div class="error-message error-input-category-cont"></div>
+                    </td>
+
+                    <td class="td-no-booking">
+                        <input value="${$(tableCreate+".td-no-booking "+"input").val()}" class="input-no-booking" placeholder="NO BOOKING" type="number" min=1>
+                        <div class="error-message error-input-no-booking"></div>
+                    </td>
+
+                    <td class="td-booking-number">
+                        <input value="${$(tableCreate+".td-booking-number "+"input").val()}" class="input-booking-number" placeholder="BOOKING NUMBER" type="text">
+                        <div class="error-message error-input-booking-number"></div>
+                    </td>
+
+                    <td class="td-carrier">
+                        <input value="${$(tableCreate+".td-carrier "+"input").val()}" class="input-carrier" placeholder="CARRIER" type="text" oninput="copyDataAllowBooking(this)">
+                        <div class="error-message error-input-booking-number"></div>
+                    </td>
+
+                    <td class="td-dc">
+                        <input value="${$(tableCreate+".td-dc "+"input").val()}"" class="input-dc" placeholder="DC" type="text">
+                        <div class="error-message error-input-dc"></div>
+                    </td>
+
+                    <td class="td-container-number">
+                        <input value="${$(tableCreate+".td-container-number "+"input").val()}" class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                        <div class="error-message error-input-container-number"></div>
+                    </td>
+
+                    <td class="td-estimated-loading-date">
+                        <input value="${$(tableCreate+".td-estimated-loading-date "+"input").val()}" class="input-estimated-loading-date" placeholder="ESTIMATE LOADING DATE" type="text">
+                        <div class="error-message error-input-estimated-loading-date"></div>
+                    </td>
+
+                    <td class="td-loading-location">
+                        <input value="${$(tableCreate+".td-loading-location "+"input").val()}" class="input-loading-location" placeholder="LOCATION" type="text">
+                        <div class="error-message error-input-loading-location"></div>
+                    </td>
+
+                    <td class="td-loading-date">
+                        <input value="${$(tableCreate+".td-loading-date "+"input").val()}" class="input-loading-date datetime" onmouseenter="addDateTime(this)" placeholder="LOADING DATE" type="text">
+                        <div class="error-message error-input-loading-date"></div>
+                    </td>
+
+                    <td class="td-ship-date">
+                        <input value="${$(tableCreate+".td-ship-date "+"input").val()}" class="input-ship-date datetime" onmouseenter="addDateTime(this)" placeholder="SHIP DATE" type="text">
+                        <div class="error-message error-input-ship-date"></div>
+                    </td>
+
+                    <td class="td-cut-off-loading-date">
+                        <input value="${$(tableCreate+".td-cut-off-loading-date "+"input").val()}" class="input-cut-off-loading-date datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CUT OFF LOADING DATE" type="text">
+                        <div class="error-message error-input-cut-off-loading-date"></div>
+                    </td>
+
+                    <td class="td-cy-cut-off">
+                        <input value="${$(tableCreate+".td-cy-cut-off "+"input").val()}" class="input-cy-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CY CUT OFF" type="text">
+                        <div class="error-message error-input-cy-cut-off"></div>
+                    </td>
+
+                    <td class="td-ammentdent-bill-cut-off">
+                        <input value="${$(tableCreate+".td-ammentdent-bill-cut-off "+"input").val()}" class="input-ammentdent-bill-cut-off" oninput="copyDataAllowBooking(this)" placeholder="AMMENT BILL CUT OFF" type="text">
+                        <div class="error-message error-input-cy-cut-off"></div>
+                    </td>
+
+                    <td class="td-etd">
+                        <input value="${$(tableCreate+".td-etd "+"input").val()}" class="input-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="ETD" type="text">
+                        <div class="error-message error-input-etd datetime"></div>
+                    </td>
+
+                    <td class="td-new-etd">
+                        <input value="${$(tableCreate+".td-new-etd "+"input").val()}" class="input-new-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="NEW ETD" type="text">
+                        <div class="error-message error-input-new-etd datetime"></div>
+                    </td>
+
+                    <td class="td-service">
+                        <input value="${$(tableCreate+".td-service "+"input").val()}" class="input-service" placeholder="SERVICE" oninput="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-service datetime"></div>
+                    </td>
+
+                    <td class="td-eta">
+                        <input value="${$(tableCreate+".td-eta "+"input").val()}" class="input-eta" placeholder="ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-eta datetime"></div>
+                    </td>
+
+                    <td class="td-new-eta">
+                        <input class="input-new-eta datetime" placeholder="NEW ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-new-eta datetime"></div>
+                    </td>
+
+                    <td class="td-vessel">
+                        <input value="${$(tableCreate+".td-vessel "+"input").val()}" class="input-vessel" placeholder="VESSEL" oninput="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-vessel datetime"></div>
+                    </td>
+
+                    <td class="td-picked-date">
+                        <input value="${$(tableCreate+".td-picked-date "+"input").val()}" class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED DATE" type="text">
+                        <div class="error-message error-input-picked-date datetime"></div>
+                    </td>
+
+                    <td class="td-vendor">
+                        <input value="${$(tableCreate+".td-vendor "+"input").val()}" class="input-vendor" placeholder="VENDOR" type="text">
+                        <div class="error-message error-input-vendor datetime"></div>
+                    </td>
+
+                    <td class="td-ata-pb">
+                        <input value="${$(tableCreate+".td-ata-pb "+"input").val()}" class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                        <div class="error-message error-input-ata-pb datetime"></div>
+                    </td>
+
+                    <td class="td-unloading-location">
+                        <input value="${$(tableCreate+".td-unloading-location "+"input").val()}" class="input-unloading-location" placeholder="UNLOADING LOCATION" type="text">
+                        <div class="error-message error-input-unloading-location datetime"></div>
+                    </td>
+
+                    <td class="td-unloading-date">
+                        <input value="${$(tableCreate+".td-unloading-date "+"input").val()}" class="input-unloading-date datetime" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                        <div class="error-message error-input-unloading-date datetime"></div>
+                    </td>
+
+                    <td class="td-cdf-date">
+                        <input value="${$(tableCreate+".td-cdf-date "+"input").val()}" class="input-cdf-date datetime" onmouseenter="addDateTime(this)" placeholder="CDF DATE" type="text">
+                        <div class="error-message error-input-cdf-date datetime"></div>
+                    </td>
+
+                    <td class="td-export-saving-truck-date">
+                        <input value="${$(tableCreate+".td-export-saving-truck-date "+"input").val()}" class="input-export-saving-truck-date" placeholder="EXPORT SAVING TRUCK DATE" type="text">
+                        <div class="error-message error-input-export-saving-truck-date datetime"></div>
+                    </td>
+
+                    <td class="td-reason-export-saving-truck">
+                        <textarea class="input-reason-export-saving-truck" placeholder="REASON EXPORT SAVING TRUCK">${$(tableCreate+".td-reason-export-saving-truck "+"textarea").val()}</textarea>
+                        <div class="error-message error-input-reason-export-saving-truck datetime"></div>
+                    </td>
+
+                    <td class="td-picked-at-port">
+                        <input value="${$(tableCreate+".td-picked-at-port "+"input").val()}" class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                        <div class="error-message error-input-picked-at-port datetime"></div>
+                    </td>
+
+                    <td class="td-dropping-at-port">
+                        <input value="${$(tableCreate+".td-dropping-at-port "+"input").val()}" class="input-dropping-at-port" placeholder="DROPPING AT PORT" type="text">
+                        <div class="error-message error-input-dropping-at-port datetime"></div>
+                    </td>
+
+                    <td class="td-dropping-date">
+                        <input value="${$(tableCreate+".td-dropping-date "+"input").val()}" class="input-dropping-date datetime" onmouseenter="addDateTime(this)" placeholder="DROPPING DATE" type="text">
+                        <div class="error-message error-input-dropping-date datetime"></div>
+                    </td>
+
+                    <td class="td-pre-booking-number">
+                        <input value="${$(tableCreate+".td-pre-booking-number "+"input").val()}" class="input-pre-booking-number" placeholder="PRE BOOKING NUMBER" type="text">
+                        <div class="error-message error-input-pre-booking-number datetime"></div>
+                    </td>
+
+                    <td class="td-seal-number">
+                        <input value="${$(tableCreate+".td-seal-number "+"input").val()}" class="input-seal-number" placeholder="SEAL NUMBER" type="text">
+                        <div class="error-message error-input-seal-number datetime"></div>
+                    </td>
+
+                    <td class="td-note">
+                        <textarea class="input-note" placeholder="NOTE">${$(tableCreate+".td-note "+"textarea").val()}</textarea>
+                        <div class="error-message error-input-note datetime"></div>
+                    </td>
+                </tr>`;
+            $("#table-info tbody").append(nextRow);
+            $("#createRow .close").click();
+        }
+        
+        //arr dung de hung thong tin row duoc chon
+        let includeRowSelected = [];
+
+        //trigger click button update
+        function triggerUpdate(){
+            let listRow = $("#table-info tbody tr")
+            for(let i=0; i<listRow.length; i++){
+                $(listRow[i]).attr("id", `tbody-${i+1}`)
+            }
+            $("#optional .close").click();
+            $("#update-row-trigger").click();
+        }
+        
+        //fill update row duoc chon
+        function updateDataRow(row){
+            let listRow = $("#table-info tbody tr");
+            for(let i=0; i<listRow.length; i++){
+                $(listRow[i]).attr("id",`tbody-${i+1}`)
+            }
+            let idSystem = $(row).attr("class").split("tbody")[1];
+            $("#idSystem").text(idSystem)
+            let listChidren = $(row).children();
+            let arrInput = [];
+            let tableUpdate = $("#table-update tbody td");
+            for(let i=0; i<tableUpdate.length; i++){
+                
+                let updateInput = $($(tableUpdate[i]).children()[1]);
+                let rowTable = $($(listChidren[i+1]).children()[0]);
+                arrInput.push($(rowTable).attr("class")?.split(" ")[0]);
+                if($(rowTable).attr("class")===$(updateInput).attr("class")){
+                    $(updateInput).val($(rowTable).val());
+                    if($(updateInput).attr("type")=="checkbox"){
+                        let value = $(rowTable).prop("checked");
+                        $(updateInput).prop("checked",value);
+                    }
+                }
+            }
+            includeRowSelected.unshift(row);
+            $("#updateRow .modal-title").text(`UPDATE ROW ${$(row).attr("id").split("-")[1]}`)
+            $("#update-row-trigger").click();
+        }
+        
+        // update row duoc chon
+        function updateData(){
+            let stt = $("#updateRow .modal-title").text().split(" ")[2];
+            let listChidren = $(`#table-info tbody #tbody-${stt}`).children();
+            
+            let arrInput = [];
+            let tableUpdate = $("#table-update tbody td");
+            let allows = [
+                "input-category-cont",
+                "input-new-etd", 
+                "input-carrier",
+                "input-cut-off-loading-date",
+                "input-cy-cut-off", 
+                "input-ammentdent-bill-cut-off",
+                "input-etd",
+                "input-service",
+                "input-eta",
+                "input-new-eta",
+                "input-vessel"
+            ];
+            for(let i=0; i<tableUpdate.length; i++){
+                
+                let updateInput = $($(tableUpdate[i]).children()[1]);
+                let rowTable = $($(listChidren[i+2]).children()[0]);
+
+                arrInput.push($(rowTable)?.attr("class").split(" ")[0]);
+                if($(rowTable).attr("class")===$(updateInput).attr("class")){
+                    // console.log($(updateInput).attr("class"))
+                    $(rowTable).val($(updateInput).val());
+                    for(let j=0; j<allows.length; j++){
+                        if($(rowTable).hasClass(allows[j])){
+                            copyDataAllowBooking($(rowTable))
+                        }
+                    }
+                }
+            }
+            $("#updateRow .close").click();
+        }
+        
+        //auto fill allow booking 
+        function autoFillAllowBook(booking, table){
+            let allows = [
+                "input-category-cont",
+                "input-no-booking",
+                "input-new-etd", 
+                "input-carrier",
+                "input-cut-off-loading-date",
+                "input-cy-cut-off", 
+                "input-ammentdent-bill-cut-off",
+                "input-etd",
+                "input-service",
+                "input-eta",
+                "input-new-eta",
+                "input-vessel"
+            ];
+            let rowsOfTable = $("#table-info tbody tr");
+            let valueBookUpdate = $(booking).val().trim();
+            let listInputBooking = $("#table-info .input-booking-number");
+            for(let i=0; i<listInputBooking.length; i++){
+                let valueCompare = $(listInputBooking[i]).val();
+                if(valueCompare===valueBookUpdate && valueCompare!='' && valueBookUpdate!=''){
+                    for(let allow of allows){
+                        let targetCopy = $(`#table-info .${allow}`)[i]
+                        let valueCopy = $(targetCopy).val();
+                        $(`#${table} tbody .${allow}`).val(valueCopy)
+                    }
+                    break
+                }else{
+                    for(let allow of allows){
+                        let targetCopy = $(`#table-info .${allow}`)[i]
+                        let valueCopy = $(targetCopy).val();
+                        $(`#${table} tbody .${allow}`).val("")
+                    }
+                }
+            }
+            
+        }
+
+        // xoa row da duoc checkbox
+        function deleteRow() {
+            let listCheckBox = $(".input-checkbox");
+            for(let i=0; i<listCheckBox.length; i++){
+                if($(listCheckBox[i]).is(":checked")){
+                    console.log(`#tbody-${i+1}`)
+                    $(`#tbody-${i+1}`).remove();
+                }
+            }
+            let listStt = $(".td-stt");
+            let listRow = $("#table-info tbody tr");
+            for(let i=0; i<listStt.length; i++){
+                $(listStt[i]).text(i+1);
+            }
+            for(let i=0; i<listRow.length; i++){
+                $(listRow[i]).attr("id", `tbody-${i+1}`)
+            }
+            $("#delete-btn").click();
+        }
+        
+        //thay doi hang loat week
+        function changeWeek() { 
+            let listRow = $(".input-week");
+            let weekRoot = $(listRow[0]).val();
+            for(let i=1; i<listRow.length; i++){
+                $(listRow[i]).val(weekRoot);
+            }
+         }
+        
+         //copy data theo booking
+        function copyDataAllowBooking(row) {  
+            let rowClass = $(row).attr("class").split(" ")[0];
+            let rowIncludeData = $(row).parent().parent();
+            let rankOfRow = +$(rowIncludeData).attr("id").split("-")[1];
+            let rowsOfTable = $("#table-info tbody tr");
+            let bookingNumberRoot = $($(".input-booking-number")[rankOfRow-1]).val();
+            let inputRoot = $($(`.${rowClass}`)[rankOfRow-1]).val();
+            for(let i=0; i<rowsOfTable.length; i++){
+                let bookingNumberTaget = $($(".input-booking-number")[i]).val();
+
+                if(bookingNumberRoot!==""&& bookingNumberTaget===bookingNumberRoot && i!==rankOfRow-1){
+                    $($(`.${rowClass}`)[i]).val(inputRoot);
+                }
+            }
+
+        }
+        
+        //post du lieu len database
+        function postData(){
+            try{
+            let listRow = includeRowSelected[0];
+            let stringTable = "#table-update tbody tr"
+            let datas = [];
+
+            let manufacture = $(`${stringTable} .input-manufacture`);
+            let unloading = $(`${stringTable} .input-unloading`);
+            let loading = $(`${stringTable} .input-loading`);
+
+            let arrError = {};
+            let dataObj = {
+                existed:[],
+                new:[],
+            };
+            for(let i=0; i<1; i++){
+                let data = {};
+                let errArr = [];
+
+                data.reason = convertNull($(manufacture[i]).val().trim());
+                data.unloading = $($(unloading)[i]).prop("checked")==true?'Y':null;
+                data.loading = $($(loading)[i]).prop("checked")==true?'Y':null;
+
+                let listStt = $("#table-update tbody tr");
+                for(let i=0; i<listStt.length; i++){
+                    $(listStt[i]).attr("id",`tbody-${i+1}`);
+                }
+
+
+                let listInput = $("#table-update input");
+                for(let i=0; i<listInput.length; i++){
+                    errArr.push($(listInput[i]).attr("class").split(" ")[0])
+                }
+                
+                let error = validate(errArr, `#table-update tbody`);
+                
+                if(error.length > 0){
+                    arrError["error"] = error;
+                }
+                
+                //hien thi thong bao loi
+                for(let key of Object.keys(arrError)){
+                    for(let j=0; j < arrError[key].length; j++){
+                        let clasKey = Object.keys(arrError[key][j])[0];
+                        let errMessage = Object.values(arrError[key][j])[0];
+                        $(`#table-update tbody .error-${clasKey}`).text(errMessage)
+                    }
+                }
+                
+                // console.log(arrError)
+                if($(listRow).hasClass("existed")){
+                    
+                    data.idSystem = $(listRow).attr("class").split(" ")[3].split("tbody")[1];
+                    
+                    dataObj.existed.push(data);
+                }else{
+                    dataObj.new.push(data);
+                }
+                console.log(dataObj)
+                // datas.push(data);
+            }
+            
+            // if(Object.keys(arrError).length==0){
+                    $.ajax({
+                        headers: {
+                            'Content-Type':'application/json'
+                        },
+                        url: host+"/api/update-reason-unloading",
+                        type: "POST",
+                        data:JSON.stringify(dataObj),
+                        })
+                    .done((result)=>{
+                        for(let i=0; i<$("input").length; i++){
+                            $($("input")[i]).val("");
+                        }
+                        location.reload(); 
+                    })
+                    .fail((e)=>{
+                        alert(e.responseText);
+                    })
+                    includeRowSelected = [];
+                // }
+                }catch(err){
+                    alert.log(err.responseText)
+                    includeRowSelected = [];
+                }
+            }
+        // }
+
+        //tao du lieu moi len database
+        function createNewData(){
+            try{
+            // let listRow = includeRowSelected[0];
+            let stringTable = "#table-create tbody tr"
+            let datas = [];
+
+            let manufacture = $(`${stringTable} .input-manufacture`);
+            let unloading = $(`${stringTable} .input-unloading`);
+            let loading = $(`${stringTable} .input-loading`);
+
+            let arrError = {};
+            let dataObj = {
+                existed:[],
+                new:[],
+            };
+            for(let i=0; i<1; i++){
+                let data = {};
+                let errArr = [];
+
+                data.reason = convertNull($(manufacture[i]).val().trim());
+                data.unloading = $($(unloading)[i]).prop("checked")==true?'Y':null;
+                data.loading = $($(loading)[i]).prop("checked")==true?'Y':null;
+
+                let listStt = $("#table-create tbody tr");
+                for(let i=0; i<listStt.length; i++){
+                    $(listStt[i]).attr("id",`tbody-${i+1}`);
+                }
+
+
+                let listInput = $("#table-create input");
+                for(let i=0; i<listInput.length; i++){
+                    errArr.push($(listInput[i]).attr("class").split(" ")[0])
+                }
+                
+                let error = validate(errArr, `#table-create tbody`);
+                
+                if(error.length > 0){
+                    arrError["error"] = error;
+                }
+                //hien thi thong bao loi
+                for(let key of Object.keys(arrError)){
+                    for(let j=0; j < arrError[key].length; j++){
+                        let clasKey = Object.keys(arrError[key][j])[0];
+                        let errMessage = Object.values(arrError[key][j])[0];
+                        $(`#table-create tbody .error-${clasKey}`).text(errMessage)
+                    }
+                }
+                // du lieu duoc them vao dataObj de dua len database
+                dataObj.new.push(data);
+                console.log("arrError", Object.keys(arrError).length)
+
+                // console.log(dataObj)
+            }
+            
+            if(Object.keys(arrError).length==0){
+                    $.ajax({
+                        headers: {
+                            'Content-Type':'application/json'
+                        },
+                        url: host+"/api/create-unloading",
+                        type: "POST",
+                        data:JSON.stringify(dataObj),
+                        })
+                    .done((result)=>{
+                        for(let i=0; i<$("input").length; i++){
+                            $($("input")[i]).val("");
+                        }
+                        location.reload(); 
+                    })
+                    .fail((e)=>{
+                        alert(e.responseText)
+                        // alert("something wrong")
+                    })
+                    includeRowSelected = [];
+                }
+                }catch(err){
+                    console.log(err)
+                    includeRowSelected = [];
+                }
+        }
+        
+        //delete reason
+        function deleteReason(){
+            let id = $("#idSystem").text();
+            $.ajax({
+                url: host + `/api/delete-reason-unloading?id=${id}`,
+                type: "POST"
+            })
+            .then(()=>{
+                location.reload();
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        // validate du lieu dau vao
+        function validate(listInput, selectorInput){
+            let arrValidate = [];
+            let validate = {
+                "input-manufacture":{
+                    required: "This input is required"
+                }
+            };
+            for(let i=0; i<listInput.length; i++){
+                for(let key of Object.keys(validate)){
+                    if(listInput[i]===key){
+                        console.log(key)
+                        if($(selectorInput +" ."+key).val().trim()=='' && validate[key]["required"]){
+                            arrValidate.push({[key]:validate[key]["required"]});
+                        }
+                    }
+                }
+            }
+            let errorMessage = $(".error-message");
+            for(let i=0; i<errorMessage.length; i++){
+                $(errorMessage[i]).text("");
+            }
+            return arrValidate;
+        }
+    </script>
+
+    <script>
+        // optional
+        function optional(row){
+            updateDataRow(row)
+            let target = $(row).attr("id");
+            $("#row-selection").text(target);
+            $("#update-trigger").click();
+        }
+        
+        //chi dinh chen hang
+        function insertRow(option){
+            let idRnd = Math.random().toString().split(".")[1];
+            let tableCreate = "#table-create ";
+            let newRow = 
+            `<tr id="tbody-${idRnd}" ondblclick="updateDataRow(this)">
+                    <td class="td-check-box"><input class="input-checkbox" type="checkbox"></td>
+
+                    <td class="td-stt"></td>
+
+                    <td class="td-week">
+                        <input value="${weekRoot}" class="input-week" type="number" placeholder="WEEK" oninput="changeWeek()">
+                        <div class="error-message error-input-week"></div>
+                    </td>
+
+                    <td class="td-category-cont">
+                        <input value="${$(tableCreate+".td-category-cont "+"input").val()}" class="input-category-cont" type="text" placeholder="CONT CATEGORY" oninput="copyDataAllowBooking(this)">
+                        <div class="error-message error-input-category-cont"></div>
+                    </td>
+
+                    <td class="td-no-booking">
+                        <input value="${$(tableCreate+".td-no-booking "+"input").val()}" class="input-no-booking" placeholder="NO BOOKING" type="number" min=1>
+                        <div class="error-message error-input-no-booking"></div>
+                    </td>
+
+                    <td class="td-booking-number">
+                        <input value="${$(tableCreate+".td-booking-number "+"input").val()}" class="input-booking-number" placeholder="BOOKING NUMBER" type="text">
+                        <div class="error-message error-input-booking-number"></div>
+                    </td>
+
+                    <td class="td-carrier">
+                        <input value="${$(tableCreate+".td-carrier "+"input").val()}" class="input-carrier" placeholder="CARRIER" type="text" oninput="copyDataAllowBooking(this)">
+                        <div class="error-message error-input-booking-number"></div>
+                    </td>
+
+                    <td class="td-dc">
+                        <input value="${$(tableCreate+".td-dc "+"input").val()}"" class="input-dc" placeholder="DC" type="text">
+                        <div class="error-message error-input-dc"></div>
+                    </td>
+
+                    <td class="td-container-number">
+                        <input value="${$(tableCreate+".td-container-number "+"input").val()}" class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                        <div class="error-message error-input-container-number"></div>
+                    </td>
+
+                    <td class="td-estimated-loading-date">
+                        <input value="${$(tableCreate+".td-estimated-loading-date "+"input").val()}" class="input-estimated-loading-date" placeholder="ESTIMATE LOADING DATE" type="text">
+                        <div class="error-message error-input-estimated-loading-date"></div>
+                    </td>
+
+                    <td class="td-loading-location">
+                        <input value="${$(tableCreate+".td-loading-location "+"input").val()}" class="input-loading-location" placeholder="LOCATION" type="text">
+                        <div class="error-message error-input-loading-location"></div>
+                    </td>
+
+                    <td class="td-loading-date">
+                        <input value="${$(tableCreate+".td-loading-date "+"input").val()}" class="input-loading-date datetime" onmouseenter="addDateTime(this)" placeholder="LOADING DATE" type="text">
+                        <div class="error-message error-input-loading-date"></div>
+                    </td>
+
+                    <td class="td-ship-date">
+                        <input value="${$(tableCreate+".td-ship-date "+"input").val()}" class="input-ship-date datetime" onmouseenter="addDateTime(this)" placeholder="SHIP DATE" type="text">
+                        <div class="error-message error-input-ship-date"></div>
+                    </td>
+
+                    <td class="td-cut-off-loading-date">
+                        <input value="${$(tableCreate+".td-cut-off-loading-date "+"input").val()}" class="input-cut-off-loading-date datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CUT OFF LOADING DATE" type="text">
+                        <div class="error-message error-input-cut-off-loading-date"></div>
+                    </td>
+
+                    <td class="td-cy-cut-off">
+                        <input value="${$(tableCreate+".td-cy-cut-off "+"input").val()}" class="input-cy-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="CY CUT OFF" type="text">
+                        <div class="error-message error-input-cy-cut-off"></div>
+                    </td>
+
+                    <td class="td-ammentdent-bill-cut-off">
+                        <input value="${$(tableCreate+".td-ammentdent-bill-cut-off "+"input").val()}" class="input-ammentdent-bill-cut-off datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="AMMENT BILL CUT OFF" type="text">
+                        <div class="error-message error-input-ammentdent-bill-cut-off"></div>
+                    </td>
+
+                    <td class="td-etd">
+                        <input value="${$(tableCreate+".td-etd "+"input").val()}" class="input-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="ETD" type="text">
+                        <div class="error-message error-input-etd datetime"></div>
+                    </td>
+
+                    <td class="td-new-etd">
+                        <input value="${$(tableCreate+".td-new-etd "+"input").val()}" class="input-new-etd datetime" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" placeholder="NEW ETD" type="text">
+                        <div class="error-message error-input-new-etd datetime"></div>
+                    </td>
+
+                    <td class="td-service">
+                        <input value="${$(tableCreate+".td-service "+"input").val()}" class="input-service" placeholder="SERVICE" oninput="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-service datetime"></div>
+                    </td>
+
+                    <td class="td-eta">
+                        <input value="${$(tableCreate+".td-eta "+"input").val()}" class="input-eta datetime" placeholder="ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-eta datetime"></div>
+                    </td>
+
+                    <td class="td-new-eta">
+                        <input value="${$(tableCreate+".td-new-eta "+"input").val()}" class="input-new-eta datetime" placeholder="NEW ETA" onmouseenter="addDateTime(this)" onchange="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-new-eta datetime"></div>
+                    </td>
+
+                    <td class="td-vessel">
+                        <input value="${$(tableCreate+".td-vessel "+"input").val()}" class="input-vessel" placeholder="VESSEL" oninput="copyDataAllowBooking(this)" type="text">
+                        <div class="error-message error-input-vessel datetime"></div>
+                    </td>
+
+                    <td class="td-picked-date">
+                        <input value="${$(tableCreate+".td-picked-date "+"input").val()}" class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED DATE" type="text">
+                        <div class="error-message error-input-picked-date datetime"></div>
+                    </td>
+
+                    <td class="td-vendor">
+                        <input value="${$(tableCreate+".td-vendor "+"input").val()}" class="input-vendor" placeholder="VENDOR" type="text">
+                        <div class="error-message error-input-vendor datetime"></div>
+                    </td>
+
+                    <td class="td-ata-pb">
+                        <input value="${$(tableCreate+".td-ata-pb "+"input").val()}" class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                        <div class="error-message error-input-ata-pb datetime"></div>
+                    </td>
+
+                    <td class="td-unloading-location">
+                        <input value="${$(tableCreate+".td-unloading-location "+"input").val()}" class="input-unloading-location" placeholder="UNLOADING LOCATION" type="text">
+                        <div class="error-message error-input-unloading-location datetime"></div>
+                    </td>
+
+                    <td class="td-unloading-date">
+                        <input value="${$(tableCreate+".td-unloading-date "+"input").val()}" class="input-unloading-date datetime" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                        <div class="error-message error-input-unloading-date datetime"></div>
+                    </td>
+
+                    <td class="td-cdf-date">
+                        <input value="${$(tableCreate+".td-cdf-date "+"input").val()}" class="input-cdf-date datetime" onmouseenter="addDateTime(this)" placeholder="CDF DATE" type="text">
+                        <div class="error-message error-input-cdf-date datetime"></div>
+                    </td>
+
+                    <td class="td-export-saving-truck-date">
+                        <input value="${$(tableCreate+".td-export-saving-truck-date "+"input").val()}" class="input-export-saving-truck-date" placeholder="EXPORT SAVING TRUCK DATE" type="text">
+                        <div class="error-message error-input-export-saving-truck-date datetime"></div>
+                    </td>
+
+                    <td class="td-reason-export-saving-truck">
+                        <textarea class="input-reason-export-saving-truck" placeholder="REASON EXPORT SAVING TRUCK">${$(tableCreate+".td-reason-export-saving-truck "+"textarea").val()}</textarea>
+                        <div class="error-message error-input-reason-export-saving-truck datetime"></div>
+                    </td>
+
+                    <td class="td-picked-at-port">
+                        <input value="${$(tableCreate+".td-picked-at-port "+"input").val()}" class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                        <div class="error-message error-input-picked-at-port datetime"></div>
+                    </td>
+
+                    <td class="td-dropping-at-port">
+                        <input value="${$(tableCreate+".td-dropping-at-port "+"input").val()}" class="input-dropping-at-port" placeholder="DROPPING AT PORT" type="text">
+                        <div class="error-message error-input-dropping-at-port datetime"></div>
+                    </td>
+
+                    <td class="td-dropping-date">
+                        <input value="${$(tableCreate+".td-dropping-date "+"input").val()}" class="input-dropping-date datetime" onmouseenter="addDateTime(this)" placeholder="DROPPING DATE" type="text">
+                        <div class="error-message error-input-dropping-date datetime"></div>
+                    </td>
+
+                    <td class="td-pre-booking-number">
+                        <input value="${$(tableCreate+".td-pre-booking-number "+"input").val()}" class="input-pre-booking-number" placeholder="PRE BOOKING NUMBER" type="text">
+                        <div class="error-message error-input-pre-booking-number datetime"></div>
+                    </td>
+
+                    <td class="td-seal-number">
+                        <input value="${$(tableCreate+".td-seal-number "+"input").val()}" class="input-seal-number" placeholder="SEAL NUMBER" type="text">
+                        <div class="error-message error-input-seal-number datetime"></div>
+                    </td>
+
+                    <td class="td-note">
+                        <textarea class="input-note" placeholder="NOTE">${$(tableCreate+".td-note "+"textarea").val()}</textarea>
+                        <div class="error-message error-input-note datetime"></div>
+                    </td>
+                </tr>`;
+            let idTarget = $("#row-selection").text();
+            if(option==='up'){
+                $(newRow).insertBefore(`#${idTarget}`)
+            }else if(option==='down'){
+                $(newRow).insertAfter(`#${idTarget}`)
+            }
+            let listStt = $(".td-stt");
+            for(let i=0; i<listStt.length; i++){
+                $(listStt[i]).text(i+1);
+            }
+            $("#optional .close").click();
+        }
+        
+    </script>
+</body>
+</html>

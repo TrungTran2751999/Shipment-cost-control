@@ -1,0 +1,953 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+         <li class="nav-item active">
+          <a class="nav-link" href="/" id="direct-authization">
+            <button class="btn btn-danger"><i class="fa-solid fa-house"></i></button>
+            <span class="sr-only">(current)</span>
+          </a>
+        </li>
+
+        <!-- <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li> -->
+
+        <li class="nav-item dropdown" id="navbar-user">
+          <a style="float: left;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/login">Log out</a>
+            <!-- <a class="dropdown-item" href="#">Another action</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Something else here</a> -->
+          </div>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li> -->
+      </ul>
+      <div class="form-inline my-2 my-lg-0">
+        <%if(dept=='LOG' || dept=='LP'){%>
+        <button style="margin-left: 10px;" class="btn btn-outline-primary" data-toggle="modal" data-target="#rangeTimeExport">EXPORT REPORT</button>
+        <button style="margin-left: 10px;" class="btn btn-outline-danger" data-toggle="modal" data-target="#rangeTimeImportReport">
+            <div id="text-report-import">IMPORT REPORT</div>
+        </button>
+        <button style="margin-left: 10px;" class="btn btn-outline-primary" data-toggle="modal" data-target="#rangeTimeSaving">SAVING TRUCK REPORT</button>
+        <%}%>
+        <button style="margin-left: 10px;" class="btn btn-outline-warning" data-toggle="modal" data-target="#rangeTimeGeneral">GENERAL REPORT</button>
+        <button style="margin-left: 10px;" class="btn btn-outline-success my-2 my-sm-0" type="submit" data-toggle="modal" data-target="#detail-container">SEARCH CONTAINER</button>
+      </div>
+      <form action="/report-container">
+        <div class="modal fade" id="detail-container" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-scrollable" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">DETAIL</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div>
+                    <div class="label">CONTAINER NUMBER:</div>
+                    <input type="text" class="form-data" style="width: 100%;" name="search">
+                  </div>
+                  <div class="label">PICKED DATE</div>
+                  <div style="display: flex; gap:10px">
+                      <a href="#">
+                          <input type="date" name="fromDate"/>
+                      </a>
+                      <a href="#">
+                          <input type="date" name="toDate"/>
+                      </a>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+        </div>
+      </form>
+    </div>
+  </nav>
+
+  <!-- option xuat bao cao export-->
+  <div class="modal fade" id="rangeTimeExport" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">RANGE TIME EXPORT</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div style="display: flex; gap:10px">
+                <input checked type="radio" id="typeFill-CDFdate-export" name="typeFill-export" value="CDFdate" onclick="selectTypeFillter(this,'rangeTimeExport')">
+                <label for="typeFill-CDFdate-export" class="label" style="font-weight: bolder;">CDF date:</label>
+            </div>
+            <div style="display: flex; gap:10px">
+                <a href="#">
+                    <input type="date" id="fromDateCDF"/>
+                </a>
+                <a href="#">
+                    <input type="date" id="toDateCDF"/>
+                </a>
+            </div>
+            <div style="display: flex; gap:10px; margin-top: 15px;">
+              <input type="radio" id="typeFill-dropping-export" name="typeFill-export" value="droppingDate" onclick="selectTypeFillter(this,'rangeTimeExport')">
+              <label for="typeFill-dropping-export" class="label" style="font-weight: bolder;">DROPPING DATE:</label>
+            </div>
+            <div style="display: flex; gap:10px">
+                <a href="#">
+                    <input type="date" id="fromDateDropping"/>
+                </a>
+                <a href="#">
+                    <input type="date" id="toDateDropping"/>
+                </a>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="export-report-cdf-date-btn" onclick="exportExport()" class="btn btn-danger btn-lg success">EXPORT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- option xuat bao cao import-->
+  <div class="modal fade" id="rangeTimeImportReport" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">RANGE TIME IMPORT</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div style="display: flex; gap:10px">
+              <input checked type="radio" id="typeFill-CDFdate-import" name="typeFill-import" value="CDFdate" onclick="selectTypeFillter(this,'rangeTimeImport')">
+              <label for="typeFill-CDFdate-import" class="label" style="font-weight: bolder;">CDF date:</label>
+            </div>
+            <div style="display: flex; gap:10px">
+                <a href="#">
+                    <input type="date" id="fromDateImport"/>
+                </a>
+                <a href="#">
+                    <input type="date" id="toDateImport"/>
+                </a>
+            </div>
+            <div style="display: flex; gap:10px; margin-top: 15px;">
+              <input type="radio" id="typeFill-dropping-import" name="typeFill-import" value="droppingDate" onclick="selectTypeFillter(this,'rangeTimeImport')">
+              <label for="typeFill-dropping-import" class="label" style="font-weight: bolder;">DROPPING DATE:</label>
+            </div>
+            <div style="display: flex; gap:10px">
+                <a href="#">
+                    <input type="date" id="fromDateDroppingImport"/>
+                </a>
+                <a href="#">
+                    <input type="date" id="toDateDroppingImport"/>
+                </a>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="exportImport(this)" class="btn btn-danger btn-lg success">
+              <div style="display: flex">
+                <div style="display: none; scale: 0.5;" class="spinner-border text-primary" id="loading-report-import" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <div id="text-report-import">EXPORT</div>
+              </div>
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- option xuat bao saving truck -->
+  <div class="modal fade" id="rangeTimeSaving" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">RANGE TIME SAVING TRUCK EXPORT</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; gap:10px">
+                    <input checked type="radio" id="typeFill-CDFdate" name="typeFill-saving" value="CDFdate" onclick="selectTypeFillter(this,'rangeTimeSaving')">
+                    <label for="typeFill-CDFdate" class="label" style="font-weight: bolder;">CDF date:</label>
+                </div>
+                <div style="display: flex; gap:10px">
+                    <a href="#">
+                        <input type="date" id="fromDateCDFSaving"/>
+                    </a>
+                    <a href="#">
+                        <input type="date" id="toDateCDFSaving"/>
+                    </a>
+                </div>
+                <div style="display: flex; gap:10px">
+                    <input type="radio" id="typeFill-ATAphubai" name="typeFill-saving" value="droppingDate" onclick="selectTypeFillter(this,'rangeTimeSaving')">
+                    <label for="typeFill-ATAphubai" class="label" style="font-weight: bolder; margin-top: 10px;">DROPPING DATE:</label>
+                </div>
+                <div style="display: flex; gap:10px">
+                    <a href="#">
+                        <input type="date" id="fromDateDroppingSaving"/>
+                    </a>
+                    <a href="#">
+                        <input type="date" id="toDateDroppingSaving"/>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-toggle="modal" onclick="exportSavingTruck(this)" class="btn btn-danger btn-lg success">
+                  <div style="display: flex">
+                    <div style="display: none; scale: 0.5;" class="spinner-border text-primary" id="loading-report-general" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <div id="text-report-general">EXPORT</div>
+                  </div>
+                </button>
+            </div>
+          </div>
+        </div>
+  </div>
+
+  <!-- option xuat bao tong -->
+  <div class="modal fade" id="rangeTimeGeneral" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">RANGE TIME GENERAL EXPORT</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; gap:10px">
+                    <input checked type="radio" id="typeFill-CDFdate" name="typeFill" value="CDFdate" onclick="selectTypeFillter(this,'rangeTimeGeneral')">
+                    <label for="typeFill-CDFdate" class="label" style="font-weight: bolder;">CDF date:</label>
+                </div>
+                <div style="display: flex; gap:10px">
+                    <a href="#">
+                        <input type="date" id="fromDateCDFGeneral"/>
+                    </a>
+                    <a href="#">
+                        <input type="date" id="toDateCDFGeneral" />
+                    </a>
+                </div>
+                <div style="display: flex; gap:10px">
+                    <input type="radio" id="typeFill-ATAphubai" name="typeFill" value="ATAphubai" onclick="selectTypeFillter(this,'rangeTimeGeneral')">
+                    <label for="typeFill-ATAphubai" class="label" style="font-weight: bolder; margin-top: 10px;">ATA phu bai:</label>
+                </div>
+                <div style="display: flex; gap:10px">
+                    <a href="#">
+                        <input type="date" id="fromDateATAGeneral"/>
+                    </a>
+                    <a href="#">
+                        <input type="date" id="toDateATAGeneral"/>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-toggle="modal" onclick="exportGeneral(this)" class="btn btn-danger btn-lg success">
+                  <div style="display: flex">
+                    <div style="display: none; scale: 0.5;" class="spinner-border text-primary" id="loading-report-general" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <div id="text-report-general">EXPORT</div>
+                  </div>
+                </button>
+            </div>
+          </div>
+        </div>
+  </div>
+
+  <script>
+    {
+
+      if(!localStorage.getItem("auth")){
+        localStorage.setItem("auth",JSON.stringify({admin: "<%=adminLog%>", unloading: "<%=unloadingLog%>", shipping: "<%=shipmentLog%>", exporter: "<%=exportLog%>", importer: "<%=importLog%>"}))
+      }else{
+          localStorage.setItem("auth",JSON.stringify({admin: "<%=adminLog%>", shipping: "<%=shipmentLog%>", unloading: "<%=unloadingLog%>", exporter: "<%=exportLog%>", importer: "<%=importLog%>"}))
+      }
+      let infoUser = JSON.parse(localStorage.getItem("user"));
+      let infoAuth = JSON.parse(localStorage.getItem("auth"));
+      let auth;
+      let arrAuth = ["admin"];
+      for(let i=0; i<arrAuth.length; i++){
+          if(infoAuth[arrAuth[i]]=="Y"){
+            auth = arrAuth[i];
+            break;
+          }
+        }
+      
+      $("#navbar-user #navbarDropdown").text(`HELLO, ${infoUser.userName}`);
+      // $("#direct-authization").attr("href",`${auth?`/${auth}`:"/"}`)
+      let exportReport; let importReport 
+      //export excel report
+      function exportExport(){
+            let radio = $("input[name='typeFill-export']:checked").val();
+            let fromDate; let toDate; let data;
+            let nameFile;
+            if(radio=="CDFdate"){
+                nameFile = "CDFdate-EXPORT";
+                fromDate = $("#fromDateCDF").val();
+                toDate =  $("#toDateCDF").val();
+                data = {rangeTime: getDate(fromDate,toDate), type: radio};
+            }else if(radio=="droppingDate"){
+                nameFile = "droppingDate-EXPORT";
+                fromDate = $("#fromDateDropping").val();
+                toDate =  $("#toDateDropping").val();
+                data = {rangeTime: {fromDate,toDate}, type: radio};
+            }
+            if(!fromDate || !toDate){
+              alert("Chưa đủ điều kiện xuất báo cáo");
+              return;
+            }
+            $("#export-report-cdf-date-btn").attr("disabled",true);
+            exportReport = $.ajax({
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                url: host + "/api/export-report-export",
+                type: "POST",
+                data: JSON.stringify(data)
+            })
+            .done((result)=>{
+                // console.log(result);
+                $("#export-report-cdf-date-btn").attr("disabled",false);
+                let title = {
+                    "HQ": "CDF NUMBER",
+                    "CDF_date":"CDF DATE",
+                    "cont_number":"SỐ CONTAINER",
+                    "MNF_number":"MNF",
+                    "SO":"SO",
+                    "cbm":"CBM",
+                    "carier": "CARRIER",
+                    "original_etd": "ETD",
+                    "cont_category":"CONT TYPE",
+                    "oil_price": "FUEL OIL",
+                    "rank_oil":"MỨC DẦU",
+                    "routing_code": "ROUTING CODE",
+                    "statuss": "CONT STATUS",
+                    "trucking_cost": "TRUCKING_COST",
+                    "trucking_cost_total": "TRUCKING COST"
+                };
+                let arrResult = [];
+               for(let i=0; i<result.length; i++){
+                    if(result[i]["statuss"]=='REUSED'){
+                        result[i]["trucking_cost_total"] = result[i]["trucking_cost_total"]/2;
+                    }
+                    let data = {};
+                    for(let keyResult of Object.keys(result[i])){
+                        for(let keyTitle of Object.keys(title)){
+                            if(keyTitle==keyResult){
+                                if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$/.test(result[i][keyResult])){
+                                    let time = result[i][keyResult];
+                                    let date = time.split("T")[0].split("-").reverse().join("-");
+                                    let hour = time.split("T")[1].split(".")[0];
+                                    result[i][keyResult] = `${date} ${hour}`;
+                                }
+                                if(/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/.test(result[i][keyResult])){
+                                    let date = result[i][keyResult].split(" ")[0].split("-").reverse().join("-");
+                                    let time = result[i][keyResult].split(" ")[1];
+                                    result[i][keyResult] = `${date} ${time}`;
+                                }
+                                data[title[keyResult]] = result[i][keyResult];
+                            }
+                        }
+                    }
+                    arrResult.push(data)
+                    for(let i=0; i<arrResult.length; i++){
+                      let routingCode2 = data["ROUTING CODE"].split("+")[1];
+                      if(routingCode2?.trim()==false){
+                        data["ROUTING CODE"] = data["ROUTING CODE"].split("+")[0];
+                      }
+                    }
+                    // data chua du lieu hang goc sau do split de tach dong cac row tuong ung
+                    if(data["MNF"] && data["CDF DATE"] && data["SO"] && data["CDF NUMBER"]){
+                      data["CDF DATE"] = data["CDF DATE"]?.split(";").join("/")
+                      data["SO"] = data["SO"].split(";").join("/");
+                      data["MNF"] = data["MNF"].split(";").join("/");
+                      data["CDF NUMBER"] = data["CDF NUMBER"]?.split(";").join("/");
+                      data["CBM"] = data["CBM"]?.split(";").join("/");
+                    }
+                    arrResult.sort((a,b)=>{
+                      let c = a["CDF DATE"].split(" ")[0].split("-").reverse().join("-")+" "+a["CDF DATE"].split(" ")[1];
+                      let d = b["CDF DATE"].split(" ")[0].split("-").reverse().join("-")+" "+b["CDF DATE"].split(" ")[1];
+                      return new Date(d).getTime()-new Date(c).getTime();
+                    })
+               }
+                if(arrResult.length > 0){
+                   exportWorksheet(eval(arrResult), nameFile);
+                }else{
+                    alert("Không có dữ liệu nào được hiển thị");
+                }
+            })
+            .fail((err)=>{
+                console.log(err);
+                $("#export-report-cdf-date-btn").attr("disabled",false);
+            })
+        }
+      //import excel export
+      function exportImport(btn){
+        let radio = $("input[name='typeFill-import']:checked").val();
+        
+        let fromDate;let toDate;let data;
+        let nameFile;
+        if(radio=="CDFdate"){
+          nameFile = "CDFdate-IMPORT";
+          fromDate = $("#fromDateImport").val();
+          toDate =  $("#toDateImport").val();
+          data = {rangeTime: getDate(fromDate,toDate), type: radio, rangeTimePB:{fromDate,toDate}};
+        }else if(radio=="droppingDate"){
+          nameFile = "CDFdate-IMPORT";
+          fromDate = $("#fromDateDroppingImport").val();
+          toDate =  $("#toDateDroppingImport").val();
+          data = {rangeTime: {fromDate,toDate}, type: radio, rangeTimePB:{fromDate,toDate}};
+        }
+        if(!fromDate || !toDate){
+            alert("Chưa đủ điều kiện xuất báo cáo");
+            return;
+        }
+        $("#loading-report-import").css("display","block");
+        $(btn).attr("disabled",true);
+        importReport = $.ajax({
+          headers: {
+              'Content-Type':'application/json'
+          },
+          url: host + "/api/export-report-import",
+          type: "POST",
+          data: JSON.stringify(data)
+        })
+        .done(result=>{
+          $("#loading-report-import").css("display","none");
+          $(btn).attr("disabled",false);
+          let arrCheckReused = result["arrCheckResued"];
+          let arrCont = result["arrCont"];
+          let arrImport = result["arrImport"];
+          let arrContOneWay = result["arrContOneWay"];
+          let arrAfterSameImport = [];
+          let arrAfterCheckResued = [];
+          let arrAfterSameContOneWay = [];
+          //loc du lieu trung
+          for(let i=0; i<arrImport.length; i++){
+            if(i==0){
+              arrAfterSameImport.push(arrImport[0]);
+            }else{
+              for(let j=0; j<arrAfterSameImport.length; j++){
+                if(arrImport[i]["idSystem"] == arrAfterSameImport[j]["idSystem"]){
+                  break;
+                }else if(j==arrAfterSameImport.length-1){
+                  arrAfterSameImport.push(arrImport[i]);
+                }
+              }
+            }
+          }
+          arrImport = arrAfterSameImport;
+          //loc du lieu o cont trung oneway
+          for(let i=0; i<arrContOneWay.length; i++){
+            if(i==0){
+              arrAfterSameContOneWay.push(arrContOneWay[0]);
+            }else{
+              for(let j=0; j<arrAfterSameContOneWay.length; j++){
+                if(arrContOneWay[i]["idSystem"] == arrAfterSameContOneWay[j]["idSystem"]){
+                  break;
+                }else if(j==arrAfterSameContOneWay.length-1){
+                  arrAfterSameContOneWay.push(arrContOneWay[i]);
+                }
+              }
+            }
+          }
+          arrContOneWay=arrAfterSameContOneWay;
+          //loc du lieu importer da reused
+          for(let i=0; i<arrImport.length; i++){
+              if(i==0){
+                arrAfterCheckResued.push({});
+              }else{
+              for(let j=0; j<arrCheckReused.length; j++){
+                if(arrImport[i]["idSystem"] == arrCheckReused[j]["idImporter"]){
+                  break;
+                }else if(j==arrCheckReused.length-1){
+                  arrAfterCheckResued.push(arrImport[i]);
+                }
+              }
+            }
+          }
+          arrAfterCheckResued.splice(0,1);
+          arrImport = arrCheckReused.length>0?arrAfterCheckResued:arrAfterSameImport;
+          //ket qua de xuat excel
+          let arrFinal = arrCont.concat(arrImport).concat(arrContOneWay);
+          result = arrFinal;
+          let title = {
+              "cont_number":"CONT",
+              "vendor":"VENDOR",
+              "ATA_phu_bai":"ATA FACTORY",
+              "unload_complete_day":"ACTUAL COMPLETE UNLOADING TIME",
+              "oil_price":"FUEL PRICE",
+              "rank_oil":"MỨC DẦU",
+              "routing_code":"TUYẾN",
+              "trucking_cost_total": "TRUCKING FEE",
+              "carrier":"CARRIER",
+              "statuss":"STATUS"
+          };
+          let arrResult = [];
+               for(let i=0; i<result.length; i++){
+                  if(result[i]["statuss"]=='REUSED'){
+                      result[i]["trucking_cost_total"] = result[i]["trucking_cost_total"]/2;
+                  }
+                  let data = {};
+                  for(let keyResult of Object.keys(result[i])){
+                      for(let keyTitle of Object.keys(title)){
+                          if(keyTitle==keyResult){
+                              if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$/.test(result[i][keyResult])){
+                                  let time = result[i][keyResult];
+                                  let date = time.split("T")[0].split("-").reverse().join("-");
+                                  let hour = time.split("T")[1].split(".")[0];
+                                  result[i][keyResult] = `${date} ${hour}`;
+                              }
+                              if(/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/.test(result[i][keyResult])){
+                                  let date = result[i][keyResult].split(" ")[0].split("-").reverse().join("-");
+                                  let time = result[i][keyResult].split(" ")[1];
+                                  result[i][keyResult] = `${date} ${time}`;
+                              }
+                              data[title[keyResult]] = result[i][keyResult];
+                          }
+                      }
+                  }
+                  arrResult.push(data);
+                  let routingCode2 = data["TUYẾN"].split("+")[1];
+                  if(routingCode2?.trim()==false){
+                    data["TUYẾN"] = data["TUYẾN"].split("+")[0];
+                  }
+              }
+              if(arrResult.length>0){
+                exportWorksheet(eval(arrResult), nameFile);
+              }else{
+                alert("Không có dữ liệu để hiển thị");
+              }
+        })
+        .fail((err)=>{
+          $("#loading-report-import").css("display","none");
+          $(btn).attr("disabled",false);
+          alert("Xuất báo cáo thất bại !")
+        })
+      }
+      //ham de loc bao cao theo CDF date hoac ATA phu bai
+      function selectTypeFillter(input, idModal){
+          let value = $(input).val();
+          if(idModal=='rangeTimeGeneral'){
+            if(value=="ATAphubai"){
+                $("#fromDateCDFGeneral").attr("disabled",true);
+                $("#toDateCDFGeneral").attr("disabled",true);
+                $("#fromDateATAGeneral").attr("disabled",false);
+                $("#toDateATAGeneral").attr("disabled",false);
+            }
+            if(value=="CDFdate"){
+                $("#fromDateCDFGeneral").attr("disabled",false);
+                $("#toDateCDFGeneral").attr("disabled",false);
+                $("#fromDateATAGeneral").attr("disabled",true);
+                $("#toDateATAGeneral").attr("disabled",true);
+            }
+          }else if(idModal == 'rangeTimeExport'){
+            if(value=="CDFdate"){
+                $("#fromDateCDF").attr("disabled",false);
+                $("#toDateCDF").attr("disabled",false);
+                $("#fromDateDropping").attr("disabled",true);
+                $("#toDateDropping").attr("disabled",true);
+            }else if(value=="droppingDate"){
+                $("#fromDateCDF").attr("disabled",true);
+                $("#toDateCDF").attr("disabled",true);
+                $("#fromDateDropping").attr("disabled",false);
+                $("#toDateDropping").attr("disabled",false);
+            }
+          }else if(idModal == 'rangeTimeImport'){
+            if(value=="CDFdate"){
+                $("#fromDateImport").attr("disabled",false);
+                $("#toDateImport").attr("disabled",false);
+                $("#fromDateDroppingImport").attr("disabled",true);
+                $("#toDateDroppingImport").attr("disabled",true);
+            }else if(value=="droppingDate"){
+                $("#fromDateImport").attr("disabled",true);
+                $("#toDateImport").attr("disabled",true);
+                $("#fromDateDroppingImport").attr("disabled",false);
+                $("#toDateDroppingImport").attr("disabled",false);
+            }
+          }else if(idModal == 'rangeTimeSaving'){
+            if(value=="CDFdate"){
+                $("#fromDateCDFSaving").attr("disabled",false);
+                $("#toDateCDFSaving").attr("disabled",false);
+                $("#fromDateDroppingSaving").attr("disabled",true);
+                $("#toDateDroppingSaving").attr("disabled",true);
+            }else if(value=="droppingDate"){
+                $("#fromDateCDFSaving").attr("disabled",true);
+                $("#toDateCDFSaving").attr("disabled",true);
+                $("#fromDateDroppingSaving").attr("disabled",false);
+                $("#toDateDroppingSaving").attr("disabled",false);
+            }
+          }
+      }
+      //export excel report
+      function exportGeneral(btn){
+            let radio = $("input[name='typeFill']:checked").val();
+            let fromDate; let toDate; let data;
+            let nameFile = "GENERAL";
+            if(radio=="CDFdate"){
+                nameFile = "CDFdate-GENERAL";
+                fromDate = $("#fromDateCDFGeneral").val();
+                toDate =  $("#toDateCDFGeneral").val();
+                data = {rangeTime: getDate(fromDate,toDate), type: radio};
+            }else if(radio=="ATAphubai"){
+                nameFile = "ATAphubai-GENERAL";
+                fromDate = $("#fromDateATAGeneral").val();
+                toDate =  $("#toDateATAGeneral").val();
+                data = {rangeTime: {fromDate,toDate}, type: radio};
+            }
+            if(!fromDate || !toDate){
+                alert("Chưa đủ điều kiện xuất báo cáo");
+                return;
+            }
+            $("#loading-report-general").css("display","block");
+            $(btn).attr("disabled",true);
+            $.ajax({
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                url: host + "/api/export-report-general",
+                type: "POST",
+                data: JSON.stringify(data)
+            })
+            .done((result)=>{
+                let arr = [result[0]];
+                for(let i=0; i<result.length; i++){
+                  for(let j=0; j<arr.length; j++){
+                    if(result[i]["idSystem"] == arr[j]["idSystem"]){
+                      break;
+                    }else if(j == arr.length-1){
+                      arr.push(result[i]);
+                    }
+                  }
+                }
+                result = arr;
+                console.log("RESULT",result)
+                let title = {
+                    "cont_number":"SỐ CONTAINER",
+                    "seal":"SỐ SEAL",
+                    "carrier": "CARRIER",
+                    "picked_date": "NGÀY PICK CONTAINER",
+                    "booking_no_update": "STT BOOKING",
+                    "pre_booking": "PRE-BOOKING",
+                    "cy_cut_of": "CY CUT OFF",
+                    "ammentdent_bill_cut_off": "AMMENTDENT BILL CUT OFF",
+                    "original_etd": "ETD",
+                    "new_etd": "NEW ETD",
+                    "service":"SERVICE",
+                    "ETA":"ETA",
+                    "new_eta":"NEW_ETA",
+                    "vessel": "VESSEL",
+                    "vendor":"VENDOR",
+                    "ATD_vendor": "ATD VENDOR",
+                    "ATA_phu_bai":"ATA PHÚ BÀI",
+                    "ata_pb":"ATA PHÚ BÀI",
+                    "stating_date":"STARTING DATE",
+                    "request_unload_date": "REQUEST UNLOAD DATE",
+                    "unload_location": "UNLOAD LOCATION",
+                    "unload_complete_day":"UNLOAD COMPLETE DAY",
+                    "saving_truck": "SAVING TRUCK",
+                    "reason_unload": "LÝ DO REQUEST CONT TRỄ",
+                    "note_unload":"LÝ DO UNLOAD TRỄ",
+                    "DC":"DC",
+                    "estimate_loading_week":"ESTIMATE LOADING WEEK",
+                    "loading_date":"NGÀY GIỜ KÉO CONT",
+                    "cut_off_loading_date": "CUT OFF LOADING DATE",
+                    "ship_date":"NGÀY SHIP",
+                    "manufacture":"MANUFACTURE",
+                    "MNF_number":"SỐ MNF",
+                    "reason_export_saving_truck": "REASON EXPORT SAVING TRUCK",
+                    "doc_pic": "CDF PIC",
+                    "finish_export_docx": "FINISH EXPORT DOCS",
+                    "CDF_date":"NGÀY CDF",
+                    "export_saving_truck_day": "EXPORT SAVING TRUCK DAY",
+                    "SO":"INVOICE/SO",
+                    "HQ": "SỐ HẢI QUAN",
+                    "dropping_date": "NGÀY HẠ CONT",
+                    "bill":"BILL",
+                    // "direct_carrier":"CARRIER",
+                    "picked_at_port": "NƠI HẠ CONT",
+                    "vendor_cargo_ready_date": "VENDOR CARGO READY DATE",
+                    "ATA_vn_port": "ATA VN PORT",
+                    "booking_date":"BOOKING DATE",
+                    "routing_code_1": "ROUTING CODE",
+                };
+                let arrResult = [];
+                for(let i=0; i<result.length; i++){
+                    if(result[i]["statuss"]=='REUSED'){
+                        result[i]["trucking_cost_total"] = result[i]["trucking_cost_total"]/2;
+                    }
+                    let data = {};
+                    for(let keyResult of Object.keys(result[i])){
+                        for(let keyTitle of Object.keys(title)){
+                            if(keyTitle==keyResult){
+                                if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$/.test(result[i][keyResult])){
+                                    let time = result[i][keyResult];
+                                    let date = time.split("T")[0].split("-").reverse().join("-");
+                                    let hour = time.split("T")[1].split(".")[0];
+                                    result[i][keyResult] = `${date} ${hour}`;
+                                }
+                                if(/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/.test(result[i][keyResult])){
+                                    let date = result[i][keyResult].split(" ")[0].split("-").reverse().join("-");
+                                    let time = result[i][keyResult].split(" ")[1];
+                                    result[i][keyResult] = `${date} ${time}`;
+                                }
+                                data[title[keyResult]] = result[i][keyResult];
+                            }
+                        }
+                    }
+                    arrResult.push(data);
+                    let routingCode2 = result[i]["routing_code_2"];
+                    if(routingCode2){
+                      data["ROUTING CODE"] = `${data["ROUTING CODE"]} + ${result[i]["routing_code_2"]}`;
+                    }
+                    // data chua du lieu hang goc sau do split de tach dong cac row tuong ung
+                    if(data["NGÀY CDF"] && data["MANUFACTURE"] && data["INVOICE/SO"] && data["DC"] && data["SỐ HẢI QUAN"]){
+                        let arrCDF = data["NGÀY CDF"].split(";");
+                        let manufacture = data["MANUFACTURE"].split(";");
+                        let invoice = data["INVOICE/SO"].split(";");
+                        let DC = data["DC"].split(";");
+                        let mnfNumber = data["SỐ MNF"].split(";");
+                        let hqNumber = data["SỐ HẢI QUAN"].split(";");
+                        let cdfPic = data["CDF PIC"].split(";");
+                        if(arrCDF.length > 0){
+                            for(let j=0; j<arrCDF.length; j++){
+                                let date = arrCDF[j].split(" ")[0].split("-").reverse().join("-");
+                                let time = arrCDF[j].split(" ")[1];
+                                arrCDF[j] = `${date} ${time}`;
+                                let row = {};
+                                let except = ["NGÀY CDF","MANUFACTURE","INVOICE/SO","DC","SỐ MNF","SỐ HẢI QUAN", "CDF PIC"];
+                                for(let key of Object.keys(data)){
+                                  for(let i=0; i<except.length; i++){
+                                    if(key!=except[i]){
+                                      row[key] = data[key];
+                                    }
+                                  }
+                                }
+                                if(j==0){
+                                    data["CDF PIC"] = cdfPic[0];
+                                    data["NGÀY CDF"] = arrCDF[0];
+                                    data["MANUFACTURE"] = manufacture[0];
+                                    data["INVOICE/SO"] = invoice[0];
+                                    data["DC"] = DC[0];
+                                    data["SỐ MNF"] = mnfNumber[0];
+                                    data["SỐ HẢI QUAN"] = hqNumber[0];
+                                }else{
+                                    row["CDF PIC"] = cdfPic[j];
+                                    row["NGÀY CDF"] = arrCDF[j];
+                                    row["MANUFACTURE"] = manufacture[j];
+                                    row["INVOICE/SO"] = invoice[j];
+                                    row["DC"] = DC[j];
+                                    row["SỐ MNF"] = mnfNumber[j];
+                                    row["SỐ HẢI QUAN"] = hqNumber[j];
+                                    arrResult.push(row);
+                                }
+                            }
+                        }
+                    }
+                  }
+                
+                if(radio=="CDFdate"){
+                  arrResult.sort((a,b)=>{
+                    if(a["NGÀY CDF"] && b["NGÀY CDF"]){
+                      let c = a["NGÀY CDF"].split(" ")[0].split("-").reverse().join("-")+" "+a["NGÀY CDF"].split(" ")[1];
+                      let d = b["NGÀY CDF"].split(" ")[0].split("-").reverse().join("-")+" "+b["NGÀY CDF"].split(" ")[1];
+                      return new Date(d).getTime()-new Date(c).getTime();
+                    }else{
+                      return -1
+                    }
+                  })
+                }else if(radio=="ATAphubai"){
+                  arrResult.sort((a,b)=>{
+                      let c = a["ATA PHÚ BÀI"]?.split(" ")[0].split("-").reverse().join("-")+" "+a["ATA PHÚ BÀI"]?.split(" ")[1];
+                      let d = b["ATA PHÚ BÀI"]?.split(" ")[0].split("-").reverse().join("-")+" "+b["ATA PHÚ BÀI"]?.split(" ")[1];
+                      return new Date(d).getTime()-new Date(c).getTime();
+                  })
+                }else{
+                  arrResult.sort((a,b)=>{
+                    if(a["NGÀY CDF"] && b["NGÀY CDF"]){
+                      let c = a["NGÀY CDF"].split(" ")[0].split("-").reverse().join("-")+" "+a["NGÀY CDF"].split(" ")[1];
+                      let d = b["NGÀY CDF"].split(" ")[0].split("-").reverse().join("-")+" "+b["NGÀY CDF"].split(" ")[1];
+                      return new Date(d).getTime()-new Date(c).getTime();
+                    }else{
+                      return -1
+                    }
+                  })
+                }
+                console.log(arrResult)
+                if(arrResult.length > 0){
+                   exportWorksheet(eval(arrResult), nameFile);
+                }else{
+                    alert("Không có dữ liệu nào được hiển thị")
+                }
+                $("#loading-report-general").css("display","none");
+                $(btn).attr("disabled",false);
+            })
+            .fail((err)=>{
+                console.log(err);
+                $("#loading-report-general").css("display","none");
+                $(btn).attr("disabled",false);
+            })
+        }
+      //export excel saving truck
+      function exportSavingTruck(btn){
+          let radio = $("input[name='typeFill-saving']:checked").val();
+          let fromDate; let toDate; let data;
+          let nameFile;
+          if(radio=="CDFdate"){
+              nameFile = "CDFdate-SAVING-TRUCK";
+              fromDate = $("#fromDateCDFSaving").val();
+              toDate =  $("#toDateCDFSaving").val();
+              data = {rangeTime: getDate(fromDate,toDate), type: radio};
+          }else if(radio=="droppingDate"){
+              nameFile = "droppingDate-SAVING-TRUCK";
+              fromDate = $("#fromDateDroppingSaving").val();
+              toDate =  $("#toDateDroppingSaving").val();
+              data = {rangeTime: {fromDate,toDate}, type: radio};
+          }
+          if(!fromDate || !toDate){
+            alert("Chưa đủ điều kiện xuất báo cáo");
+            return;
+          }
+          $(btn).attr("disabled",true);
+          $.ajax({
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                url: host + "/api/export-report-saving",
+                type: "POST",
+                data: JSON.stringify(data)
+          })
+          .done((result)=>{
+            $(btn).attr("disabled",false);
+            console.log(result);
+            let arrResult = [];
+            let title = {
+              "cont_number":"CONTAINER",
+              "vendor": "VENDOR",
+              "ATA_phu_bai": "ATA PB",
+              "saving_truck":"SAVING TRUCK COST",
+              "starting_date": "START DATE",
+              "unload_complete_day": "UNLOADED COMLETE DATE",
+              "CDF_date": "CDF DATE",
+              "import_cost":"PHÍ LƯU NHẬP",
+              "export_cost":"PHÍ LƯU XUẤT",
+              "export_saving_truck_day":"NGÀY LƯU XUẤT",
+              "saving_truck": "NGÀY LƯU NHẬP",
+              "reason_export_saving_truck":"LÝ DO LƯU XUẤT",
+              "reason_unload":"lÝ DO LƯU NHẬP"
+            };
+            for(let i=0; i<result.length; i++){
+                  let data = {};
+                  let rawCdfDate = result[i]["CDF_date"];
+                  let rawUnloadingDate = result[i]["unload_complete_day"];
+                  let rawStartDate = result[i]["starting_date"];
+                  let rawAtaPb = result[i]["ATA_phu_bai"];
+                  for(let keyResult of Object.keys(result[i])){
+                      for(let keyTitle of Object.keys(title)){
+                          if(keyTitle==keyResult){
+                            // if(keyResult=='saving_truck'){
+                            //   result[i][keyResult] = +result[i][keyResult]*3000000;
+                            // }
+                              if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$/.test(result[i][keyResult])){
+                                  let time = result[i][keyResult];
+                                  let date = time.split("T")[0].split("-").reverse().join("-");
+                                  let hour = time.split("T")[1].split(".")[0];
+                                  result[i][keyResult] = `${date} ${hour}`;
+                              }
+                              if(/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/.test(result[i][keyResult])){
+                                  let date = result[i][keyResult].split(" ")[0].split("-").reverse().join("-");
+                                  let time = result[i][keyResult].split(" ")[1];
+                                  result[i][keyResult] = `${date} ${time}`;
+                              }
+                              data[title[keyResult]] = result[i][keyResult];
+                          }
+                      }
+                  }
+                  let arrFilterCdfDate = [];
+                  if(rawCdfDate){
+                    let arrCDFDate = rawCdfDate.split(";");
+                    for(let i=0; i<arrCDFDate.length; i++){
+                      if(arrCDFDate[i]){
+                        arrFilterCdfDate.push(arrCDFDate[i]);
+                      }
+                    }
+                  }
+                  arrFilterCdfDate.sort((a,b)=>{
+                    return new Date(b) - new Date(a);
+                  });
+                  let cdfDate = arrFilterCdfDate.length > 0?arrFilterCdfDate[0]:rawCdfDate;
+                  let unloadingDate = rawUnloadingDate;
+                  let startDate = rawStartDate;
+                  let ataPb = data["ATA PB"];
+
+                  let exportSavingDay; let importSavingDay;
+                  if(cdfDate && unloadingDate){
+                    exportSavingDay = (Math.abs(new Date(new Date(cdfDate).toDateString()) - new Date(new Date(unloadingDate).toDateString()))/(86400*1000))-1;
+                    data["NGÀY LƯU XUẤT"] = exportSavingDay;
+                  }
+                  if(unloadingDate && startDate){
+                    importSavingDay = (Math.abs(new Date(new Date(unloadingDate).toDateString()) - new Date(new Date(startDate).toDateString()))/(86400*1000));
+                    data["NGÀY LƯU NHẬP"] = importSavingDay
+                  }
+                  
+                  if(unloadingDate && ataPb && !startDate){
+                    ataPb = ataPb.split(" ")[0].split("-").reverse().join("-");
+                    let dateOfUnload = unloadingDate.split("T")[0];
+                    let hourAta = new Date(ataPb.split(" ")[1]).getHours();
+                    let dates = ataPb.split(" ")[0];
+                    if(hourAta>=12){
+                      let result =  convertISOTime(new Date(new Date(dates).setDate(new Date(dates) + 1)).toISOString());
+                      let date = result.split(" ")[0].split("-").reverse().join("-");
+                      data["START DATE"] = `${date} 00:00:00`;
+                      data["NGÀY LƯU NHẬP"] = Math.abs((new Date(date) - new Date(dateOfUnload)))/(86400*1000);
+                    }else{
+                      data["START DATE"]  = data["ATA PB"];
+                      let dateATA = data["ATA PB"].split(" ")[0].split("-").reverse().join("-");
+                      let unload = data["UNLOADED COMLETE DATE"].split(" ")[0].split("-").reverse().join("-");
+                      data["NGÀY LƯU NHẬP"] = Math.abs((new Date(unload) - new Date(dateATA)))/(86400*1000);
+                    }
+                  }
+    
+                  data["PHÍ LƯU NHẬP"] = 300000*(+data["NGÀY LƯU NHẬP"] || 0);
+                  data["PHÍ LƯU XUẤT"] = 300000*(exportSavingDay||0);
+                  data["TỔNG LƯU"] = (exportSavingDay||0) + (+data["NGÀY LƯU NHẬP"]||0);
+                  
+                  arrResult.push(data);
+              }
+              if(arrResult.length>0){
+                exportWorksheet(eval(arrResult), nameFile);
+              }else{
+                alert("Không có dữ liệu để hiển thị");
+              }
+          })
+          .fail(()=>{
+            $(btn).attr("disabled",false);
+          })
+        
+      }
+        window.onbeforeunload = ()=>{
+        if(exportReport) exportReport.abort();
+        if(importReport) importReport.abort();
+      }
+    }
+  </script>

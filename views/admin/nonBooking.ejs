@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("../utils/header.ejs") %>
+    <title>Document</title>
+</head>
+<style>
+    body{
+        overflow: hidden;
+    }
+    #table-info{
+        width: 100vw;
+        height: 85vh;
+        overflow: auto;
+    }
+    
+    th:not:first-child, td{
+        min-width: 25em;
+        font-size: smaller;
+    }
+    .checkbox{
+        min-width: 1em;
+    }
+    input[type="checkbox"]{
+        cursor: pointer;
+        width: 1.5em;
+        height: 1.5em;
+    }
+    .label{
+        font-weight: bolder;
+        font-size: x-small;
+    }
+    #table-info th, #table-info td{
+        padding: 0 !important;
+    }
+    #table-create tbody td{
+       padding: 0.6em;
+    }
+    #table-update tbody td{
+        padding: 0.6em;
+    }
+    .error-message{
+        color: red;
+    }
+    select{
+        width: 12em;
+        height: 2em;
+    }
+
+</style>
+<body>
+    <%- include("../layout/navbar.ejs")%>
+    <div id="table-info">
+        <table class="table table-bordered table-hover" id="data-table">
+            <thead class="thead-dark table-hover" style="position: block;">
+                <th id="thead-stt" style="min-width: 3em;">STT</th>
+                <th id="thead-cont-category">CONT TYPE</th>
+                <th id="thead-container-number">CONTAINER NUMBER</th>
+                <th id="thead-vendor">VENDOR</th>
+                <th id="thead-direct-carrier">DIRECT CARRIER</th>
+                <th id="thead-picked-at-port">PICKED AT PORT</th>
+                <th id="thead-picked-at-port">PICKED AT PORT DAY</th>
+                <th id="thead-oil-price">OIL PRICE</th>
+                <th id="thead-ata-vn-port">ATA VN PORT</th>
+                <th id="thead-ata-pb">ATA PHU BAI</th>
+                <th id="thead-unloading-location">UNLOADING LOCATION</th>
+                <th id="thead-unloading-date">UNLOADING DATE</th>
+                <th id="thead-return-at-port-date">RETURN PORT DATE</th>
+                <th id="thead-status" style="min-width: 3em;">STATUS</th>
+            </thead>
+            <tbody>
+                <%var i=0%>
+                <% for(let data of listData){ %>
+                    <tr class="tr stt-<%=++i%>" id="<%=data['idSystem']%>" ondblclick="updateDataRow(this)">
+                        <td class="tbody-stt" style="min-width: 3em;"><%=i%></td>
+
+                        <td class="td-category-cont">
+                            <input class="input-category-cont" type="text" placeholder="CATEGORY CONT" value="<%=data["cont_category"]%>">
+                            <div class="error-message error-input-category-cont"></div>
+                        </td>
+
+                        <td class="td-container-number">
+                            <input value="<%=data["cont_number"]%>" class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                            <div class="error-message error-input-container-number"></div>
+                        </td>
+
+                        <td class="td-vendor">
+                            <input value="<%=data["vendor"]%>" class="input-vendor" placeholder="VENDOR" type="text">
+                            <div class="error-message error-input-vendor"></div>
+                        </td>
+                        
+                        <td class="td-direct-carrier">
+                            <input class="input-direct-carrier" value="<%=data["direct_carrier"]%>" placeholder="DIRECT CARRIER" type="text">
+                            <select class="select-carrier"></select>
+                            <div class="error-message error-input-direct-carrier"></div>
+                        </td>
+
+                        <td class="td-picked-at-port">
+                            <input value="<%=data["picked_at_port"]%>" class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                            <select class="select-picked-at-port"></select>
+                            <div class="error-message error-input-picked-at-port"></div>
+                        </td>
+
+                        <td class="td-picked-date">
+                            <input value="<%=data["picked_date"]%>" class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED DATE" type="text">
+                            <div class="error-message error-input-picked-date datetime"></div>
+                        </td>
+
+                        <td class="td-oil-price">
+                            <input value="<%=data["oil_price"]%>" class="input-oil-price" placeholder="OIL PRICE" type="number">
+                            <div class="error-message error-input-oil-price"></div>
+                        </td>
+
+                        <td class="td-ata-vn-port">
+                            <input value="<%=data["ata_vn_port"]%>" class="input-ata-vn-port datetime" onmouseenter="addDateTime(this)" placeholder="ATA VN PORT" type="text">
+                            <div class="error-message error-input-ata-vn-port datetime"></div>
+                        </td>
+
+                        <td class="td-ata-pb">
+                            <input value="<%=data["ata_pb"]%>" class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PB" type="text">
+                            <div class="error-message error-input-ata-pb datetime"></div>
+                        </td>
+
+                        <td class="td-unload-location">
+                            <input class="input-unload-location" value="<%=data["unload_location"]%>" placeholder="UNLOADING LOCATION" type="text">
+                            <select class="select-unload-location"></select>
+                            <div class="error-message error-input-unload-location"></div>
+                        </td>
+
+                        <td class="td-unload-date">
+                            <input class="input-unload-date datetime" value="<%=data["unload_date"]%>" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                            <div class="error-message error-input-unload-date datetime"></div>
+                        </td>
+
+                        <td class="td-return-at-port-date">
+                            <input class="input-return-at-port-date datetime" value="<%=data["return_at_port_day"]%>" onmouseenter="addDateTime(this)" placeholder="RETURN AT PORT DATE" type="text">
+                            <div class="error-message error-input-unload-date datetime"></div>
+                        </td>
+
+                        <td class="td-status" style="min-width: 3em;" data-stt="<%=i%>"><%=data["status"]%></td>
+                    </tr>
+                <%}%>
+            </tbody>
+        </table>
+    </div>
+    <!-- modal loc  -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">FILTER</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <thead>
+                        <th>STATUS:</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="form-control" id="status-option">
+                                    <option value="">NON STATUS</option>
+                                    <option value="REUSED">REUSED</option>
+                                    <option value="ONEWAY">ONEWAY</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                    </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="fillData()">FILL</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal update row -->
+    <div class="modal fade" id="updateRow" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">UPDATE ROW</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <table id="table-update">
+                    <tbody>
+                        <tr>
+                            <td class="td-category-cont">
+                                <label class="label">CONT TYPE</label>
+                                <input class="input-category-cont" type="text" placeholder="CONT CATEGORY">
+                                <div class="error-message error-input-category-cont"></div>
+                            </td>
+        
+                            <td class="td-container-number">
+                                <label class="label">CONTAINER NUMBER:</label>
+                                <input class="input-container-number" type="text" placeholder="CONTAINER NUMBER">
+                                <div class="error-message error-input-container-number"></div>
+                            </td>
+                            
+                            <td class="td-vendor">
+                                <label class="label">VENDOR:</label>
+                                <input class="input-vendor" type="text" placeholder="VENDOR">
+                                <div class="error-message error-input-vendor"></div>
+                            </td>
+                            
+                            <td class="td-direct-carrier">
+                                <label class="label">DIRECT CARRIER:</label>
+                                <input class="input-direct-carrier" placeholder="DIRECT CARRIER" type="text">
+                                <select class="select-carrier"></select>
+                                <div class="error-message error-input-direct-carrier"></div>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="td-picked-at-port">
+                                <label class="label">PICKED AT PORT:</label>
+                                <input class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                                <select class="select-picked-at-port"></select>
+                                <div class="error-message error-input-picked-at-port"></div>
+                            </td>
+    
+                            <td class="td-picked-at-port-day">
+                                <label class="label">PICKED AT PORT DAY:</label>
+                                <input class="input-picked-date datetime" onmouseenter="addDateTime(this)" placeholder="PICKED AT PORT DAY" type="text">
+                                <div class="error-message error-input-picked-date datetime"></div>
+                            </td>
+
+                            <td class="td-oil-price">
+                                <label class="label">OIL PRICE:</label>
+                                <input class="input-oil-price" placeholder="" type="text">
+                                <div class="error-message error-input-oil-price"></div>
+                            </td>
+    
+                            <td class="td-ata-vn-port">
+                                <label class="label">ATA VN PORT:</label>
+                                <input class="input-ata-vn-port datetime" onmouseenter="addDateTime(this)" placeholder="ATA VN PORT" type="text">
+                                <div class="error-message error-input-ata-vn-port datetime"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-ata-pb">
+                                <label class="label">ATA PHU BAI:</label>
+                                <input class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                                <div class="error-message error-input-ata-pb datetime"></div>
+                            </td>
+
+                            <td class="td-unload-location">
+                                <label class="label">UNLOADING LOCATION:</label>
+                                <input class="input-unload-location" placeholder="UNLOADING LOCATION" type="text">
+                                <select class="select-unload-location"></select>
+                                <div class="error-message error-input-unload-location"></div>
+                            </td>
+    
+                            <td class="td-unload-date">
+                                <label class="label">UNLOADING DATE:</label>
+                                <input class="input-unload-date datetime" onmouseenter="addDateTime(this)" placeholder="UNLOADING DATE" type="text">
+                                <div class="error-message error-input-unload-date datetime"></div>
+                            </td>
+
+                            <td class="td-return-at-port-date" style="display: none;">
+                                <label class="label">RETURN AT PORT DATE:</label>
+                                <input class="input-return-at-port-date datetime" onmouseenter="addDateTime(this)" placeholder="RETURN AT PORT DATE" type="text">
+                                <div class="error-message error-input-unload-date datetime"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-non-status" onclick="nonStatus()" type="button" class="btn btn-success" style="display: none;">Non-Status</button>
+                <button id="btn-oneway" onclick="oneway()" type="button" class="btn btn-secondary">Oneway</button>
+                <button id="btn-reused" type="button" class="btn btn-primary" onclick="toggleReused()" data-toggle="modal" data-target="#booking-table">Reused</button>
+                <button id="btn-update" type="button" class="btn btn-danger" onclick="updateData()">UPDATE</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal update option -->
+    <div class="modal fade" id="updateOption" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">OPTION MODAL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <a href="#"><button class="btn btn-danger btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true" onclick="directUpdate()">UPDATE DATA</button></a>
+                <a href="#"><button onclick="updateRoleBooking()" class="btn btn-success btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true">UPDATE NO BOOKING</button></a>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- modal hien thi thong tin booking cua tuan hien tai va tuan tiep theo  -->
+    <div class="modal fade" id="booking-table" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">
+                <button class="btn btn-primary" onclick="toggleUpdate()" data-toggle="modal" data-target="#updateRow">
+                    <i class="fa-solid fa-hand-point-left"></i>
+                </button>
+                BOOKING TABLE
+              </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <table id="table-booking" class="table table-bordered table-hover">
+                        <thead class="thead-dark table-hover">
+                            <th id="thead-stt" style="min-width: fit-content;">STT</th>
+                            <th id="thead-booking-number">BOOKING NUMBER</th>
+                            <th id="thead-carrier">CARRIER</th>
+                            <th id="thead-action">ACTION</th>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>  
+                </div>            
+            </div>
+            <div class="modal-footer">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination" id="non-booking-pagination">
+                        
+                    </ul>
+                </nav>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- cac button thao tac o bottom -->
+    <div style="display: flex; justify-content: flex-end; gap:1em">
+        <a>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </a>
+
+        <!-- <a href="#"><button class="btn btn-success btn-lg active" data-toggle="modal" data-target="#updateOption" role="button" style="font-size: smaller;" aria-pressed="true">UPDATE PLAN</button></a>
+
+        <a href="/create-loading-plan" id="makePlanBtn"><button class="btn btn-primary btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true">MAKE PLAN</button></a> -->
+        
+        <nav aria-label="Page navigation example">
+            <ul class="pagination" id="navbar-pagination">
+              
+            </ul>
+        </nav>
+    </div>
+    
+    <div id="idSystem"></div>
+    <button id="updateTrigger" style="display: none;" data-toggle="modal" data-target="#updateRow"></button>
+
+    <script src="../../script/utils.js"></script>
+
+    <script>
+        
+        let arrSelectUnloadingLocation = [];
+        let arrSelectCarrier = [];
+        let arrSelectPickAtport = [];
+        let urlParams = new URLSearchParams(window.location.search);
+        let year = urlParams.get('year')||new Date().getFullYear();
+        let week = "";
+        //dinh dang lai ngay thang
+        let datetime = $("#table-info input");
+        for(let i=0; i<datetime.length; i++){
+            if($(datetime[i]).hasClass("datetime")){
+                let time = $(datetime[i]).val()
+                if(time){
+                    let date = new Date(time).toISOString().split("T")[0].split("-").reverse().join("/")
+                    let hour = new Date(time).toISOString().split("T")[1].split(".")[0]
+
+                    $(datetime[i]).val(date+ " " +hour);
+                }
+            }
+        }
+    </script>
+    <!-- hien thi toan bo booking chua co cont number -->
+    <script>
+        let listBookingBtn = [];
+        let tableBooking = $("#table-booking tbody");
+
+        $.ajax({
+            url: host + "/api/weekNoContNumber"
+        })
+        .then(result=>{
+            // phan trang cho booking de resued hoac one
+            for(let i=0; i<result.length; i++){
+                listBookingBtn.push(result[i]["estimated_loading_week"]);
+            }
+            let preBtn = `<li class="page-item"><a class="page-link" onclick=paginationBooking("pre") href="#">Previous</a></li>`;
+            let nextBtn = `<li class="page-item"><a class="page-link" onclick=paginationBooking("next") href="#">Next</a></li>`;
+            let containerPagination = $("#non-booking-pagination");
+            // console.log(result)
+            let pagination = "";
+            for(let i=0; i<result.length; i++){
+                pagination += `
+                <li class="page-item ${i==0?"active":""}" id=pagination-${result[i]["estimated_loading_week"]}>
+                    <a class="page-link" onclick=paginationBooking(${result[i]["estimated_loading_week"]})>
+                        ${result[i]["estimated_loading_week"]}
+                    </a>
+                </li>`;
+            }
+            $(containerPagination).html(preBtn + pagination + nextBtn);
+
+            let maxWeek = result[0]["estimated_loading_week"];
+            $.ajax({
+                url: host + `/api/booking?year=${year}&week=${maxWeek}`
+            })
+            .then(result=>{
+                let totalRow = "";
+                for(let i=0; i<result.length; i++){
+                    let stt = i;
+                    let row = `
+                    <tr>
+                        <td>${stt+1}</td>
+                        <td>${result[i]["booking_number"]}</td>
+                        <td>${result[i]["carrier"]}</td>
+                        <td><button class="btn btn-primary" onclick="reused('${result[i]["booking_number"]}')">REUSED</button></td>
+                    </tr>`;
+                    totalRow+=row;
+                }
+                $(tableBooking).append(totalRow);
+                
+            })
+            .fail((err)=>{
+                console.log(err);
+            });
+        })
+        
+        
+        //pagination booking 
+        function paginationBooking(param){
+                let booking = $("#non-booking-pagination li");
+                let id = "asd";
+                
+                for(let i=0; i<booking.length; i++){
+                    if($(booking[i]).hasClass("active")){
+                        id = $(booking[i]).attr("id").split("-")[1];
+                        $(booking[i]).removeClass("active");
+                        break;
+                    }
+                }
+                if(isNaN(parseInt(param))){
+                    if(param==='pre' && +id+1 <= listBookingBtn[0]){
+                        getDataBooking(+id+1);
+                    }
+                    if(param==='next' && +id-1 >= listBookingBtn[listBookingBtn.length-1]){
+                        getDataBooking(+id-1);
+                    }
+                }else{
+                    let listBtnBooking = $("#non-booking-pagination li");
+                    for(let i=0; i<listBtnBooking.length; i++){
+                        $(listBtnBooking[i]).removeClass("active");
+                    }
+                    getDataBooking(param);
+                    
+                }
+            }
+            function getDataBooking(param){
+                $(`#pagination-${param}`).addClass("active");
+                    $.ajax({
+                        url: host + `/api/booking?year=${year}&week=${param}`
+                    })
+                    .then(result=>{
+                        $(tableBooking).html("");
+                        let totalRow = "";
+                        for(let i=0; i<result.length; i++){
+                            let stt = i;
+                            let row = `
+                            <tr>
+                                <td>${stt+1}</td>
+                                <td>${result[i]["booking_number"]}</td>
+                                <td>${result[i]["carrier"]}</td>
+                                <td><button class="btn btn-primary" onclick="reused('${result[i]["booking_number"]}')">REUSED</button></td>
+                            </tr>`;
+                            totalRow+=row;
+                        }
+                        $(tableBooking).append(totalRow);
+                    })
+            }
+    </script>
+
+    <!-- xu ly bo loc  -->
+    <script>
+        // fillData bao gom ca xu ly url
+        function fillData(){
+            let status = $("#status-option").find(":selected").val();
+            let url = new URLSearchParams(window.location.search);
+            status?url.set("status", `${status}`):"";
+            window.location.href= host + "/non-booking" + `${status?"?status="+status:""}`;
+        }
+    </script>
+
+    <!-- init data vao bang va tai so phan trang -->
+    <script>
+        let page = urlParams.get('page') || 1; 
+        let limit = urlParams.get('limit') || 16;
+        let status = urlParams.get('status');
+        let maxBtn = "hehe";
+        let arrBtn = [];
+        let listBtn = [];
+
+        if(status=='REUSED'){
+            $("#btn-reused").css("display","none");
+            $("#btn-oneway").css("display","none");
+            $("#btn-non-status").css("display", "block");
+        }else if(status == 'ONEWAY'){
+            $("#btn-reused").css("display","none");
+            $("#btn-oneway").css("display","none");
+            $("#btn-non-status").css("display", "block");
+        }
+        $.ajax({
+            url: host+`/api/countNonBooking?${status?"status="+status:""}`,
+            method: "GET"
+            })
+            .done(result=>{
+                maxBtn = result[0].max;
+                for(let i=1; i<=Math.ceil(maxBtn/countRowPerPage); i++){
+                    listBtn.push(i);
+                }
+                //console.log(devidePaginate(Math.ceil(maxBtn/countRowPerPage)))
+                // $("#makePlanBtn").attr("href", `/create-loading-plan?${year?"year="+year:""}&week=${maxBtn}`)
+                initData();
+            })
+            .fail(err=>{
+                console.log(err);
+        })
+        function addDateTime(param){
+            $(param).datetimepicker({format:'d/m/Y H:00:00'});
+        }
+        //call so phan trang tai giao dien
+        function initData(){
+                let preBtn = `<li class="page-item"><a class="page-link" onclick=pagination("pre") href="#">Previous</a></li>`;
+                let nextBtn = `<li class="page-item"><a class="page-link" onclick=pagination("next") href="#">Next</a></li>`;
+
+                let arrNew = devidePaginate(Math.ceil(maxBtn/countRowPerPage));
+                console.log("arrNew",arrNew)
+
+                console.log("zxcv",maxBtn)
+    
+                let firstIndex = arrNew[0][0];
+                let lastIndex = arrNew[0][arrNew[0].length-1];
+                let pagination = "";
+                
+                function checkRange(page) { 
+                    let range = {};
+                    for(let i=0; i<arrNew.length; i++){
+                        for(let j=0; j<arrNew[i].length; j++){
+                            if(page==arrNew[i][j]){
+                                range.lastIndex = arrNew[i][arrNew[i].length-1];
+                                range.firstIndex = arrNew[i][0];
+                                return range;
+                            }
+                        }
+                    }
+                }
+                function exportRangePaginate(){
+                    for(let i=0; i<arrNew.length; i++){
+                        for(let j=0; j<arrNew[i].length; j++){
+                            if(page==arrNew[i][j]){
+                                return arrNew[i];
+                            }
+                        }
+                    }
+                }
+
+                let range = exportRangePaginate();
+                for(let i=0; i<range.length; i++){
+                    pagination += `
+                        <li class="page-item ${page==range[i]?"active":""}">
+                            <a class="page-link" href="/non-booking?status=${status||""}&page=${range[i]}&limit=${limit}">
+                                ${range[i]}
+                            </a>
+                        </li>`;
+                }
+
+                let totalPgination = preBtn + pagination + nextBtn;
+            
+                $("#navbar-pagination").html(totalPgination)
+        }
+    </script>
+
+    <!-- handle phan trang -->
+    <script>
+        arrBtn = devidePaginate(maxBtn);
+        // phan trang
+        function pagination(status){
+            let arr = devidePaginate(Math.ceil(maxBtn/countRowPerPage));
+            let max = listBtn[listBtn.length-1];
+            console.log("max", max);
+            let min = listBtn[0];
+            console.log("min", min)
+
+            if(status==='next'){
+                if(+page+1 <= max){
+                    window.location = `/non-booking?status=${status||""}&page=${+page+1}&limit=${+limit}`;
+                }
+            }
+            if(status==='pre'){
+                if(+page-1 >= min){
+                    window.location = `/non-booking?&status=${status||""}&page=${+page-1}&limit=${+limit}`;
+                }
+            }
+            
+            
+        }
+        //chia khoang cac tuan
+        function devidePaginate(maxBtn){
+            let result = [];
+            for(let i=1; i<=maxBtn; ){
+                let arrDevide = [];
+                for(let j=1; j<=countListBtnImporter; j++){
+                    if(i<=maxBtn){
+                        arrDevide.push(i);
+                        i++;
+                    }
+                }
+                result.push(arrDevide);
+            }
+            return result;
+        }
+        //
+        function handlePagination(status){
+            // let listBtn = $("#navbar-pagination li");
+            
+        }
+    </script>
+    
+    <!-- handle vi tr cac row theo booking -->
+    <script>
+        // $( "#table-info" ).sortable({
+        //     items: '.tr',
+        //     dropOnEmpty: false,
+        //     start: function (G, ui) {
+        //             ui.item.addClass("select");
+        //         },
+        //     stop: function (G, ui) {
+        //         // ui.item.removeClass("select");
+        //         // $(this).find("tr").each(function (GFG) {
+        //         //     console.log($(this).find("td").eq(2))
+        //         //     if (GFG > 0) {
+        //         //         $(this).find("td").eq(2).html(GFG);
+        //         //     }
+        //         // });
+        //     }
+        // });
+        $( "" ).sortable({
+            items: '.tr',
+            dropOnEmpty: false,
+            start: function (G, ui) {
+                // ui.item.addClass("select");
+                // console.log(ui.item["context"]["cells"])
+                // let rank = $(stt[0]).attr("class").split(" ")[1].split("-")[1];
+                // console.log(rank)
+                let nameBooking = "";
+                let listCell = ui.item["context"]["cells"];
+                for(let i=0; i<listCell.length; i++){
+                    if($(listCell[i]).hasClass("tbody-booking-number")){
+                        nameBooking = $(listCell[i]).text();
+                        break;
+                    }
+                }
+                
+                let listBookingRow = $(".tbody-booking-number");
+                let listRow = $(".tr");
+                for(let i=0; i<listRow.length; i++){
+                    let rowBookingNumber = $(listRow[i]).children();
+                    
+                    for(let j=0; j<rowBookingNumber.length; j++){
+                        if($(rowBookingNumber[j]).hasClass("tbody-booking-number")){
+                            let text = $(rowBookingNumber[j]).text();
+                            
+                            if(text == nameBooking){
+                                $(listRow[i]).addClass("target")
+                            }else{
+                                $(listRow[i]).css("background")
+                            }
+                        }
+                    }
+                }
+
+            },
+            stop: function (G, ui) {
+                let listRow = $(".tr");
+                for(let i=0; i<listRow.length; i++){
+                    if($(listRow[i]).hasClass("target")){
+                        $($(".tr")[i]).removeClass("target")
+                    }
+                }
+                let nameBooking = "";
+                let listCell = ui.item["context"]["cells"];
+                for(let i=0; i<listCell.length; i++){
+                    if($(listCell[i]).hasClass("tbody-booking-number")){
+                        nameBooking = $(listCell[i]).text();
+                        break;
+                    }
+                }
+                let listBookingRow = $(".tbody-booking-number");
+                let a=1;
+                for(let i=0; i<listRow.length; i++){
+                    let rowBookingNumber = $(listRow[i]).children();
+
+                    for(let j=0; j<rowBookingNumber.length; j++){
+                        if($(rowBookingNumber[j]).hasClass("tbody-booking-number")){
+                            let text = $(rowBookingNumber[j]).text();
+                            if(text == nameBooking){
+                                for(let b=0; b<rowBookingNumber.length; b++){
+                                    if($(rowBookingNumber[b]).hasClass("tbody-no-booking")){
+                                        $(rowBookingNumber[b]).text(a);
+                                        a++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    for(let q=0; q<rowBookingNumber.length; q++){
+                        if($(rowBookingNumber[q]).hasClass("tbody-stt")){
+                            $(rowBookingNumber[q]).text(i+1);
+                        }
+                    }
+                }
+            }
+            });
+    </script>
+
+    <!-- update data -->
+    <script>
+        //auto fill data vao modal update
+        function updateDataRow(row){
+            let id = $(row).attr("id");
+            $("#idSystem").text(id);
+            let idSystem = $("#idSystem").text();
+            let type = idSystem?.split(".")[0];
+            if(type=="importer"){
+                $("#table-update .td-return-at-port-date").css("display","block");
+            }else{
+                $("#table-update .td-return-at-port-date").css("display","none");
+            }
+            let listChidren = $(row).children();
+            let sttRow = $(listChidren[0]).text(); 
+            let arrInput = [];
+            let tableUpdate = $("#table-update tbody td");
+            for(let i=0; i<tableUpdate.length; i++){
+                
+                let updateInput = $($(tableUpdate[i]).children()[1]);
+                let rowTable = $($(listChidren[i+1]).children()[0]);
+                let dropdown = $($(listChidren[i+2]).children()[1]);
+                let selectOptionUpdate = $($(tableUpdate[i]).children()[2]);
+
+                arrInput.push($(rowTable).attr("class")?.split(" ")[0]);
+                
+                if($(rowTable).attr("class")===$(updateInput).attr("class")){
+                    $(updateInput).val($(rowTable).val());
+
+                    if($(dropdown).hasClass("dropdown")){
+                        let chidrenDropdown = $(dropdown).children();
+                        for(let i=0; i<chidrenDropdown.length; i++){
+                            if($(chidrenDropdown[i]).hasClass("dropbtn")){
+                                let value = $(chidrenDropdown[i]).text();
+                                importData(value)
+                            }
+                        }
+                    }else{
+                        if(selectOptionUpdate.val()){
+                            $(selectOptionUpdate).val($(rowTable).val());
+                        $(selectOptionUpdate).select2();
+                        }
+                    }
+                }
+                function importData(data){
+                    for(let i=0; i<selectOptionUpdate.length; i++){
+                        if($(selectOptionUpdate[i]).hasClass("dropdown")){
+                            let select = $(selectOptionUpdate[i]).children();
+                            for(let j=0; j<select.length; j++){
+                                if($(select[i]).hasClass("dropbtn")){
+                                    $(select[i]).text(data);
+                                }
+                                break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            // let head = idSystem.split(".")[0];
+            // if(head==='loadingPlan'){
+            //     $("#btn-update").css("display", "block");
+            // }else{
+            //     $("#btn-update").css("display", "none");
+            // }
+            $("#updateRow .modal-title").text(`UPDATE ROW ${sttRow}`);
+            
+            $("#updateTrigger").click();
+        }
+        //update data
+        function updateData(){
+            let idSystem = $("#idSystem").text();
+            let data = {};
+            
+            data.vendor = convertNull($("#table-update .input-vendor").val());
+            data.contCategory = convertNull($("#table-update .input-category-cont").val());
+            data.contNumber = convertNull($("#table-update .input-container-number").val());
+            data.carrier = convertNull($("#table-update .input-direct-carrier").val());
+            
+            data.pickedAtPort = convertNull($("#table-update .input-picked-at-port").val());
+            data.pickedDate = convertNull(formatDate($("#table-update .input-picked-date").val()));
+            data.oilPrice = convertNull($("#table-update .input-oil-price").val());
+
+            data.ataVnPort = convertNull(formatDate($("#table-update .input-ata-vn-port").val()));
+            data.ataPb = convertNull(formatDate($("#table-update .input-ata-pb").val()));
+            data.returnAtPortDay = convertNull(formatDate($("#table-update .input-return-at-port-date").val()));
+            data.idSystem = $("#idSystem").text();
+            
+            let datas = {existed:[], new:[]};
+            datas.existed.push(data);
+            let errArr = [];
+            let listInput = $("#table-update input");
+            for(let i=0; i<listInput.length; i++){
+                errArr.push($(listInput[i]).attr("class").split(" ")[0])
+            }
+            
+            let arrError = {};
+            let error = validate(errArr, `#table-update tbody`);
+
+            if(error.length > 0){
+                arrError["error"] = error;
+            }
+
+            // for(let key of Object.keys(arrError)){
+            //     for(let j=0; j < arrError[key].length; j++){
+            //         let clasKey = Object.keys(arrError[key][j])[0];
+            //         let errMessage = Object.values(arrError[key][j])[0];
+            //         $(`#table-update tbody .error-${clasKey}`).text(errMessage)
+            //     }
+            // }
+            // if(Object.keys(arrError).length==0){
+                
+                $.ajax({
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                url: host + "/api/update-non-booking",
+                type: 'POST',
+                data: JSON.stringify(datas),
+                })
+                .then(()=>{
+                    location.reload();
+                })
+                .fail(()=>{
+                    alert("something wrong");
+                })
+            // }
+        }
+    </script>
+
+    <!-- validate data -->
+    <script>
+        function validate(listInput, selectorInput){
+            let arrValidate = [];
+            let validate = {
+                "input-cont-category":{
+                    required: "This input is required"
+                },
+                "input-container-number":{
+                    required: "This input is required"
+                }, 
+                "input-vendor":{
+                    required: "This input is required"
+                }, 
+                "input-bill":{
+                    required: "This input is required"
+                },
+                "input-direct-carrier":{
+                    required: "This input is required"
+                },
+                "input-picked-at-port":{
+                    required: "This input is required",
+                },
+                "input-picked-at-port-day":{
+                    required: "This input is required",
+                },
+                "input-ata-vn-port":{
+                    required: "This input is required",
+                },
+                "input-ata-pb":{
+                    required: "This input is required",
+                },
+                "input-unload-location":{
+                    required: "This input is required",
+                },
+                "input-unload-date":{
+                    required: "This input is required",
+                }
+
+            };
+            for(let i=0; i<listInput.length; i++){
+                for(let key of Object.keys(validate)){
+                    if(listInput[i]===key){
+                        console.log("ketequal", key)
+                        if($(selectorInput +" ."+key).val().trim()=='' && validate[key]["required"]){
+                            arrValidate.push({[key]:validate[key]["required"]});
+                        }
+                    }
+                }
+            }
+            let errorMessage = $(".error-message");
+            for(let i=0; i<errorMessage.length; i++){
+                $(errorMessage[i]).text("");
+            }
+            return arrValidate;
+        }
+    </script>
+
+    <!-- reused booking -->
+    <script>
+        function reused(bookingNumber){
+            let weekBooking = $(".page-item");
+            for(let i=0; i<weekBooking.length; i++){
+                if($(weekBooking[i]).hasClass("active")){
+                    week = $($(".page-link")[i]).text();
+                    break;
+                }
+            }
+            let data = {}
+
+            data.idSystem = $("#idSystem").text();
+            data.bookingNumber = convertNull(bookingNumber);
+            data.categoryCont = convertNull($("#table-update .input-category-cont").val());
+            data.contNumber = convertNull($("#table-update .input-container-number").val());
+            data.vendor = convertNull($("#table-update .input-vendor").val());
+            data.directCarrier = convertNull($("#table-update .input-direct-carrier").val());
+            data.pickedAtPort = convertNull($("#table-update .input-picked-at-port").val());
+            data.pickedDay = convertNull(formatDate($("#table-update .input-picked-date").val()));
+            data.ataVnPort = convertNull(formatDate($("#table-update .input-ata-vn-port").val()));
+            data.ataPb = convertNull(formatDate($("#table-update .input-ata-pb").val()));
+            data.unloadLocation = convertNull($("#table-update .input-unload-location").val());
+            data.unloadDate = convertNull(formatDate($("#table-update .input-unload-date").val()));
+            data.year = +year;
+            data.week = +week;
+
+            console.log(data);
+            $.ajax({
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                url: host + "/api/reused",
+                data: JSON.stringify(data),
+                type: "POST"
+            })
+            .then(()=>{
+                location.reload();
+            })
+            .fail(()=>{
+                alert("something wrong");
+            })
+        }
+    </script>
+
+    <!-- non-status booking -->
+    <script>
+        function nonStatus(){
+            let id = $("#idSystem").text();
+            $.ajax({
+                url: host + `/api/non-status?id=${id}`
+            })
+            .then(()=>{
+                location.reload();
+            })
+            .fail(()=>{
+                alert("something wrong");
+            })
+        }
+    </script>
+    
+    <!-- oneway -->
+    <script>
+        function oneway(){
+            let id = $("#idSystem").text();
+            $.ajax({
+                url: host + `/api/oneway?id=${id}`
+            })
+            .then(()=>{
+                location.reload()
+            })
+            .fail(()=>{
+                alert("something wrong");
+            })
+        }
+    </script>
+
+    <!-- toggle modal reused -->
+    <script>
+        function toggleReused(){
+            $("#updateRow .close").click();
+        }
+        function toggleUpdate(){
+            $("#booking-table .close").click();
+        }
+    </script>
+
+    <script>
+        let unloadingLocations = $(".select-unload-location");
+        let inputUnloadingLocation = $(".input-unload-location");
+
+        let carirer = $(".select-carrier");
+        let inputCarrier = $(".input-direct-carrier");
+
+        let pickedAtPorts = $(".select-picked-at-port");
+        let inputPicked = $(".input-picked-at-port");
+
+        //khoi tao gia tri cua select vao input
+        function initSelect(){
+            //picked at port
+            let pickedAtPorts = $(".select-picked-at-port");
+            let inputPicked = $(".input-picked-at-port");
+            for(let i=0; i<pickedAtPorts.length; i++){
+                $(inputPicked[i]).css("display","none")
+                $(pickedAtPorts[i]).on("change", ()=>{
+                    let valueSelect = $(pickedAtPorts[i]).find(":selected").val();
+                    $(inputPicked[i]).val(valueSelect);
+                })
+            }
+            // loading location
+            let unloadingLocations = $(".select-unload-location");
+            let inputUnloadingLocation = $(".input-unload-location");
+            for(let i=0; i<unloadingLocations.length; i++){
+                $(inputUnloadingLocation[i]).css("display","none")
+                $(unloadingLocations[i]).on("change", ()=>{
+                    let valueSelect = $(unloadingLocations[i]).find(":selected").val();
+                    $(inputUnloadingLocation[i]).val(valueSelect);
+                })
+            }
+            //carrier
+            let carrier = $(".select-carrier");
+            let inputCarrier = $(".input-direct-carrier");
+            for(let i=0; i<carrier.length; i++){
+                $(inputCarrier[i]).css("display","none")
+                $(carrier[i]).on("change", ()=>{
+                    let valueSelect = $(carrier[i]).find(":selected").val();
+                    $(inputCarrier[i]).val(valueSelect);
+                })
+            }
+        }
+        initSelect();
+        //init data vao select option
+
+        function initCarrier(){
+            $.ajax({
+                url: host + "/api/carrier",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectCarrier.push(result[i]["port"])
+                }
+                for(let i=0; i<carirer.length; i++){
+                    $(carirer[i]).append("<option value=' '></option>")
+                    $(inputCarrier[i]).val()?"":$(inputCarrier[i]).val(" ")
+                    
+                    for(let j=0; j<result.length; j++){
+                        $(carirer[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+                initSelected();
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+
+        function initPickedAtPort(){
+            $.ajax({
+                url: host + "/api/picked-at-port",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectPickAtport.push(result[i]["port"])
+                }
+                for(let i=0; i<pickedAtPorts.length; i++){
+                    $(pickedAtPorts[i]).append("<option value=' '></option>")
+                    $(inputPicked[i]).val()?"":$(inputPicked[i]).val(" ");
+                    for(let j=0; j<result.length; j++){
+                        $(pickedAtPorts[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+                // initSelected();
+                initSelect();
+                
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+
+        function initLoadingLocation(){
+            $.ajax({
+                url: host + "/api/loading-location",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectUnloadingLocation.push(result[i]["port"])
+                }
+                for(let i=0; i<unloadingLocations.length; i++){
+                    $(unloadingLocations[i]).append("<option value=' '></option>")
+                    $(inputUnloadingLocation[i]).val()?"":$(inputUnloadingLocation[i]).val(' ')
+                    for(let j=0; j<result.length; j++){
+                        $(unloadingLocations[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+                initSelect();
+                initSelected();
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        initPickedAtPort();
+        initCarrier();
+        initLoadingLocation();
+
+        function initSelected(){
+            let listRow = $("#table-info tbody tr td");
+            for(let i=0; i<listRow.length; i++){
+                let rowTable = $($(listRow[i]).children()[0]);
+                let selectValue = $($(listRow[i]).children()[1]);
+                if($(selectValue).val()){
+                    let valueSelectValue = $(rowTable).val();
+                    $(selectValue).val(valueSelectValue);
+                }
+            }
+            let selectList = $("select");
+            for(let i=0; i<selectList.length; i++){
+                $(selectList[i]).select2();
+            }
+        }
+
+        let selectList = $("select");
+        for(let i=0; i<selectList.length; i++){
+            $(selectList[i]).select2();
+        }
+    </script>
+    <script>
+        //an hien return at port date
+        // function invisibleReturnAtPort(){
+        //     let listRow = $("#table-info tr");
+        //     for(let i=0; i<listRow.length; i++){
+        //         let id = $(listRow[i]).attr("id");
+        //         let className = $(listRow[i]).attr("class")?.split(" ")[1];
+        //         let type = id?.split(".")[0];
+        //         if(type=="importer"){
+        //             $(`#table-info .${className} .td-return-at-port-date`).css("display","block");
+
+        //         }
+        //     }
+        // }
+        // invisibleReturnAtPort()
+        
+    </script>
+</body>
+</html>

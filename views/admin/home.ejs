@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("../utils/header.ejs") %>
+    <title>Document</title>
+</head>
+<style>
+    #table-info{
+        width: 100vw;
+        height: 80vh;
+        overflow: auto;
+    }
+    th, td{
+        /* min-width: 20em;
+        min-height: 10em; */
+        padding: 0px !important;
+    }
+    th{
+        text-align: center;
+    }
+    .target{
+        background-color: rgb(255, 153, 0);
+    }
+    .size{
+        min-width: "3em";
+    }
+</style>
+<body>
+    <%- include("../layout/navbar.ejs")%>
+    <div id="table-info">
+        <table class="table table-bordered table-hover" id="data-table">
+            <thead class="thead-dark table-hover" style="position: block;">
+                <th id="thead-week" style="min-width: 2em;">WEEK</th>
+                <th id="thead-stt" style="min-width: 2em;">STT</th>
+                <th id="thead-no-booking" style="min-width: 2em;">BK NO</th>
+                <th id="thead-request-loading" style="min-width: 10em;">REQUEST LOADING</th>
+                <th id="thead-container-number" style="min-width: 8em;">CONT NUMBER</th>
+                <th id="thead-seal-number" style="min-width: 5em;">SEAL NUMBER</th>
+                <th id="thead-dc" style="min-width: 3em;">DC</th>
+                <th id="thead-carrier" style="min-width: 7em;">CARRIER</th>
+                <th id="thead-loading-location" style="min-width: 3em;">LOAD LOCATE</th>
+                <th id="thead-loading-date" style="min-width: 10em;">LOADING DATE</th>
+                <th id="thead-ship-date" style="min-width: 10em;">SHIP DATE</th>
+                <th id="thead-cdf-date" style="min-width: 10em;">CDF DATE</th>
+                <th id="thead-booking-number" style="min-width: 7em;">BK NUMBER</th>
+                <th id="thead-cut-off-loading-date" style="min-width: 10em;">CUT OFF LOAD DATE</th>
+                <th id="thead-cy-cut-off" style="min-width: 10em;">CY CUT OFF</th>
+                <th id="thead-ammentdent-bill-cut-off" style="min-width: 10em;">AMMENTDENT BILL CUT OFF</th>
+                <th id="thead-etd" style="min-width: 10em;">ETD</th>
+                <th id="thead-new-etd" style="min-width: 10em;">NEW ETD</th>
+                <th id="thead-service" style="min-width: 10em;">SERVICE</th>
+                <th id="thead-eta" style="min-width: 10em;">ETA</th>
+                <th id="thead-vessel" style="min-width: 12em;">VESSEL</th>
+                <th id="thead-picked-date" style="min-width: 10em;">PICKED DATE</th>
+                <th id="thead-vendor" style="min-width: 10em;">VENDOR</th>
+                <th id="thead-ata-pb" style="min-width: 10em;">ATA PHU BAI</th>
+                <th id="thead-unloading-location" style="min-width: 3em;">UNLOAD LOCATE</th>
+                <th id="thead-unloading-date" style="min-width: 10em;">UNLOADING DATE</th>
+                <th id="thead-export-saving-thuck-date" style="min-width: 8em;">EXPORT SAVING TRUCK DATE</th>
+                <th id="thead-reason-export-saving-truck" style="min-width: 12em;">REASON EXPORT SAVING TRUCK</th>
+                <th id="thead-picked-at-port" style="min-width: 4em;">PICKED PORT</th>
+                <th id="thead-dropping-at-port" style="min-width: 5em;">DROP PORT</th>
+                <th id="thead-dropping-date" style="min-width: 10em;">DROPPING DATE</th>
+                <!-- <th id="thead-new-eta">NEW ETA</th> -->
+                <th id="thead-cont-category" style="min-width: 3em;" style="min-width: 5em;">CONT TYPE</th>
+                <th id="thead-pre-booking-number" style="min-width: 12em;">PRE-BOOKING NUMBER</th>
+                <th id="thead-note" style="min-width: 12em;">NOTE</th>
+            </thead>
+            <tbody>
+                <%var i=0%>
+                <% for(let data of listData){ %>
+                    <tr class="tr stt-<%=++i%>" id="<%=data['idSystem']%>">
+                        <td class="color-background" style="display: none;"><%=data["color"]%></td>
+
+                        <td class="tbody-week" data-stt="<%=i%>" style="min-width: 3em;"><%=data["estimated_loading_week"]%></td>
+
+                        <td class="tbody-stt" data-stt="<%=i%>" style="min-width: 3em;"><%=i%></td>
+
+                        <td class="tbody-no-booking" data-stt="<%=i%>"><%=data["booking_no_update"]%></td>
+
+                        <td class="tbody-request-loading datetime" class="wrappable" data-stt="<%=i%>"><%=data["request_loading"]%></td>
+
+                        <td class="tbody-container-number" data-stt="<%=i%>"><%=data["cont_number"]%></td>
+
+                        <td class="tbody-seal-number" data-stt="<%=i%>"><%=data["seal"]%></td>
+
+                        <td class="tbody-dc" data-stt="<%=i%>"><%=data["DC"]?.split(";")[0]%></td>
+
+                        <td class="tbody-carrier" data-stt="<%=i%>"><%=data["carrier"]%></td>
+
+                        <td class="tbody-loading-location" data-stt="<%=i%>"><%=data["loading_location"]%></td>
+
+                        <td class="tbody-loading-date datetime" data-stt="<%=i%>"><%=data["loading_date"]%></td>
+
+                        <td class="tbody-ship-date datetime" data-stt="<%=i%>"><%=data["ship_date"]%></td>
+
+                        <td class="tbody-cdf-date datetime" data-stt="<%=i%>"><%=data["CDF_date"]?.split(";")[0]%></td>
+
+                        <td class="tbody-booking-number" data-stt="<%=i%>"><%=data["booking_number"]%></td>
+
+                        <td class="tbody-cut-off-loading-date datetime" data-stt="<%=i%>"><%=data["cut_off_loading_date"]%></td>
+                        
+                        <td class="tbody-cy-cut-off datetime" data-stt="<%=i%>"><%=data["cy_cut_off"]%></td>
+
+                        <td class="tbody-ammentdent-bill-cut-off datetime" data-stt="<%=i%>"><%=data["ammentdent_bill_cut_off"]%></td>
+
+                        <td class="tbody-etd datetime" data-stt="<%=i%>"><%=data["original_etd"]%></td>
+
+                        <td class="tbody-new-etd datetime" data-stt="<%=i%>"><%=data["new_etd"]%></td>
+
+                        <td class="tbody-service" data-stt="<%=i%>"><%=data["service"]%></td>
+
+                        <td class="tbody-eta datetime" data-stt="<%=i%>"><%=data["ETA"]%></td>
+
+                        <td class="tbody-vessel" data-stt="<%=i%>"><%=data["vessel"]%></td>
+
+                        <td class="tbody-picked-date datetime" data-stt="<%=i%>"><%=data["picked_date"]%></td>
+
+                        <td class="tbody-vendor" data-stt="<%=i%>"><%=data["vendor"]%></td>
+
+                        <td class="tbody-ata-pb datetime" data-stt="<%=i%>"><%=data["ATA_phu_bai"]%></td>
+
+                        <td class="tbody-unloading-location" data-stt="<%=i%>"><%=data["unload_location"]%></td>
+
+                        <td class="tbody-unloading-date datetime" data-stt="<%=i%>"><%=data["unload_complete_day"]%></td>
+
+                        <td class="tbody-export-saving-truck-date" data-stt="<%=i%>"><%=data["export_saving_truck_day"]%></td>
+
+                        <td class="tbody-reason-export-saving-truck" data-stt="<%=i%>"><%=data["reason_export_saving_truck"]%></td>
+                                                
+                        <td class="tbody-picked-at-port" data-stt="<%=i%>"><%=data["picked_at_port"]%></td>
+       
+                        <td class="tbody-dropping-at-port" data-stt="<%=i%>"><%=data["dropping_at_port"]%></td>
+
+                        <td class="tbody-dropping-date datetime" data-stt="<%=i%>"><%=data["dropping_date"]%></td>
+
+                        <td class="tbody-cont-category" data-stt="<%=i%>" style="min-width: 3em;"><%=data["cont_category"]%></td>
+
+                        <!-- <td class="tbody-new-eta datetime " data-stt="<%=i%>"><%=data["new_ETA"]%></td> -->
+                        
+                        <td class="tbody-pre-booking-number" data-stt="<%=i%>"><%=data["pre_booking_number"]%></td>
+
+                        <td class="tbody-note" data-stt="<%=i%>"><%=data["note_loading_plan"]%></td>
+                    </tr>
+                <%}%>
+            </tbody>
+        </table>
+    </div>
+    <!-- modal loc  -->
+    <form>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">FILTER</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <table style="text-align: left; border-spacing: 10px;">
+                        <tbody>
+                            <tr>
+                                <td><label style="font-weight: bolder;">YEAR:</label></td>
+                                <td>
+                                    <input type="number" id="input-year" name="year"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label style="font-weight: bolder;">WEEK:</label></td>
+                                <td>
+                                    <input type="number" id="input-week" name="week"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label style="font-weight: bolder;">SEARCH:</label></td>
+                                <td>
+                                    <input type="search" id="input-search" name="search"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                      </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- modal update option -->
+    <div class="modal fade" id="updateOption" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">OPTION MODAL</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <a href="#"><button class="btn btn-danger btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true" onclick="directUpdate()">UPDATE DATA</button></a>
+                <a href="#"><button onclick="updateRoleBooking()" class="btn btn-success btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true">UPDATE NO BOOKING</button></a>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- mass upload modal -->
+    <div class="modal fade" id="massUpload" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">MASS UPLOAD</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1em;">
+                    Tải file mẫu <a href="/script/template-excel.xlsx">tại đây</a>
+                </div>
+                <input type="file" class="form-control" id="file_upload" style="padding: 2px;"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="upload()">UPLOAD</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- err mass upload alert -->
+    <div class="modal fade" id="errMassUpload" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">ALERT</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- option routing code va demdet -->
+    <div class="modal fade" id="optionRoutingAndDemdet" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">OPTION</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; gap: 50px">
+                <a href="/routing-code"><button class="btn btn-primary">ROUTING CODE</button></a>
+                <a href="/demdet"><button class="btn btn-danger">DEMDET</button></a>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- option adding -->
+    <div class="modal fade" id="optionAdding" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">OPTION</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; gap:10px">
+                    <a href="/manufacture">
+                        <button class="btn btn-primary btn-lg success" role="button" style="font-size: smaller;" aria-pressed="true">MANUFACTURE</button>
+                    </a>
+                    <a href="/reason-unloading">
+                        <button class="btn btn-danger btn-lg success" role="button" style="font-size: smaller;" aria-pressed="true">REASON</button>
+                    </a>
+                    <a href="/email-receive">
+                        <button class="btn btn-success btn-lg" role="button" style="font-size: smaller;" aria-pressed="true">EMAIL</button>
+                    </a>
+                </div>
+                <div style="display: flex; gap:10px; margin-top: 15px;">
+                    <a href="/product-cont">
+                        <button class="btn btn-warning btn-lg" role="button" style="font-size: smaller;" aria-pressed="true">PRODUCT CATEGORY</button>
+                    </a>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- option export -->
+    <div class="modal fade" id="exportReport" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">OPTION</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; gap:10px">
+                    <a href="#">
+                        <label class="label"></label>
+                        <button class="btn btn-primary btn-lg success" role="button" style="font-size: smaller;" aria-pressed="true">EXPORT COST EXPORT</button>
+                    </a>
+                    
+                    <!-- <a href="#">
+                        <button class="btn btn-danger btn-lg success" role="button" style="font-size: smaller;" aria-pressed="true">REASON UNLOADING</button>
+                    </a> -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                
+            </div>
+          </div>
+        </div>
+    </div>
+
+    
+    <button id="btn-errMassUpload" style="display: none;" data-toggle="modal" data-target="#errMassUpload"></button>
+
+    <div style="display: flex; justify-content: flex-end; gap:1em">
+        <a>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </a>
+
+        <!-- <a>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </a> -->
+
+        <a href="#">
+            <button data-toggle="modal" data-target="#optionAdding" class="btn btn-primary btn-lg success" role="button" style="font-size: smaller;" aria-pressed="true">ADDING</button>
+        </a>
+
+        <!-- <a href="/cost">
+            <button class="btn btn-primary btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true">COST</button>
+        </a> -->
+
+        <a href="#">
+            <button data-toggle="modal" data-target="#optionRoutingAndDemdet" class="btn btn-warning btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true">ROUTING CODE - DEMDET</button>
+        </a>
+
+        <a href="/non-booking">
+            <button class="btn btn-secondary btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true">NON-BOOKING</button>
+        </a>
+
+        <a href="#">
+            <button class="btn btn-success btn-lg active" data-toggle="modal" data-target="#updateOption" role="button" style="font-size: smaller;" aria-pressed="true">UPDATE PLAN</button>
+        </a>
+
+        <a href="#" id="mass-upload-btn">
+            <button class="btn btn-danger btn-lg active" role="button" style="font-size: smaller;" data-toggle="modal" data-target="#massUpload" aria-pressed="true">MASS UPLOAD</button>
+        </a>
+
+        <a href="/create-loading-plan" id="makePlanBtn">
+            <button class="btn btn-primary btn-lg active" role="button" style="font-size: smaller;" aria-pressed="true">MAKE PLAN</button>
+        </a>
+        
+        <nav aria-label="Page navigation example">
+            <ul class="pagination" id="navbar-pagination">
+              
+            </ul>
+        </nav>
+    </div>
+
+    <script src="../../script/utils.js"></script>
+
+    <script>
+        //fill color
+        let colorBg = $(".color-background");
+        for(let i=0; i<colorBg.length; i++){
+            let row = $(colorBg[i]).parent();
+            let color = $(colorBg[i]).text();
+            $(row).css("background-color", color);
+        }
+        //dinh dang lai ngay thang
+        let datetime = $(".datetime");
+        for(let i=0; i<datetime.length; i++){
+            let time = $(datetime[i]).text()
+            if(time){
+                let date = new Date(time).toISOString().split("T")[0].split("-").reverse().join("/")
+                let hour = new Date(time).toISOString().split("T")[1].split(".")[0]
+
+                $(datetime[i]).text(date+ " " +hour);
+            }
+        }
+        // chuyen huong trang update 
+        function directUpdate(){
+            let urlParams = new URLSearchParams(window.location.search);
+            let year = urlParams.get("year") || new Date().getFullYear();
+            let week = urlParams.get("week");
+            console.log(week)
+            window.location.href=`/update-loading-plan?${week?"&week="+week:""}${year?"&year="+year:""}`;
+        }
+    </script>
+
+    <!-- init data vao bang -->
+    <script>
+        let urlParams = new URLSearchParams(window.location.search);
+        let week = urlParams.get('week'); 
+        let year = urlParams.get('year')||new Date().getFullYear();
+        let maxWeek = urlParams.get('maxWeek');
+        let minWeek = urlParams.get('minWeek');
+        let search = urlParams.get('search');
+        let maxBtn = "hehe";
+        let arrBtn = [];
+        $.ajax({
+            url: host+`/api/countRowPlan?year=${year}`,
+            method: "GET"
+            })
+            .done(result=>{
+                maxBtn = result[0].max;
+                $("#makePlanBtn").attr("href", `/create-loading-plan?${year?"year="+year:""}&week=${maxBtn||0}`)
+                initData(maxWeek, minWeek);
+            })
+            .fail(err=>{
+                console.log(err);
+        })
+        //call so phan trang tai giao dien
+        function initData(maxWeek, minWeek){
+            $.ajax({
+                url: host+`/api/top5week?${year?"year="+year:""}&${maxWeek?"maxWeek="+maxWeek:""}&${minWeek?"minWeek="+minWeek:""}&${search?"search="+search:""}`,
+                method: "GET"
+            })
+            .done(result=>{
+                console.log(result);
+                let preBtn = `<li class="page-item"><a class="page-link" onclick=pagination("pre") href="#">Previous</a></li>`;
+                let nextBtn = `<li class="page-item"><a class="page-link" onclick=pagination("next") href="#">Next</a></li>`;
+            
+                let maxBtn = result[0]["estimated_loading_week"];
+
+                let arrNew = devidePaginate(maxBtn);
+                let firstIndex = arrNew[0][0];
+                let lastIndex = arrNew[0][arrNew[0].length-1];
+                let pagination = "";
+                
+                function checkRange(page) { 
+                    let range = {};
+                    for(let i=0; i<arrNew.length; i++){
+                        for(let j=0; j<arrNew[i].length; j++){
+                            if(page==arrNew[i][j]){
+                                range.lastIndex = arrNew[i][arrNew[i].length-1];
+                                range.firstIndex = arrNew[i][0];
+                                return range;
+                            }
+                        }
+                    }
+                }
+                for(let i=0; i<result.length; i++){
+                    arrBtn.push(result[i]["estimated_loading_week"]);
+                    if(!week) week=maxBtn;
+                    let range = checkRange(result[i]["estimated_loading_week"]);
+                    pagination += `
+                        <li class="page-item ${week==result[i]["estimated_loading_week"]?"active":""}">
+                            <a class="page-link" href="/admin?week=${result[i]["estimated_loading_week"]}&year=${year}&maxWeek=${range.firstIndex}&minWeek=${range.lastIndex}">
+                                ${result[i]["estimated_loading_week"]}
+                            </a>
+                        </li>`;
+                }
+
+                let totalPgination = nextBtn + pagination + preBtn;
+            
+                $("#navbar-pagination").html(totalPgination)
+            })
+            .fail(e=>{
+                console.log(e);
+            })
+        }
+    </script>
+
+    <!-- handle phan trang -->
+    <script>
+        arrBtn = devidePaginate(maxBtn);
+        // phan trang
+        function pagination(status){
+            let count = 1;
+            let urlParams = new URLSearchParams(window.location.search);
+            let week = +urlParams.get('week')||+maxBtn;
+            // let year = urlParams.get('year')||new Date().getFullYear();
+
+            let maxWeek = +urlParams.get('maxWeek') || arrBtn[0][0];
+            let minWeek = +urlParams.get('minWeek') || arrBtn[0][arrBtn[0]-1];
+
+            maxBtn = +maxBtn
+            console.log(week+1)
+            if(status==="pre" && week-1>0){
+                handlePagination(status)
+                // window.location.href=`/admin?week=${+week-1}&year=${year}${maxWeek?"&maxWeek="+maxWeek:""}${minWeek?"&minWeek="+minWeek:""}`;
+            }else if(status === "next" && week+1<=maxBtn){
+                handlePagination(status)
+                // window.location.href=`/admin?week=${+week+1}&year=${year}${maxWeek?"&maxWeek="+maxWeek:""}${minWeek?"&minWeek="+minWeek:""}`;
+            }
+            
+        }
+        //chia khoang cac tuan
+        function devidePaginate(arrBtn){
+            let result = [];
+            for(let i=maxBtn; i>=1;){
+                let arrDevide = [];
+                for(let j=1; j<=countBtnPagination; j++){
+                    if(i>=1){
+                        arrDevide.push(+i);
+                        i--;
+                    }
+                }
+                result.push(arrDevide);
+            }
+            return result;
+        }
+        //
+        function handlePagination(status){
+            // let listBtn = $("#navbar-pagination li");
+            let arr = devidePaginate(maxBtn);
+            for(let i=0; i<arr.length; i++){
+                for(let j=0; j<arr[i].length; j++){
+                    if(week==arr[i][0]){
+                        if(status==='next'){
+                            // console.log("next");
+                            // return;
+                            window.location.href=`/admin?week=${+week+1}&year=${year}&maxWeek=${arr[i-1][0]}&minWeek=${arr[i-1][arr[i-1].length-1]}`;
+                            return
+                        }
+                    }
+                    if(week==arr[i][arr[i].length-1]){
+                        if(status==='pre'){
+                        //    console.log("prev");
+                        //    return;
+                            window.location.href=`/admin?week=${+week-1}&year=${year}&maxWeek=${arr[i+1][0]}&minWeek=${arr[i+1][arr[i+1].length-1]}`;
+                            return ;
+                        }
+                    }
+                    if(week==arr[i][j]){
+                        if(status==='pre'){
+                            // console.log("prev thuong")
+                            // return 
+                            window.location.href=`/admin?week=${+week-1}&year=${year}&maxWeek=${arr[i][0]}&minWeek=${arr[i][arr[i].length-1]}`;
+                            return;
+                        }
+                        if(status==='next'){
+                            // console.log("next thuong")
+                            window.location.href=`/admin?week=${+week+1}&year=${year}&maxWeek=${arr[i][0]}&minWeek=${arr[i][arr[i].length-1]}`;
+                            return 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- handle vi tr cac row theo booking -->
+    <script>
+        // $( "#table-info" ).sortable({
+        //     items: '.tr',
+        //     dropOnEmpty: false,
+        //     start: function (G, ui) {
+        //             ui.item.addClass("select");
+        //         },
+        //     stop: function (G, ui) {
+        //         // ui.item.removeClass("select");
+        //         // $(this).find("tr").each(function (GFG) {
+        //         //     console.log($(this).find("td").eq(2))
+        //         //     if (GFG > 0) {
+        //         //         $(this).find("td").eq(2).html(GFG);
+        //         //     }
+        //         // });
+        //     }
+        // });
+        $( "#table-info" ).sortable({
+            items: '.tr',
+            dropOnEmpty: false,
+            start: function (G, ui) {
+                // ui.item.addClass("select");
+                // console.log(ui.item["context"]["cells"])
+                // let rank = $(stt[0]).attr("class").split(" ")[1].split("-")[1];
+                // console.log(rank)
+                let nameBooking = "";
+                let listCell = ui.item["context"]["cells"];
+                for(let i=0; i<listCell.length; i++){
+                    if($(listCell[i]).hasClass("tbody-booking-number")){
+                        nameBooking = $(listCell[i]).text();
+                        break;
+                    }
+                }
+                
+                let listBookingRow = $(".tbody-booking-number");
+                let listRow = $(".tr");
+                for(let i=0; i<listRow.length; i++){
+                    let rowBookingNumber = $(listRow[i]).children();
+                    
+                    for(let j=0; j<rowBookingNumber.length; j++){
+                        if($(rowBookingNumber[j]).hasClass("tbody-booking-number")){
+                            let text = $(rowBookingNumber[j]).text();
+                            
+                            if(text == nameBooking){
+                                $(listRow[i]).addClass("target")
+                            }else{
+                                $(listRow[i]).css("background")
+                            }
+                        }
+                    }
+                }
+
+            },
+            stop: function (G, ui) {
+                let listRow = $(".tr");
+                for(let i=0; i<listRow.length; i++){
+                    if($(listRow[i]).hasClass("target")){
+                        $($(".tr")[i]).removeClass("target")
+                    }
+                }
+                let nameBooking = "";
+                let listCell = ui.item["context"]["cells"];
+                for(let i=0; i<listCell.length; i++){
+                    if($(listCell[i]).hasClass("tbody-booking-number")){
+                        nameBooking = $(listCell[i]).text();
+                        break;
+                    }
+                }
+                let listBookingRow = $(".tbody-booking-number");
+                let a=1;
+                for(let i=0; i<listRow.length; i++){
+                    let rowBookingNumber = $(listRow[i]).children();
+
+                    for(let j=0; j<rowBookingNumber.length; j++){
+                        if($(rowBookingNumber[j]).hasClass("tbody-booking-number")){
+                            let text = $(rowBookingNumber[j]).text();
+                            if(text == nameBooking){
+                                for(let b=0; b<rowBookingNumber.length; b++){
+                                    if($(rowBookingNumber[b]).hasClass("tbody-no-booking")){
+                                        $(rowBookingNumber[b]).text(a);
+                                        a++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    for(let q=0; q<rowBookingNumber.length; q++){
+                        if($(rowBookingNumber[q]).hasClass("tbody-stt")){
+                            $(rowBookingNumber[q]).text(i+1);
+                        }
+                    }
+                }
+            }
+            });
+    </script>
+
+    <!-- handle khi nguoi dung muon thay doi cac o -->
+    <script>
+        // function handleUpdate(selector){
+        //     let number = Math.random();
+        //     let classSelector = $(selector).attr("class").split(" ")[0];
+        //     $(selector).css("color","white");
+        //     let value = $(selector).text();
+        //     let input = `<input class="${classSelector}" id="zxc" value="${value}"/>`
+            
+        //     $(selector).html(input+value);
+            
+        //     $(selector).mouseleave(()=>{
+        //         console.log($(`#zxc`))
+        //         $(selector).html($(`#zxc`).val())
+        //     })
+        // }
+    </script>
+
+    <!-- update role booking -->
+    <script>
+        function updateRoleBooking(){
+            let tableRow = $("#table-info tbody tr");
+            let listResult = [];
+            for(let i=0; i<tableRow.length; i++){
+                let obj = {};
+                obj.id = $(tableRow[i]).attr("id");
+                let chidren = $(tableRow[i]).children();
+                for(let j=0; j<chidren.length; j++){
+                    if($(chidren[j]).hasClass("tbody-no-booking")){
+                        obj.noBooking = convertNull($(chidren[j]).text());
+                    }
+                    if($(chidren[j]).hasClass("tbody-stt")){
+                        obj.stt = convertNull($(chidren[j]).text());
+                    }
+                }
+                listResult.push(obj);
+            }
+            postDataRoleBooking(listResult);
+        }
+        function postDataRoleBooking(listData){
+            $.ajax({
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                url: host + "/api/updateBookingStt",
+                type: "POST",
+                data: JSON.stringify(listData)
+            })
+            .then(()=>{
+                location.reload()
+            })
+            .fail((e)=>{
+                console.log(e);
+            })
+            
+        }
+    </script>
+
+    <!-- mass upload file excel -->
+    <script>
+        let getDataCheck = new Promise(function(resolve, reject){
+            let result = {vendor:[], pickedAtPort:[]};
+            $.ajax({
+                url: host + "/api/vendor"
+            })
+            .done(vendor=>{
+                for(let i=0; i<vendor.length; i++){
+                    result.vendor.push(vendor[i]);
+                }
+                $.ajax({
+                    url:host + "/api/picked-at-port"
+                })
+                .done(pickedAtPort=>{
+                    for(let i=0; i<pickedAtPort.length; i++){
+                        result.pickedAtPort.push(pickedAtPort[i])
+                    }
+                    resolve(result);
+                })
+                .fail((err)=>{
+                    reject(err)
+                })
+            })
+            .fail(err=>{
+                reject(err)
+            })
+        });
+        
+        function upload() {
+            let files = document.getElementById('file_upload').files;
+            if(files.length==0){
+                alert("Please choose any file...");
+                return;
+            }
+            let filename = files[0].name;
+            let extension = filename.substring(filename.lastIndexOf(".")).toUpperCase();
+            if (extension == '.XLS' || extension == '.XLSX') {
+                try {
+                    let reader = new FileReader();
+                    reader.readAsBinaryString(files[0]);
+                    reader.onload = function(e) {
+                        let data = e.target.result;
+                        let workbook = XLSX.read(data, {
+                            type : 'binary'
+                        });
+                        let result = {};
+                        workbook.SheetNames.forEach(function(sheetName) {
+                        let roa = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                        if (roa.length > 0) {
+                            result[sheetName] = roa;
+                        }
+                        });
+                        // noi hung ket qua tra ve sau khi xu ly excel
+                
+                        let resultData = [];
+                        let yearr = $("#massUpload .year").val();
+                        let weekk = $("#massUpload .week").val();
+
+                        let listDataExcel = result["Sheet1"];
+                       
+                        for(let i=0; i<listDataExcel.length; i++){
+                            
+                            let objData = {};
+                            let bookingNumber = `${listDataExcel[i]["Booking Number"]}`.trim();
+                            
+                            objData.bookingNumber = convertNull(`${listDataExcel[i]["Booking Number"]==undefined?"":`${listDataExcel[i]["Booking Number"]}`.trim()}`);
+                            
+                            objData.stt = convertNull(i+1);
+                            
+                            objData.ataVnPort = convertNull(formatDate(`${listDataExcel[i]["ATA VN Port"]==undefined?"":`${listDataExcel[i]["ATA VN Port"]}`.trim()}`));
+
+                            objData.atdVendor = convertNull(formatDate(`${listDataExcel[i]["ATD vendor"]==undefined?"":`${listDataExcel[i]["ATD vendor"]}`.trim()}`));
+                            
+                            objData.carrier = convertNull(`${listDataExcel[i]["Carrier"]==undefined?"":`${listDataExcel[i]["Carrier"]}`.trim().toUpperCase()}`);
+                            
+                            objData.contNumber = convertNull(`${listDataExcel[i]["Container number"]==undefined?"":`${listDataExcel[i]["Container number"]}`.trim()}`);
+                            
+                            // objData.bookingNo = convertNull(`${listDataExcel[i]["Booking No"]==undefined?"":`${listDataExcel[i]["Booking No"]}`.trim()}`);
+                            
+                            objData.pickedAtPort = convertNull(`${listDataExcel[i]["Picked at Port"]==undefined?"":`${listDataExcel[i]["Picked at Port"]}`.trim().toUpperCase()}`);
+                            
+                            objData.pickedDate = convertNull(formatDate(`${listDataExcel[i]["Picked date"]==undefined?"":`${listDataExcel[i]["Picked date"]}`.trim()}`));
+                            
+                            objData.seal = convertNull(`${listDataExcel[i]["Số seal"]==undefined?"":`${listDataExcel[i]["Số seal"]}`.trim()}`);
+                            
+                            objData.vendor = convertNull(`${listDataExcel[i]["Vendor"]==undefined?"":`${listDataExcel[i]["Vendor"]}`.trim().toUpperCase()}`);
+                            
+                            objData.ataPb = convertNull(formatDate(`${listDataExcel[i]["ATA Phu bai"]==undefined?"":`${listDataExcel[i]["ATA Phu bai"]}`.trim()}`));
+                            
+                            objData.contCategory = convertNull(`${listDataExcel[i]["Cont type"]==undefined?"":`${listDataExcel[i]["Cont type"]}`.trim()}`);
+                            
+                            resultData.push(objData);
+                        }
+
+                        let arrBooking = [];
+                        for(let i=0; i<resultData.length; i++){
+                            arrBooking.push(resultData[i]["bookingNumber"]);
+                        }
+                        let filterArrBooking = [];
+                        for(let i=0; i<arrBooking.length; i++){
+                            if(filterArrBooking.length==0) filterArrBooking.push(arrBooking[i]);
+                            for(let j=0; j<filterArrBooking.length; j++){
+                                if(arrBooking[i]===filterArrBooking[j]){
+                                    break;
+                                }else if(j===filterArrBooking.length-1){
+                                    filterArrBooking.push(arrBooking[i]);
+                                }
+                            }
+                        }
+                        let booking = {};
+                        for(let i=0; i<filterArrBooking.length; i++){
+                            let count = 0;
+                            for(let j=0; j<arrBooking.length; j++){
+                                if(arrBooking[j]==filterArrBooking[i]){
+                                    count++;
+                                    booking[filterArrBooking[i]] = count
+                                }
+                            }
+                        }
+                        
+                        $.ajax({
+                            url: host + "/api/count-booking-number",
+                            type:"GET"
+                        })
+                        .done((result)=>{
+                           getDataCheck
+                            .then((checkData)=>{
+                                checkData.vendor.push({port: 'MT'})
+                                let arrErr = [];
+                                for(let key of Object.keys(booking)){
+                                    if(result.length==0){
+                                        if(key!="null"){
+                                            let message = `Số booking ${key} không tồn tại trong kế hoạch`;
+                                            arrErr.push(message);
+                                        }
+                                    }else{
+                                        for(let i=0; i<result.length; i++){
+                                            if(key == `'${result[i]["booking_number"]}'`){
+                                                if(booking[key] > result[i]["count"]){
+                                                    let message = `Số lượng container ${result[i]["booking_number"]}(${booking[key]}) thực tế lớn hơn dự kiến ${result[i]["booking_number"]}(${result[i]["count"]})`;
+                                                    arrErr.push(message);
+                                                }
+                                                break;
+                                            }else if(i==result.length-1){
+                                                if(key!="null"){
+                                                    let message = `Số booking ${key} không tồn tại trong kế hoạch`;
+                                                    arrErr.push(message);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                for(let i=0; i<resultData.length; i++){
+
+                                        if(!resultData[i]["bookingNumber"] && !resultData[i]["vendor"]){
+                                            let message = `Tại hàng ${i+2}, booking number và vendor đồng thời cùng bị trống`;
+                                            arrErr.push(message);
+                                        }
+
+                                        if(!resultData[i]["contCategory"]){
+                                            let message = `Tại hàng ${i+2}, loại cont đang bị trống`;
+                                            arrErr.push(message);
+                                        }
+
+                                        if(!resultData[i]["ataPb"]){
+                                            let message = `Tại hàng ${i+2}, ATA phu bai đang trống`;
+                                            arrErr.push(message);
+                                        }
+                                        if(!resultData[i]["vendor"]){
+                                            let message = `Tại hàng ${i+2}, vendor đang bị trống`;
+                                            arrErr.push(message);
+                                        }else{
+                                            for(let j=0; j<checkData["vendor"].length; j++){
+                                                if(removeVietnameseTones(resultData[i]["vendor"]||"")==`'${checkData["vendor"][j]["port"]}'`){
+                                                    break;
+                                                }else if(j==checkData["vendor"].length-1){
+                                                    let message = `Tại hàng ${i+2}, vendor ${resultData[i]["vendor"]} không tồn tại`;
+                                                    arrErr.push(message);
+                                                }
+                                            }
+                                        }
+
+                                        for(let j=0; j<checkData["pickedAtPort"].length; j++){
+                                            if(resultData[i]["pickedAtPort"]){
+                                                if(removeVietnameseTones(resultData[i]["pickedAtPort"]||"")==`'${checkData["pickedAtPort"][j]["port"]}'`){
+                                                    break;
+                                                }else if(j==checkData["pickedAtPort"].length-1){
+                                                    let message = `Tại hàng ${i+2}, picked at port ${resultData[i]["pickedAtPort"]} không tồn tại`;
+                                                    arrErr.push(message);
+                                                }
+                                            }
+                                        }
+
+                                        if(!validateDateTime(resultData[i]["ataVnPort"])){
+                                            let message = `Tại hàng ${i+2}, ATA VN PORT ${resultData[i]["ataVnPort"]} không đúng định dạng`;
+                                            arrErr.push(message);
+                                        }else if(!validateDateTime(resultData[i]["atdVendor"])){
+                                            let message = `Tại hàng ${i+2}, ATD VENDOR ${resultData[i]["atdVendor"]} không đúng định dạng`;
+                                            arrErr.push(message);
+                                        }else if(!validateDateTime(resultData[i]["pickedDate"])){
+                                            let message = `Tại hàng ${i+2}, PICKED DATE ${resultData[i]["pickedDate"]} không đúng định dạng`;
+                                            arrErr.push(message);
+                                        }else if(!validateDateTime(resultData[i]["ataPb"])){
+                                            let message = `Tại hàng ${i+2}, ATA PB ${resultData[i]["ataPb"]} không đúng định dạng`;
+                                            arrErr.push(message);
+                                        }
+                                        
+                                        // if(!resultData[i]["pickedDate"]){
+                                        //     let message = `Tại hàng ${i+1}, ngày pick cont đang trống`;
+                                        //     arrErr.push(message);
+                                        // }else if(new Date(resultData[i]["pickedDate"].split("'")[1]) - new Date() > 0){
+                                        //     let message = `Tại hàng ${i+1}, ngày Pick đang nhỏ hơn ngày hiện tại`;
+                                        //     arrErr.push(message);
+                                        // }
+                                }
+                
+                                if(arrErr.length == 0){
+                                        $.ajax({
+                                            url: host + `/api/booking-number-nearest`,
+                                            dataType:"JSON"
+                                        })
+                                        .then((result)=>{
+                                            let arr = [];
+                                            for(let i=0; i<result.length; i++){
+                                                arr.push(result[i])
+                                            }
+                                            for(let i=0; i<resultData.length; i++){
+                                                for(let j=0; j<result.length; j++){
+                                                    if(resultData[i]["bookingNumber"]==`'${result[j]["booking_number"]}'`){
+                                                        resultData[i]["idSystem"] = result[j]["idSystem"];
+                                                        result.splice(j,1);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            //chay tu dong booking no
+                                            let currentBooking = {}
+                                            let arrKey = Object.keys(booking);
+
+                                            for(let i=0; i<arrKey.length; i++){
+                                                currentBooking[arrKey[i]] = 0;
+                                            }
+                                            
+                                            for(let i=0; i<resultData.length; i++){
+                                                for(let key of Object.keys(booking)){
+                                                    if(resultData[i]["bookingNumber"]==key){
+                                                        currentBooking[key] += 1
+                                                        resultData[i]["bookingNo"] = currentBooking[key];
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            // console.log(resultData)
+                                            createData()
+                                        })
+                                        .fail(()=>{
+
+                                        })
+                                }else{
+                                        $("#errMassUpload .modal-body").html("")
+                                        for(let i=0; i<arrErr.length; i++){
+                                            let message = `<div style="margin-bottom: 10px; font-size: 12pt">${arrErr[i]}</div>`;
+                                            $("#errMassUpload .modal-body").append(message)
+                                        }
+                                        $("#btn-errMassUpload").click();
+                                }
+                            })
+                            .catch(err=>{
+                                console.log(err)
+                            })
+                        // .fail((err)=>{
+                        //     console.log(err);
+                        // })
+                        function createData(){
+                            $.ajax({
+                                url: host + `/api/excel`,
+                                headers: {
+                                    'Content-Type':'application/json'
+                                },
+                                type: "POST",
+                                data:JSON.stringify(resultData),
+                            })
+                            .done(()=>{
+                                window.location.href = `${host}?year=${yearr}&week=${weekk}`
+                            })
+                            .fail(()=>{
+                                alert("Something wrong")
+                            })
+                        }
+                    })
+                    }
+                }catch(e){
+                    console.error(e);
+                }
+            }else{
+                alert("Please select a valid excel file.");
+            }
+      }
+    </script>
+</body>
+</html>

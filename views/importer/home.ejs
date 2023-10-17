@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("../utils/header.ejs") %>
+    <title>Document</title>
+</head>
+<style>
+   body{
+    overflow-x: hidden;
+   }
+   #table-info{
+        width: 100vw;
+        height: 85vh;
+        overflow: auto;
+    }
+    th:not:first-child, td{
+        min-width: 25em;
+        font-size: smaller;
+    }
+    .checkbox{
+        min-width: 1em;
+    }
+    input[type="checkbox"]{
+        cursor: pointer;
+        width: 1.95em;
+        height: 1.95em;
+    }
+    .label{
+        font-weight: bolder;
+        font-size: x-small;
+    }
+    th, td{
+        /* min-width: 20em;
+        min-height: 10em; */
+        padding: 0px !important;
+    }
+    #table-create tbody td{
+       padding: 0.6em;
+    }
+    #table-update tbody td{
+        padding: 0.6em;
+    }
+    .error-message{
+        color: red;
+    }
+    textarea{
+        height: 22px;
+    }
+    select{
+        width: 12em;
+        height: 2em;
+    }
+</style>
+<body>
+    <%- include("../layout/navbar.ejs")%>
+    <div id="table-info">
+        <table class="table table-bordered table-hover" id="data-table">
+            <thead class="thead-dark table-hover" style="position: block;">
+                <th id="thead-check-box"></th>
+                <th id="thead-stt" style="min-width: 3em;">STT</th>
+                <th id="thead-bill">BILL</th>
+                <th id="thead-container-number">CONTAINER NUMBER</th>
+                <th id="thead-cont-category" style="min-width: 5em;">CONT TYPE</th>
+                <th id="thead-direct-carrier">DIRECT CARRIER</th>
+                <th id="thead-invoice">INVOICE</th>
+                <th id="thead-vendor-cargo-ready-date">CARGO READY DATE</th>
+                <th id="thead-etd">ETD</th>
+                <th id="thead-eta-vn-port">ETA VN PORT</th>
+                <th id="thead-picked-at-port">VN PORT</th>
+                <th id="thead-ata-pb">ETA PHU BAI</th>
+                <th id="thead-vendor">VENDOR</th>
+                <th id="thead-po">PO</th>
+                <th id="thead-note">NOTE</th>
+                
+                <!-- <th id="thead-booking-date">BOOKING DATE</th>
+                <th id="thead-picked-at-port">PICKED AT PORT</th>
+                <th id="thead-picked-at-port">PICKED AT PORT DAY</th>
+                <th id="thead-ata-vn-port">ATA VN PORT</th>
+                <th id="thead-return-at-port-day">RETURN AT PORT DAY</th> -->
+                
+            </thead>
+            <tbody>
+                <tr id="tbody-1" ondblclick="updateDataRow(this)">
+                    <td class="td-check-box"><input class="input-checkbox" type="checkbox"></td>
+
+                    <td class="td-stt">1</td>
+
+                    <td class="td-bill">
+                        <input class="input-bill" placeholder="BILL" type="text">
+                        <div class="error-message error-input-bill"></div>
+                    </td>
+
+                    <td class="td-container-number">
+                        <input class="input-container-number" type="text" placeholder="CONTAINER NUMBER">
+                        <div class="error-message error-input-container-number"></div>
+                    </td>
+
+                    <td class="td-cont-category">
+                        <input style="width: 6em;" class="input-cont-category" type="text" placeholder="CONT CATEGORY">
+                        <div class="error-message error-input-cont-category"></div>
+                    </td>
+
+                    <td class="td-direct-carrier">
+                        <input class="input-direct-carrier" placeholder="DIRECT CARRIER" type="text">
+                        <select class="select-direct-carrier"></select>
+                        <div class="error-message error-input-direct-carrier"></div>
+                    </td>
+
+                    <td class="td-invoice">
+                        <input class="input-invoice" placeholder="INVOICE" type="text">
+                        <div class="error-message error-input-invoice"></div>
+                    </td>
+
+                    <td class="td-vendor-cargo-ready-day">
+                        <input class="input-vendor-cargo-ready-day datetime" onmouseenter="addDateTime(this)" placeholder="VENDOR CARGO READY DATE" type="text">
+                        <div class="error-message error-input-vendor-cargo-ready-day datetime"></div>
+                    </td>
+
+                    <td class="td-booking-date">
+                        <input class="input-booking-date datetime" onmouseenter="addDateTime(this)" placeholder="BOOKING DATE" type="text">
+                        <div class="error-message error-input-booking-date"></div>
+                    </td>
+
+                    <td class="td-ata-vn-port">
+                        <input class="input-ata-vn-port datetime" onmouseenter="addDateTime(this)" placeholder="ETA VN PORT" type="text">
+                        <div class="error-message error-input-ata-vn-port datetime"></div>
+                    </td>
+
+                    <td class="td-picked-at-port">
+                        <input class="input-picked-at-port" placeholder="VN PORT" type="text">
+                        <select class="select-picked-at-port"></select>
+                        <div class="error-message error-input-picked-at-port"></div>
+                    </td>
+
+                    <td class="td-ata-pb">
+                        <input class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                        <div class="error-message error-input-ata-pb datetime"></div>
+                    </td>
+
+                    <td class="td-vendor">
+                        <input class="input-vendor" type="text" placeholder="VENDOR">
+                        <div class="error-message error-input-vendor"></div>
+                    </td>
+
+                    <td class="td-po">
+                        <input class="input-po" placeholder="PO" type="text">
+                        <div class="error-message error-input-po"></div>
+                    </td>
+                    
+                    <td class="td-note">
+                        <textarea class="input-note" placeholder="NOTE" type="text"></textarea>
+                        <div class="error-message error-input-note"></div>
+                    </td>
+
+                    <!-- <td class="td-picked-at-port-day">
+                        <input class="input-picked-at-port-day datetime" onmouseenter="addDateTime(this)" placeholder="PICKED AT PORT DAY" type="text">
+                        <div class="error-message error-input-picked-at-port-day datetime"></div>
+                    </td> -->
+
+                    <!-- <td class="td-return-at-port-day">
+                        <input class="input-return-at-port-day datetime" onmouseenter="addDateTime(this)" placeholder="RETURN AT PORT DAY" type="text">
+                        <div class="error-message error-input-return-at-port-day datetime"></div>
+                    </td> -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- modal create row -->
+    <div class="modal fade" id="createRow" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">CREATE NEW ROW</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <table id="table-create">
+                    <tbody>
+                        <tr>
+                            <td class="td-bill">
+                                <label class="label">BILL:<span style="opacity: 0;">EEEEEEEEEEEEEEEEEEEEEEEEEE</span></label>
+                                <input class="input-bill" placeholder="BILL" type="text">
+                                <div class="error-message error-input-bill"></div>
+                            </td>
+
+                            <td class="td-container-number">
+                                <label class="label">CONTAINER NUMBER:</label>
+                                <input class="input-container-number" type="text" placeholder="CONTAINER NUMBER">
+                                <div class="error-message error-input-container-number"></div>
+                            </td>
+
+                            <td class="td-cont-category">
+                                <label class="label">CONT TYPE</label>
+                                <input class="input-cont-category" type="text" placeholder="CONT CATEGORY">
+                                <div class="error-message error-input-cont-category"></div>
+                            </td>
+
+                            <td class="td-direct-carrier">
+                                <label class="label">DIRECT CARRIER:</label>
+                                <input class="input-direct-carrier" placeholder="DIRECT CARRIER" type="text">
+                                <select class="select-direct-carrier"></select>
+                                <div class="error-message error-input-direct-carrier"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-invoice">
+                                <label class="label">INVOICE:</label>
+                                <input class="input-invoice" placeholder="INVOICE" type="text">
+                                <div class="error-message error-input-invoice"></div>
+                            </td>
+
+                            <td class="vendor-cargo-ready-day">
+                                <label class="label">VENDOR CARGO READY DAY:</label>
+                                <input class="input-vendor-cargo-ready-day datetime" onmouseenter="addDateTime(this)" placeholder="VENDOR CARGO READY DATE" type="text">
+                                <div class="error-message error-input-vendor-cargo-ready-day datetime"></div>
+                            </td>
+
+                            <td class="td-booking-date">
+                                <label class="label">ETD:</label>
+                                <input class="input-booking-date datetime" onmouseenter="addDateTime(this)" placeholder="ETD" type="text">
+                                <div class="error-message error-input-booking-date"></div>
+                            </td>
+
+                            <td class="td-ata-vn-port">
+                                <label class="label">ETA VN PORT:</label>
+                                <input class="input-ata-vn-port datetime" onmouseenter="addDateTime(this)" placeholder="ETA VN PORT" type="text">
+                                <div class="error-message error-input-ata-vn-port datetime"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-picked-at-port">
+                                <label class="label">VN PORT:</label>
+                                <input class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                                <select class="select-picked-at-port"></select>
+                                <div class="error-message error-input-picked-at-port"></div>
+                            </td>
+
+                            <td class="td-ata-pb">
+                                <label class="label">ETA PHU BAI:</label>
+                                <input class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ETA PHU BAI" type="text">
+                                <div class="error-message error-input-ata-pb datetime"></div>
+                            </td>
+                            
+                            <td class="td-vendor">
+                                <label class="label">VENDOR:</label>
+                                <input class="input-vendor" type="text" placeholder="VENDOR">
+                                <div class="error-message error-input-vendor"></div>
+                            </td>
+
+                            <td class="td-po">
+                                <label class="label">PO:<span style="opacity: 0;">EEEEEEEEEEEEEEEEEEEEEEEEEE</span></label>
+                                <input class="input-po" type="text" placeholder="PO">
+                                <div class="error-message error-input-po"></div>
+                            </td>
+    
+                        </tr>
+                        <tr>
+                            <td class="td-note">
+                                <label class="label">NOTE:<span style="opacity: 0;">EEEEEEEEEEEEEEEEEEEEEEEEEE</span></label>
+                                <textarea style="margin-bottom: 10px;" class="input-note" type="text" placeholder="NOTE"></textarea>
+                                <div class="error-message error-input-note"></div>
+                            </td>
+                        </tr>
+                        
+                        <!-- <tr>
+                            <td class="td-po">
+                                <label class="label">PO NUMBER:</label>
+                                <input style="margin-top: 10px;" class="input-po" placeholder="PO" type="text">
+                                <div class="error-message error-input-po"></div>
+                            </td>
+                        </tr> -->
+                        
+                        <!-- <tr>
+                            <td class="td-picked-at-port-day">
+                                <label class="label">PICKED AT PORT DAY:</label>
+                                <input class="input-picked-at-port-day datetime" onmouseenter="addDateTime(this)" placeholder="PICKED AT PORT DAY" type="text">
+                                <div class="error-message error-input-picked-at-port-day datetime"></div>
+                            </td>
+                        </tr>
+                         -->
+                        <!-- <tr>
+                            <td class="td-return-at-port-day">
+                                <label class="label">RETURN AT PORT DAY:</label>
+                                <input class="input-return-at-port-day datetime" onmouseenter="addDateTime(this)" placeholder="RETURN AT PORT DAY" type="text">
+                                <div class="error-message error-input-return-at-port-day datetime"></div>
+                            </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="createRow()">Save changes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- modal update row -->
+
+    <div class="modal fade" id="updateRow" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">UPDATE ROW</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="display: flex; justify-content: space-between;">
+                <table id="table-update">
+                    <tbody>
+                        <tr>
+                            <td class="td-bill">
+                                <label class="label">BILL:<span style="opacity: 0;">EEEEEEEEEEEEEEEEEEEEEEEEEE</span></label>
+                                <input class="input-bill" placeholder="BILL" type="text">
+                                <div class="error-message error-input-bill"></div>
+                            </td>
+
+                            <td class="td-container-number">
+                                <label class="label">CONTAINER NUMBER:</label>
+                                <input class="input-container-number" type="text" placeholder="CONTAINER NUMBER">
+                                <div class="error-message error-input-container-number"></div>
+                            </td>
+
+                            <td class="td-cont-category">
+                                <label class="label">CONT TYPE</label>
+                                <input class="input-cont-category" type="text" placeholder="CONT CATEGORY">
+                                <div class="error-message error-input-cont-category"></div>
+                            </td>
+
+                            <td class="td-direct-carrier">
+                                <label class="label">DIRECT CARRIER:</label>
+                                <input class="input-direct-carrier" placeholder="DIRECT CARRIER" type="text">
+                                <select class="select-direct-carrier"></select>
+                                <div class="error-message error-input-direct-carrier"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-invoice">
+                                <label class="label">INVOICE:</label>
+                                <input class="input-invoice" placeholder="INVOICE" type="text">
+                                <div class="error-message error-input-invoice"></div>
+                            </td>
+
+                            <td class="vendor-cargo-ready-day">
+                                <label class="label">VENDOR CARGO READY DAY:</label>
+                                <input class="input-vendor-cargo-ready-day datetime" onmouseenter="addDateTime(this)" placeholder="VENDOR CARGO READY DATE" type="text">
+                                <div class="error-message error-input-vendor-cargo-ready-day datetime"></div>
+                            </td>
+
+                            <td class="td-booking-date">
+                                <label class="label">ETD:</label>
+                                <input class="input-booking-date datetime" onmouseenter="addDateTime(this)" placeholder="ETD" type="text">
+                                <div class="error-message error-input-booking-date"></div>
+                            </td>
+
+                            <td class="td-ata-vn-port">
+                                <label class="label">ETA VN PORT:</label>
+                                <input class="input-ata-vn-port datetime" onmouseenter="addDateTime(this)" placeholder="ETA VN PORT" type="text">
+                                <div class="error-message error-input-ata-vn-port datetime"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td-picked-at-port">
+                                <label class="label">VN PORT:</label>
+                                <input class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                                <select class="select-picked-at-port"></select>
+                                <div class="error-message error-input-picked-at-port"></div>
+                            </td>
+
+                            <td class="td-ata-pb">
+                                <label class="label">ETA PHU BAI:</label>
+                                <input class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ETA PHU BAI" type="text">
+                                <div class="error-message error-input-ata-pb datetime"></div>
+                            </td>
+                            
+                            <td class="td-vendor">
+                                <label class="label">VENDOR:</label>
+                                <input class="input-vendor" type="text" placeholder="VENDOR">
+                                <div class="error-message error-input-vendor"></div>
+                            </td>
+
+                            <td class="td-po">
+                                <label class="label">PO:<span style="opacity: 0;">EEEEEEEEEEEEEEEEEEEEEEEEEE</span></label>
+                                <input class="input-po" type="text" placeholder="PO">
+                                <div class="error-message error-input-po"></div>
+                            </td>
+    
+                        </tr>
+                        <tr>
+                            <td class="td-note">
+                                <label class="label">NOTE:<span style="opacity: 0;">EEEEEEEEEEEEEEEEEEEEEEEEEE</span></label>
+                                <textarea style="margin-bottom: 10px;" class="input-note" type="text" placeholder="NOTE"></textarea>
+                                <div class="error-message error-input-note"></div>
+                            </td>
+                        </tr>
+                        
+                        <!-- <tr>
+                            <td class="td-po">
+                                <label class="label">PO NUMBER:</label>
+                                <input style="margin-top: 10px;" class="input-po" placeholder="PO" type="text">
+                                <div class="error-message error-input-po"></div>
+                            </td>
+                        </tr> -->
+                        
+                        <!-- <tr>
+                            <td class="td-picked-at-port-day">
+                                <label class="label">PICKED AT PORT DAY:</label>
+                                <input class="input-picked-at-port-day datetime" onmouseenter="addDateTime(this)" placeholder="PICKED AT PORT DAY" type="text">
+                                <div class="error-message error-input-picked-at-port-day datetime"></div>
+                            </td>
+                        </tr>
+                         -->
+                        <!-- <tr>
+                            <td class="td-return-at-port-day">
+                                <label class="label">RETURN AT PORT DAY:</label>
+                                <input class="input-return-at-port-day datetime" onmouseenter="addDateTime(this)" placeholder="RETURN AT PORT DAY" type="text">
+                                <div class="error-message error-input-return-at-port-day datetime"></div>
+                            </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateData()">Save changes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <button style="display: none;" data-toggle="modal" data-target="#updateRow" id="updateTrigger"></button>
+
+    <div style="display: flex; gap: 1em; margin-left: 50vw;">
+        <button class="btn btn-primary create-delete" id="create-btn" data-toggle="modal" data-target="#createRow"><i class="fa-solid fa-plus"></i></button>
+        <button class="btn btn-danger create-delete" id="delete-btn" onclick="deleteRow()"><i class="fa-solid fa-trash"></i></button>
+        <button class="btn btn-success" id="upload-btn" onclick="postData()"><i class="fa-solid fa-upload"></i></button>
+        <a href="/detail-importer"><button class="btn btn-info" id="history-btn" onclick=""><i class="fa-solid fa-list-ol"></i></button></a>
+    </div>
+    <script src="../../script/utils.js"></script>
+    
+    <script>
+        function validateTime(time){
+            if(!time) return true;
+            if(time.match("^[0-9]*$")){
+                return true
+            }else{
+                return false
+            }
+        }
+        let url = new URLSearchParams(window.location.search);
+        let year = url.get("year");
+        let week = url.get("week");
+        let regexTime = "^[0-9]*$";
+        let arrSelectCarrier = [];
+        let arrSelectPickAtport = [];
+        if(!validateTime(week) || !validateTime(year)){
+            window.location.href="/404";
+        }
+        let weekInput = $(".input-week");
+        for(let i=0; i<weekInput.length; i++){
+            $(weekInput[i]).val(+week+1);
+        }
+    </script>
+    <script>
+        function addDateTime(param){
+            $(param).datetimepicker({format:'d/m/Y H:00:00'});
+        }
+        
+        // them row moi
+        function createRow(){
+            let rank = $("#table-info tbody tr").length;
+            let weekRoot = $($(".input-week")[0]).val();
+            let tableCreate = "#table-create "
+            let nextRow =                
+            `<tr id="tbody-${rank+1}" ondblclick="updateDataRow(this)">
+                    <td class="td-check-box"><input class="input-checkbox" type="checkbox"></td>
+
+                    <td class="td-stt">${rank+1}</td>
+
+                    <td class="td-bill">
+                        <input value="${$(tableCreate+".td-bill "+"input").val()}"" class="input-bill" placeholder="BILL" type="text">
+                        <div class="error-message error-input-bill"></div>
+                    </td>
+
+                    <td class="td-container-number">
+                        <input value="${$(tableCreate+".td-container-number "+"input").val()}" class="input-container-number" placeholder="CONTAINER NUMBER" type="text">
+                        <div class="error-message error-input-container-number"></div>
+                    </td>
+
+                    <td class="td-cont-category">
+                        <input value="${$(tableCreate+".td-cont-category "+"input").val()}" class="input-cont-category" type="text" placeholder="CONT CATEGORY" style="width: 6em">
+                        <div class="error-message error-input-cont-category"></div>
+                    </td>
+
+                    <td class="td-direct-carrier">
+                        <input value="${$(tableCreate+".td-direct-carrier "+"input").val()}" class="input-direct-carrier" placeholder="CARRIER" type="text">
+                        <select class="select-direct-carrier">
+                            ${arrSelectCarrier.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-direct-carrier "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-direct-carrier"></div>
+                    </td>
+
+                    <td class="td-invoice">
+                        <input value="${$(tableCreate+".td-invoice "+"input").val()}" class="input-invoice" placeholder="INVOICE" type="text">
+                        <div class="error-message error-input-invoice"></div>
+                    </td>
+
+                    <td class="vendor-cargo-ready-day">
+                        <input value="${$(tableCreate+".vendor-cargo-ready-day "+"input").val()}" class="input-vendor-cargo-ready-day datetime" onmouseenter="addDateTime(this)" placeholder="VENDOR CARGO READY DATE" type="text">
+                        <div class="error-message error-input-vendor-cargo-ready-day datetime"></div>
+                    </td>
+
+                    <td class="td-booking-date">
+                        <input value="${$(tableCreate+".td-booking-date "+"input").val()}" class="input-booking-date datetime" onmouseenter="addDateTime(this)" placeholder="BOOKING DATE" type="text">
+                        <div class="error-message error-input-booking-date"></div>
+                    </td>
+
+                    <td class="td-ata-vn-port">
+                        <input value="${$(tableCreate+".td-ata-vn-port "+"input").val()}" class="input-ata-vn-port datetime" onmouseenter="addDateTime(this)" placeholder="ATA VN PORT" type="text">
+                        <div class="error-message error-input-ata-vn-port datetime"></div>
+                    </td>
+
+                    <td class="td-picked-at-port">
+                        <input value="${$(tableCreate+".td-picked-at-port "+"input").val()}" class="input-picked-at-port" placeholder="PICKED AT PORT" type="text">
+                        <select class="select-picked-at-port">
+                            ${arrSelectPickAtport.map(result=>{
+                                return `<option value="${result}"
+                                ${$(tableCreate+".td-picked-at-port "+"input").val()===result?"selected":""}
+                                >
+                                    ${result}
+                                </option>`
+                            })}
+                        </select>
+                        <div class="error-message error-input-picked-at-port"></div>
+                    </td>
+
+                    <td class="td-ata-pb">
+                        <input value="${$(tableCreate+".td-ata-pb "+"input").val()}" class="input-ata-pb datetime" onmouseenter="addDateTime(this)" placeholder="ATA PHU BAI" type="text">
+                        <div class="error-message error-input-ata-pb datetime"></div>
+                    </td>
+                    
+                    <td class="td-vendor">
+                        <input value="${$(tableCreate+".td-vendor "+"input").val()}" class="input-vendor" placeholder="VENDOR" type="text">
+                        <div class="error-message error-input-vendor"></div>
+                    </td>
+
+                    <td class="td-po">
+                        <input value="${$(tableCreate+".td-po "+"input").val()}" class="input-po" placeholder="PO" type="text">
+                        <div class="error-message error-input-po"></div>
+                    </td>
+
+                    <td class="td-note">
+                        <input value="${$(tableCreate+".td-note "+"textarea").val()}" class="input-note" placeholder="NOTE" type="text">
+                        <div class="error-message error-input-note"></div>
+                    </td>
+
+                </tr>`;
+            $("#table-info tbody").append(nextRow);
+            initSelect();
+            $("#createRow .close").click();
+            
+        }
+        
+        //fill update row duoc chon
+        function updateDataRow(row){
+            let listChidren = $(row).children();
+            let arrInput = [];
+            let tableUpdate = $("#table-update tbody td");
+            for(let i=0; i<tableUpdate.length; i++){
+                
+                let updateInput = $($(tableUpdate[i]).children()[1]);
+                let rowTable = $($(listChidren[i+2]).children()[0]);
+
+                let dropdown = $($(listChidren[i+2]).children()[1]);
+                let selectOptionUpdate = $($(tableUpdate[i]).children()[2]);
+
+                arrInput.push($(rowTable).attr("class")?.split(" ")[0]);
+                if($(rowTable).attr("class")===$(updateInput).attr("class")){
+                    $(updateInput).val($(rowTable).val());
+
+                    if($(dropdown).hasClass("dropdown")){
+                        let chidrenDropdown = $(dropdown).children();
+                        for(let i=0; i<chidrenDropdown.length; i++){
+                            if($(chidrenDropdown[i]).hasClass("dropbtn")){
+                                let value = $(chidrenDropdown[i]).text();
+                                importData(value)
+                            }
+                        }
+                    }else{
+                        if($(dropdown).val()){
+                            $(selectOptionUpdate).val($(rowTable).val());
+                            $(selectOptionUpdate).select2();
+                        }
+                    }
+                }
+                function importData(data){
+                    for(let i=0; i<selectOptionUpdate.length; i++){
+                        if($(selectOptionUpdate[i]).hasClass("dropdown")){
+                            let select = $(selectOptionUpdate[i]).children();
+                            for(let j=0; j<select.length; j++){
+                                if($(select[i]).hasClass("dropbtn")){
+                                    $(select[i]).text(data);
+                                }
+                                break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            $("#updateRow .modal-title").text(`UPDATE ROW ${$(row).attr("id").split("-")[1]}`)
+            $("#updateTrigger").click();
+        }
+        
+        // update row duoc chon
+        function updateData(){
+            let stt = $("#updateRow .modal-title").text().split(" ")[2];
+            let listChidren = $(`#table-info tbody #tbody-${stt}`).children();
+            
+            let arrInput = [];
+            let tableUpdate = $("#table-update tbody td");
+            for(let i=0; i<tableUpdate.length; i++){
+                
+                let updateInput = $($(tableUpdate[i]).children()[1]);
+                let rowTable = $($(listChidren[i+2]).children()[0]);
+
+                let dropdown = $($(listChidren[i+2]).children()[1]);
+                let selectOptionUpdate = $($(tableUpdate[i]).children()[2]);
+
+                arrInput.push($(rowTable)?.attr("class").split(" ")[0]);
+                if($(rowTable).attr("class")===$(updateInput).attr("class")){
+                    $(rowTable).val($(updateInput).val());
+
+                    if($(selectOptionUpdate).hasClass("dropdown")){
+                        let chidrenDropdown = $(selectOptionUpdate).children();
+                        for(let i=0; i<chidrenDropdown.length; i++){
+                            if($(chidrenDropdown[i]).hasClass("dropbtn")){
+                                let value = $(chidrenDropdown[i]).text();
+                                importData(value)
+                            }
+                        }
+                    }else{
+                        if($(dropdown).val()){
+                            $(dropdown).val($(selectOptionUpdate).val());
+                            $(dropdown).select2();
+                        }
+                    }
+                }
+                function importData(data){
+                    for(let i=0; i<dropdown.length; i++){
+                        if($(dropdown[i]).hasClass("dropdown")){
+                            let select = $(dropdown[i]).children();
+                            for(let j=0; j<select.length; j++){
+                                if($(select[i]).hasClass("dropbtn")){
+                                    $(select[i]).text(data);
+                                }
+                                break;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+            }
+            $("#updateRow .close").click();
+        }
+        
+        //auto fill allow booking 
+        function autoFillAllowBook(booking, table){
+            let allows = [
+                "input-category-cont",
+                "input-no-booking",
+                "input-new-etd", 
+                "input-carrier",
+                "input-cut-off-loading-date",
+                "input-cy-cut-off", 
+                "input-ammentdent-bill-cut-off",
+                "input-etd",
+                "input-service",
+                "input-eta",
+                "input-new-eta",
+                "input-vessel"
+            ];
+            let rowsOfTable = $("#table-info tbody tr");
+            let valueBookUpdate = $(booking).val().trim();
+            let listInputBooking = $("#table-info .input-booking-number");
+
+            for(let i=0; i<listInputBooking.length; i++){
+                let valueCompare = $(listInputBooking[i]).val();
+                if(valueCompare===valueBookUpdate && valueCompare!='' && valueBookUpdate!=''){
+                    for(let allow of allows){
+                        let targetCopy = $(`#table-info .${allow}`)[i]
+                        let valueCopy = $(targetCopy).val();
+                        console.log(valueCopy)
+                        $(`#${table} tbody .${allow}`).val(valueCopy)
+                    }
+                    break
+                }else{
+                    for(let allow of allows){
+                        let targetCopy = $(`#table-info .${allow}`)[i]
+                        let valueCopy = $(targetCopy).val();
+                        $(`#${table} tbody .${allow}`).val("")
+                    }
+                }
+            }
+            
+        }
+        
+        // xoa row da duoc checkbox
+        function deleteRow() {
+            let listCheckBox = $(".input-checkbox");
+            for(let i=0; i<listCheckBox.length; i++){
+                if($(listCheckBox[i]).is(":checked") && i!=0){
+                    console.log($(`#tbody-${i+1}`))
+                    $(`#tbody-${i+1}`).remove();
+                }
+            }
+            let listStt = $(".td-stt");
+            let listRow = $("#table-info tbody tr");
+            for(let i=0; i<listStt.length; i++){
+                $(listStt[i]).text(i+1);
+            }
+            for(let i=0; i<listRow.length; i++){
+                $(listRow[i]).attr("id", `tbody-${i+1}`)
+            }
+        }
+        
+        //thay doi hang loat week
+        function changeWeek() { 
+            let listRow = $(".input-week");
+            let weekRoot = $(listRow[0]).val();
+            for(let i=1; i<listRow.length; i++){
+                $(listRow[i]).val(weekRoot);
+            }
+         }
+        
+         //copy data theo booking
+        function copyDataAllowBooking(row) {  
+            let rowClass = $(row).attr("class").split(" ")[0];
+            let rowIncludeData = $(row).parent().parent();
+            let rankOfRow = +$(rowIncludeData).attr("id").split("-")[1];
+            let rowsOfTable = $("#table-info tbody tr");
+            let bookingNumberRoot = $($(".input-booking-number")[rankOfRow-1]).val();
+            let inputRoot = $($(`.${rowClass}`)[rankOfRow-1]).val();
+            for(let i=0; i<rowsOfTable.length; i++){
+                let bookingNumberTaget = $($(".input-booking-number")[i]).val();
+
+                if(bookingNumberRoot!==""&& bookingNumberTaget===bookingNumberRoot && i!==rankOfRow-1){
+                    $($(`.${rowClass}`)[i]).val(inputRoot);
+                }
+            }
+
+        }
+        
+        //post du lieu len database
+        function postData(){
+            let listRow = $("#table-info tbody tr");
+            let datas = [];
+
+            let contCategory = $(".input-cont-category");
+            let containerNumber = $(".input-container-number");
+            let vendor = $(".input-vendor");
+            let bill = $(".input-bill");
+            let directCarrier = $(".input-direct-carrier");
+            let invoice = $(".input-invoice");
+            let po = $(".input-po");
+            let bookingDate = $(".input-booking-date");
+            let pickedAtPort = $(".input-picked-at-port");
+            let pickedAtPortDay = $(".input-picked-at-port-day");
+            let vendorCargoReadyDay = $(".input-vendor-cargo-ready-day");
+            let ataVnPort = $(".input-ata-vn-port");
+            let ataPb = $(".input-ata-pb");
+            let returnAtPortDay = $(".input-return-at-port-day");
+            let note = $(".input-note");
+
+            let arrError = {};
+            for(let i=0; i<listRow.length; i++){
+                let data = {};
+                let errArr = [];
+
+                data.idCurrent = 
+                convertNull($(containerNumber[i]).val().trim())?
+                `${$(containerNumber[i]).val().trim()}-${Math.random().toFixed(10).split(".")[1]}`:
+                Math.random().toFixed(10).split(".")[1];
+                
+                data.contCategory = convertNull($(contCategory[i]).val().trim());
+                                                                
+                data.containerNumber = convertNull($(containerNumber[i]).val().trim());
+                
+                data.vendor = `${convertNull(`NHAP KHAU (${$(vendor[i]).val().trim().toUpperCase()})`)}`
+
+                data.bill = convertNull($(bill[i]).val().trim());
+
+                data.directCarrier = convertNull($(directCarrier[i]).val().trim());
+
+                data.invoice = convertNull($(invoice[i]).val().trim());
+
+                data.po = convertNull($(po[i]).val().trim());
+
+                data.bookingDate = convertNull(formatDate($(bookingDate[i]).val()));
+
+                data.picAtPort = convertNull($(pickedAtPort[i]).val().trim());
+    
+                data.pickedDate = convertNull(formatDate($(pickedAtPortDay[i]).val()));
+
+                data.venderCargoDay = convertNull(formatDate($(vendorCargoReadyDay[i]).val()));
+
+                data.ataVnPort = convertNull(formatDate($(ataVnPort[i]).val()));
+
+                data.ataPb = convertNull(formatDate($(ataPb[i]).val()));
+
+                data.returnAtPortDay = convertNull(formatDate($(returnAtPortDay[i]).val()));
+
+                data.note = convertNull($(note[i]).val().trim());
+
+                let listInput = $($(listRow[i]).children())
+                
+                for(let j=2; j<listInput.length; j++){
+                    let input = $($(listInput[j]).children()[0])
+                    errArr.push($(input).attr("class").split(" ")[0])
+                }
+
+                let error = validate(errArr, `#table-info tbody #tbody-${i+1}`)
+                
+                if(error.length > 0){
+                    arrError[i+1] = error;
+                }
+                
+                datas.push(data);
+            }
+            console.log(arrError);
+            
+            //hien thi thong bao loi
+            for(let key of Object.keys(arrError)){
+                for(let j=0; j < arrError[key].length; j++){
+                    let clasKey = Object.keys(arrError[key][j])[0];
+                    let errMessage = Object.values(arrError[key][j])[0];
+                    $(`#table-info tbody #tbody-${key} .error-${clasKey}`).text(errMessage)
+                }
+            }
+            if(Object.keys(arrError).length>0){
+                alert("Đã xảy ra lỗi. Vui lòng kiểm tra dữ liệu")
+            }
+            // console.log(datas)
+            // console.log(datas[0].week)
+            // console.log(Object.keys(arrError).length)
+            if(Object.keys(arrError).length==0){
+                $("#upload-btn").attr("disabled", "true");
+                $.ajax({
+                    headers: {
+                        'Content-Type':'application/json'
+                    },
+                    url: host+"/api/create-importer",
+                    type: "POST",
+                    data:JSON.stringify(datas),
+                    })
+                .done((result)=>{
+                    for(let i=0; i<$("input").length; i++){
+                        $($("input")[i]).val("");
+                    }
+                    $("#upload-btn").attr("disabled", "false");
+                    window.location.href = "/detail-importer"
+                })
+                .fail((e)=>{
+                    $("#upload-btn").attr("disabled", "false");
+                    console.log(e);
+                })
+            }
+        }
+        
+        // validate du lieu dau vao
+        function validate(listInput, selectorInput){
+            let arrValidate = [];
+            let validate = {
+                "input-cont-category":{
+                    required: "This input is required"
+                },
+                "input-container-number":{
+                    required: "This input is required"
+                },
+                "input-vendor":{
+                    required: "This input is required"
+                }
+
+            };
+            for(let i=0; i<listInput.length; i++){
+                for(let key of Object.keys(validate)){
+                    if(listInput[i]===key){
+                        console.log(key)
+                        if($(selectorInput +" ."+key).val().trim()=='' && validate[key]["required"]){
+                            arrValidate.push({[key]:validate[key]["required"]});
+                        }
+                    }
+                }
+            }
+            let errorMessage = $(".error-message");
+            for(let i=0; i<errorMessage.length; i++){
+                $(errorMessage[i]).text("");
+            }
+            return arrValidate;
+        }
+    </script>
+    <script>
+        let carrier = $(".select-direct-carrier");
+        let inputCarrier = $(".input-direct-carrier");
+
+        let pickedAtPorts = $(".select-picked-at-port");
+        let inputPicked = $(".input-picked-at-port");
+
+        function initSelect(){
+             //picked at port
+            let pickedAtPorts = $(".select-picked-at-port");
+            let inputPicked = $(".input-picked-at-port");
+            for(let i=0; i<pickedAtPorts.length; i++){
+                $(inputPicked[i]).css("display","none")
+                $(pickedAtPorts[i]).on("change", ()=>{
+                    let valueSelect = $(pickedAtPorts[i]).find(":selected").val();
+                    $(inputPicked[i]).val(valueSelect);
+                })
+            }
+
+            //carrier
+            let carrier = $(".select-direct-carrier");
+            let inputCarrier = $(".input-direct-carrier");
+            for(let i=0; i<carrier.length; i++){
+                $(inputCarrier[i]).css("display","none")
+                $(carrier[i]).on("change", ()=>{
+                    let valueSelect = $(carrier[i]).find(":selected").val();
+                    $(inputCarrier[i]).val(valueSelect);
+                })
+            }
+            let selectList = $("select");
+            for(let i=0; i<selectList.length; i++){
+                $(selectList[i]).select2();
+            }
+        }
+        initSelect();
+
+        function initCarrier(){
+            $.ajax({
+                url: host + "/api/carrier",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectCarrier.push(result[i]["port"])
+                }
+                for(let i=0; i<carrier.length; i++){
+                    $(carrier[i]).append("<option value=' '></option>")
+                    $(inputCarrier[i]).val(' ')
+                    for(let j=0; j<result.length; j++){
+                        $(carrier[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        function initPickedAtPort(){
+            $.ajax({
+                url: host + "/api/picked-at-port",
+                type: "GET",
+                dataType: "JSON"
+            })
+            .done((result)=>{
+                for(let i=0; i<result.length; i++){
+                    arrSelectPickAtport.push(result[i]["port"])
+                }
+                for(let i=0; i<pickedAtPorts.length; i++){
+                    $(pickedAtPorts[i]).append("<option value=' '></option>")
+                    $(inputPicked[i]).val(' ')
+                    for(let j=0; j<result.length; j++){
+                        $(pickedAtPorts[i]).append(`<option value="${result[j]["port"]}">${result[j]["port"]}</option>`);
+                    }
+                }
+            })
+            .fail((err)=>{
+                console.log(err);
+            })
+        }
+        initCarrier();
+        initPickedAtPort();
+    </script>
+</body>
+</html>
